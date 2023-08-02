@@ -6,8 +6,15 @@ a {
     font-size: xx-large;
     font-family: cursive;
 }
-body { background: #1995d3; color: #fff; }
-a { cursor: pointer;}
+body {
+    background: #00000078;
+    color: #fff;
+}
+a {
+    cursor: pointer;
+    font-size: 15px;
+}
+
 .tv-area { margin-top: 50px; }
 .channel-list { padding-left: 0; height: 520px; white-space: nowrap; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; scroll-behavior: smooth; }
 .thumbnail-slider { margin:0; padding:0;  }
@@ -26,10 +33,6 @@ a { cursor: pointer;}
  background-color: #D62929;
 }
 
-/*[data-player] { position: relative; width: 100%; height: auto; margin: 0; }
-[data-player] .container[data-container] { width: 100%; height: auto; position: relative; }
-[data-player] .media-control[data-media-control] { top: 0; right: 0; bottom: 0; left: 0; }
-[data-player] video { position: relative; display: block; width: 100%; height: auto; }*/
 
  @media (max-width: 1199px) {
 	 .channel-list { height: 425px; }

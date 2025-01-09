@@ -7,9 +7,11 @@ a {
     font-family: cursive;
 }
 body {
-    background: #00000078;
-    color: #fff;
+    background-color: #3c763d;
+    /* background: #0046afe6; */
+    color: #ff0000;
 }
+
 a {
     cursor: pointer;
     font-size: 15px;

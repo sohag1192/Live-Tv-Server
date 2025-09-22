@@ -1,57 +1,50 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>HLS Player</title>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        #video {
-            width: 100%;
-            background: #000;
-        }
-        .controls {
-            margin-top: 10px;
-        }
-    </style>
-</head>
-<body>
-    <h1>HLS Stream Player</h1>
-    <video id="video" controls></video>
-    <div class="controls">
-        <input type="text" id="streamUrl" value="https://owrcovcrpy.gpcdn.net/bpk-tv/1709/output/1709.m3u8" style="width: 70%">
-        <button onclick="loadStream()">Play Stream</button>
-    </div>
 
-    <script>
-        function loadStream() {
-            const video = document.getElementById('video');
-            const streamUrl = document.getElementById('streamUrl').value;
-            
-            if (Hls.isSupported()) {
-                const hls = new Hls();
-                hls.loadSource(streamUrl);
-                hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                    video.play();
-                });
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                // For Safari/iOS
-                video.src = streamUrl;
-                video.addEventListener('loadedmetadata', function() {
-                    video.play();
-                });
-            } else {
-                alert("Your browser doesn't support HLS streaming");
-            }
+        <input type="text" id="streamUrl" value="" style="width: 70%">
+
+<script src="https://jwpsrv.com/library/XpMfzFwiEeOfZhIxOQfUww.js" type="text/javascript"></script>
+<script type="text/javascript">
+        if(!FlashDetect.installed){
+            alert("Flash is required to use this site.");
         }
-        
-        // Auto-load the default stream
-        window.onload = loadStream;
-    </script>
-</body>
-</html>
+</script>
+	<style type="text/css">
+			html, body {
+				height: 100%;
+				width: 100%;
+				padding: 0;
+				margin: 0;
+			}
+			#player {
+				height: 100%;
+				width: 100%; 
+				padding: 0;
+			}
+		</style>
+
+<div class="col-sm-offset-4"><div id="playerVh1hF1z5roh2"></div>
+<script type="text/javascript">
+if( navigator.userAgent.match(/android/i)
+ || navigator.userAgent.match(/webOS/i)
+ || navigator.userAgent.match(/iPhone/i)
+ || navigator.userAgent.match(/iPad/i)
+ || navigator.userAgent.match(/iPod/i)
+ || navigator.userAgent.match(/BlackBerry/i)
+ || navigator.userAgent.match(/Windows Phone/i)
+ ) {
+            var stream = "https://owrcovcrpy.gpcdn.net/bpk-tv/1709/output/1709.m3u8";
+        }else{
+            var stream = "https://owrcovcrpy.gpcdn.net/bpk-tv/1709/output/1709.m3u8";
+        }
+  jwplayer("playerVh1hF1z5roh2").setup({
+  "title": "Watch Live TV ",
+"stretching":"exactfit",
+        "width": "100%",
+        "height": "100%",
+        "skin": "seven",
+autostart:"true",
+"androidhls": true,
+  "file": stream
+
+  });
+
+</script>

@@ -1,4 +1,4 @@
-# Live-Tv-Server
+# Live-Tv-Server  ![Badge](https://hitscounter.dev/api/hit?url=https%3A%2F%2Fgithub.com%2Fsohag1192%2FLive-Tv-Server&label=&icon=github&color=%23198754&message=&style=flat-square&tz=UTC)
 How to Set Up a Video Streaming Server
 
 ## Star History

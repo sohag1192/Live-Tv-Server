@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Live TV Streaming</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        :root {
+            --primary: #0f0f1a;
+            --secondary: #1a1a2e;
+            --accent: #6a11cb;
+            --accent-light: #2575fc;
+            --text: #ffffff;
+            --text-secondary: #b0b0b0;
+            --card-bg: rgba(30, 30, 46, 0.7);
+            --card-border: rgba(106, 17, 203, 0.3);
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(106, 17, 203, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(37, 117, 252, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(106, 17, 203, 0.1) 0%, transparent 50%);
+            animation: pulse 15s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo i {
+            font-size: 2.5rem;
+            color: var(--accent);
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+        }
+
+        .theme-toggle, .search-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text);
+            font-size: 1.2rem;
+        }
+
+        .theme-toggle:hover, .search-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(106, 17, 203, 0.4);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+        }
+
+        .player-section {
+            background: var(--card-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--card-border);
+            transition: all 0.3s ease;
+        }
+
+        .player-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(106, 17, 203, 0.3);
+        }
+
+        .embed-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .embed-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .player-info {
+            padding: 20px;
+            background: linear-gradient(to top, rgba(15, 15, 26, 0.9), transparent);
+        }
+
+        .channel-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .live-badge {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .program-info {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+        }
+
+        .player-controls {
+            display: flex;
+            gap: 15px;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 10px;
+            padding: 10px 15px;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .control-btn:hover {
+            background: rgba(106, 17, 203, 0.3);
+        }
+
+        .channels-section {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--card-border);
+            height: fit-content;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .channel-count {
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .channel-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .channel-grid::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .channel-grid::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .channel-grid::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 10px;
+        }
+
+        .channel-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+            text-align: center;
+        }
+
+        .channel-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(106, 17, 203, 0.3);
+            border-color: var(--accent);
+        }
+
+        .channel-item.active {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.3);
+        }
+
+        .channel-thumbnail {
+            width: 100%;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+        }
+
+        .channel-name {
+            padding: 12px 5px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .categories {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .category-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            border-radius: 20px;
+            padding: 8px 20px;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            font-size: 0.9rem;
+        }
+
+        .category-btn.active, .category-btn:hover {
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 50px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            color: var(--accent-light);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 1100px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .channel-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .channel-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            header {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .player-controls {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .channel-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .categories {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+    
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-tv"></i>
+                <h1>Premium Live TV</h1>
+            </div>
+            <div class="controls">
+                <div class="search-btn">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <div class="player-section">
+                <div class="embed-container">
+                    <iframe name="player" allowfullscreen 
+                            src="tv1.html?stream=sports1"></iframe>
+                </div>
+                <div class="player-info">
+                    <div class="channel-title">
+                        Sports Channel 1
+                        <span class="live-badge">LIVE</span>
+                    </div>
+                    <div class="program-info">Live: Premier League Football - Manchester United vs Liverpool</div>
+                    <div class="player-controls">
+                        <button class="control-btn"><i class="fas fa-volume-up"></i> Volume</button>
+                        <button class="control-btn"><i class="fas fa-expand"></i> Fullscreen</button>
+                        <button class="control-btn"><i class="fas fa-heart"></i> Favorite</button>
+                        <button class="control-btn"><i class="fas fa-share"></i> Share</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="channels-section">
+                <div class="section-header">
+                    <h2 class="section-title">Channels</h2>
+                    <div class="channel-count">12/250</div>
+                </div>
+                
+                <div class="categories">
+                    <button class="category-btn active">All</button>
+                    <button class="category-btn">Sports</button>
+                    <button class="category-btn">Movies</button>
+                    <button class="category-btn">News</button>
+                    <button class="category-btn">Entertainment</button>
+                    <button class="category-btn">Music</button>
+                </div>
+                
+                <div class="channel-grid">
+                    <div class="channel-item active" onclick="changeChannel('tv1.html?stream=sports1', 'Sports Channel 1', 'Live: Premier League Football')">
+                        <img src="https://placehold.co/420x300/f608f7/ffffff?text=SPORTS1" class="channel-thumbnail" alt="Sports 1">
+                        <div class="channel-name">Sports 1</div>
+                    </div>
+                    <div class="channel-item" onclick="changeChannel('tv2.html?stream=sports2', 'Sports Channel 2', 'Live: Tennis Championship')">
+                        <img src="https://placehold.co/420x300/f608f7/ffffff?text=SPORTS2" class="channel-thumbnail" alt="Sports 2">
+                        <div class="channel-name">Sports 2</div>
+                    </div>
+                    <div class="channel-item" onclick="changeChannel('tv3.html?stream=sports3', 'Sports Channel 3', 'Live: Basketball')">
+                        <img src="https://placehold.co/420x300/f608f7/ffffff?text=SPORTS3" class="channel-thumbnail" alt="Sports 3">
+                        <div class="channel-name">Sports 3</div>
+                    </div>
+                    <div class="channel-item" onclick="changeChannel('tv4.html?stream=sports4', 'Sports Channel 4', 'Live: Motorsports')">
+                        <img src="https://placehold.co/420x300/f608f7/ffffff?text=SPORTS4" class="channel-thumbnail" alt="Sports 4">
+                        <div class="channel-name">Sports 4</div>
+                    </div>
+                    <div class="channel-item" onclick="changeChannel('tv5.html', 'Sports Channel 5', 'Live: Extreme Sports')">
+                        <img src="https://placehold.co/420x300/f608f7/ffffff?text=SPORTS5" class="channel-thumbnail" alt="Sports 5">
+                        <div class="channel-name">Sports 5</div>
+                    </div>
+                    <div class="channel-item" onclick="changeChannel('tv6.html', 'Movie Channel', 'Avengers: Endgame')">
+                        <img src="https://placehold.co/420x300/f608f7/ffffff?text=MOVIES" class="channel-thumbnail" alt="Movie Channel">
+                        <div class="channel-name">Movie Channel</div>
+                    </div>
+                    <div class="channel-item" onclick="changeChannel('tv7.html?stream=news1', 'News 24', 'Breaking News')">
+                        <img src="https://placehold.co/420x300/f608f7/ffffff?text=NEWS24" class="channel-thumbnail" alt="News 24">
+                        <div class="channel-name">News 24</div>
+                    </div>
+                    <div class="channel-item" onclick="changeChannel('tv8.html?stream=music1', 'Music Channel', 'Top 40 Hits')">
+                        <img src="https://placehold.co/420x300/f608f7/ffffff?text=MUSIC" class="channel-thumbnail" alt="Music Channel">
+                        <div class="channel-name">Music Channel</div>
+                    </div>
+                    <div class="channel-item" onclick="changeChannel('tv9.html?stream=sports3', 'Sports Channel 6', 'Live: Golf Tournament')">
+                        <img src="https://placehold.co/420x300/f608f7/ffffff?text=SPORTS6" class="channel-thumbnail" alt="Sports 6">
+                        <div class="channel-name">Sports 6</div>
+                    </div>
+                    <div class="channel-item" onclick="changeChannel('tv10.html?stream=sports4', 'Sports Channel 7', 'Live: Boxing')">
+                        <img src="https://placehold.co/420x300/f608f7/ffffff?text=SPORTS7" class="channel-thumbnail" alt="Sports 7">
+                        <div class="channel-name">Sports 7</div>
+                    </div>
+                    <div class="channel-item" onclick="changeChannel('tv11.html', 'Movie Channel 2', 'Fast & Furious 9')">
+                        <img src="https://placehold.co/420x300/f608f7/ffffff?text=MOVIES2" class="channel-thumbnail" alt="Movie Channel 2">
+                        <div class="channel-name">Movie Channel 2</div>
+                    </div>
+                    <div class="channel-item" onclick="changeChannel('tv12.html', 'Kids Channel', 'Animated Series')">
+                        <img src="https://placehold.co/420x300/f608f7/ffffff?text=KIDS" class="channel-thumbnail" alt="Kids Channel">
+                        <div class="channel-name">Kids Channel</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© Copyright 2013 Md Sohag Rana, Developed By: <a href="https://t.me/MdSohagRana" target="_blank">Md Sohag Rana</a></p>
+            <div style="margin-top: 10px;">
+                <img src="https://hitscounter.dev/api/hit?url=https%3A%2F%2Fgithub.com%2Fsohag1192%2FLive-Tv-Server&label=&icon=github&color=%23198754&message=&style=flat&tz=UTC" alt="GitHub hits">
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Theme Toggle Functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // Check for saved theme preference or use preferred color scheme
+        const savedTheme = localStorage.getItem('theme') || 
+                          (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+        
+        if (savedTheme === 'light') {
+            body.classList.add('light-theme');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('light-theme');
+            const isLight = body.classList.contains('light-theme');
+            
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            themeToggle.innerHTML = isLight ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+        });
+
+        // Channel Change Function
+        function changeChannel(url, channelName, programInfo) {
+            // Update the player
+            const player = document.getElementsByName('player')[0];
+            player.src = url;
+            
+            // Update the channel info
+            document.querySelector('.channel-title').innerHTML = channelName + ' <span class="live-badge">LIVE</span>';
+            document.querySelector('.program-info').textContent = programInfo;
+            
+            // Update active channel in the list
+            const items = document.querySelectorAll('.channel-item');
+            items.forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            // Smooth scroll to keep active channel in view (for mobile)
+            event.currentTarget.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Category buttons
+        const categoryBtns = document.querySelectorAll('.category-btn');
+        categoryBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                categoryBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+
+        // Keyboard Shortcuts
+        document.addEventListener('keydown', function(e) {
+            const items = document.querySelectorAll('.channel-item');
+            const currentActive = document.querySelector('.channel-item.active');
+            let currentIndex = Array.from(items).indexOf(currentActive);
+            
+            if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+                e.preventDefault();
+                currentIndex = (currentIndex - 1 + items.length) % items.length;
+            } else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+                e.preventDefault();
+                currentIndex = (currentIndex + 1) % items.length;
+            } else if (e.key >= '1' && e.key <= '9') {
+                currentIndex = parseInt(e.key) - 1;
+                if (currentIndex >= items.length) currentIndex = items.length - 1;
+            } else {
+                return;
+            }
+            
+            const nextItem = items[currentIndex];
+            nextItem.click();
+        });
+
+        // Initialize with first channel active
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelector('.channel-item.active').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+    </script>
+</body>
+</html>

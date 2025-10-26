@@ -6,11 +6,16 @@ a {
     font-size: xx-large;
     font-family: cursive;
 }
+
 body {
-    background-color: #3c763d;
-    /* background: #0046afe6; */
-    color: #ff0000;
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364); /* Deep blue gradient */
+  color: #ffffff; /* Clean white text for contrast */
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 0;
 }
+
+
 
 a {
     cursor: pointer;

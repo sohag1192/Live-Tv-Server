@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Live TV Streaming</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .navbar {
+      background-color: #198754;
+    }
+    .navbar-brand {
+      font-weight: bold;
+      color: #fff;
+    }
+    .tv-player {
+      height: 70vh;
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+    }
+    .channel-thumb {
+      cursor: pointer;
+      transition: transform 0.2s;
+      border-radius: 6px;
+    }
+    .channel-thumb:hover {
+      transform: scale(1.05);
+    }
+    .sidebar {
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+    footer {
+      background-color: #e9ecef;
+      padding: 15px 0;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">📡 Live TV</a>
+      <a class="btn btn-outline-light btn-sm" href="/">Home</a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container-fluid mt-3">
+    <div class="row">
+      <!-- Video Player -->
+      <div class="col-md-9 mb-3">
+        <iframe name="player" class="tv-player" src="tv1.html?stream=sports1" allowfullscreen></iframe>
+      </div>
+
+      <!-- Channel List -->
+      <div class="col-md-3 sidebar">
+        <div class="row g-2">
+          <div class="col-6 col-md-12">
+            <img src="img/1.jpg" class="img-fluid channel-thumb" onclick="switchStream('tv1.html?stream=sports1')" alt="Channel 1" />
+          </div>
+          <div class="col-6 col-md-12">
+            <img src="img/2.jpg" class="img-fluid channel-thumb" onclick="switchStream('tv2.html?stream=sports2')" alt="Channel 2" />
+          </div>
+          <div class="col-6 col-md-12">
+            <img src="img/3.jpg" class="img-fluid channel-thumb" onclick="switchStream('tv3.html?stream=sports3')" alt="Channel 3" />
+          </div>
+          <div class="col-6 col-md-12">
+            <img src="img/4.jpg" class="img-fluid channel-thumb" onclick="switchStream('tv4.html?stream=sports4')" alt="Channel 4" />
+          </div>
+          <div class="col-6 col-md-12">
+            <img src="img/5.jpg" class="img-fluid channel-thumb" onclick="switchStream('tv5.html?stream=sports5')" alt="Channel 5" />
+          </div>
+          <div class="col-6 col-md-12">
+            <img src="img/5.jpg" class="img-fluid channel-thumb" onclick="switchStream('tv6.html?stream=sports6')" alt="Channel 6" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    © 2013 Md Sohag Rana — Developed by
+    <a href="https://github.com/sohag1192" target="_blank">Md Sohag Rana</a>
+    <br />
+    <img src="https://hitscounter.dev/api/hit?url=https%3A%2F%2Fgithub.com%2Fsohag1192%2FLive-Tv-Server&icon=github&color=%23198754&style=flat-square" alt="GitHub Hits" />
+    <a href="https://smallcounter.com/conline/1713617336/" target="_blank">
+      <img src="https://smallcounter.com/online/fcc.php?id=1713617336" alt="Visitors by Country" style="width:20px; height:20px; vertical-align:middle;" />
+    </a>
+  </footer>
+
+  <!-- Script -->
+  <script>
+    function switchStream(url) {
+      document.getElementsByName('player')[0].src = url;
+    }
+  </script>
+
+</body>
+</html>

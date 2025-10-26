@@ -3,7 +3,7 @@ REM === Full Git Upload Script for NLive-Tv-Server ===
 REM Author: Sohag
 
 SET "PROJECT_DIR=C:\Users\Md Sohag Rana\Downloads\Live-Tv-Server-master\Live-Tv-Server-master"
-SET "REPO_URL=https://github.com/sohag1192/NLive-Tv-Server.git"
+SET "REPO_URL=https://github.com/sohag1192/Live-Tv-Server.git"
 SET "COMMIT_MSG=Initial commit by Sohag"
 SET "BRANCH=main"
 SET "GIT_USER=sohag1192"

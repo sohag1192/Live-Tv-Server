@@ -1,0 +1,405 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	    <!-- Using a placeholder for the favicon -->
+    <link rel="shortcut icon" href="https://placehold.co/16x16/000000/ffffff?text=Premium Live TV Streaming"/>
+     <title>Premium Live TV Streaming</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-dark: #121212;
+            --secondary-dark: #1E1E1E;
+            --accent-dark: #BB86FC;
+            --text-dark: #E1E1E1;
+            
+            --primary-light: #FFFFFF;
+            --secondary-light: #F5F5F5;
+            --accent-light: #6200EE;
+            --text-light: #333333;
+            
+            --current-primary: var(--primary-dark);
+            --current-secondary: var(--secondary-dark);
+            --current-accent: var(--accent-dark);
+            --current-text: var(--text-dark);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--current-text);
+            background-color: var(--current-primary);
+            transition: all 0.5s ease;
+            min-height: 100vh;
+        }
+
+        /* Animated Background */
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(0,0,0,0.3);
+            border-radius: 50px;
+            padding: 5px;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .theme-toggle i {
+            font-size: 1.5rem;
+            padding: 10px;
+            color: var(--current-text);
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 30px;
+            padding-top: 80px;
+        }
+
+        /* Player Section */
+        .player-section {
+            background-color: var(--current-secondary);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .player-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+
+        /* Responsive Embed */
+        .embed-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .embed-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Channel List */
+        .channel-list {
+            background-color: var(--current-secondary);
+            border-radius: 16px;
+            padding: 20px;
+            height: 100%;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .channel-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .channel-list-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .channel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+            overflow-y: auto;
+            max-height: 70vh;
+            padding-right: 5px;
+        }
+
+        .channel-item {
+            background-color: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .channel-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border-color: var(--current-accent);
+        }
+
+        .channel-item.active {
+            border-color: var(--current-accent);
+            box-shadow: 0 0 0 3px rgba(187, 134, 252, 0.3);
+        }
+
+        .channel-thumbnail {
+            width: 100%;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+        }
+
+        .channel-name {
+            padding: 8px;
+            font-size: 0.9rem;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Player Info */
+        .player-info {
+            padding: 15px 20px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+        }
+
+        .channel-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .program-info {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* Light Theme */
+        body.light-theme {
+            --current-primary: var(--primary-light);
+            --current-secondary: var(--secondary-light);
+            --current-accent: var(--accent-light);
+            --current-text: var(--text-light);
+        }
+
+        body.light-theme .channel-list {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        body.light-theme .channel-item {
+            background-color: rgba(0,0,0,0.03);
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 992px) {
+            .channel-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 15px;
+                padding-top: 70px;
+            }
+            
+            .channel-grid {
+                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+                gap: 10px;
+            }
+            
+            .channel-name {
+                font-size: 0.8rem;
+                padding: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="background"></div>
+
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <div class="row g-4">
+            <!-- Player Column -->
+            <div class="col-lg-9 col-md-8">
+                <div class="player-section">
+                    <div class="embed-container">
+                        <iframe name="player" allowfullscreen 
+                                src="tv1.html?stream=sports1"></iframe>
+                        <div class="player-info">
+                            <div class="channel-title">Sports Channel 1</div>
+                            <div class="program-info">Live: Premier League Football</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Channel List Column -->
+            <div class="col-lg-3 col-md-4">
+                <div class="channel-list">
+                    <div class="channel-list-header">
+                        <h2 class="channel-list-title">Channels</h2>
+                        <div class="channel-count">12/250</div>
+                    </div>
+                    <div class="channel-grid">
+                        <div class="channel-item active" onclick="changeChannel('tv1.html?stream=sports1', 'Sports Channel 1', 'Live: Premier League Football')">
+                            <img src="https://placehold.co/420x300/000000/ffffff?text=LIVE%20TV" class="channel-thumbnail">
+                            <div class="channel-name">Sports 1</div>
+                        </div>
+                        <div class="channel-item" onclick="changeChannel('tv2.html?stream=sports2', 'Sports Channel 2', 'Live: Tennis Championship')">
+                            <img src="https://placehold.co/420x300/000000/ffffff?text=LIVE%20TV" class="channel-thumbnail">
+                            <div class="channel-name">Sports 2</div>
+                        </div>
+                        <div class="channel-item" onclick="changeChannel('tv3.html?stream=sports3', 'Sports Channel 3', 'Live: Basketball')">
+                            <img src="https://placehold.co/420x300/000000/ffffff?text=LIVE%20TV" class="channel-thumbnail">
+                            <div class="channel-name">Sports 3</div>
+                        </div>
+                        <div class="channel-item" onclick="changeChannel('tv4.html?stream=sports4', 'Sports Channel 4', 'Live: Motorsports')">
+                            <img src="https://placehold.co/420x300/000000/ffffff?text=LIVE%20TV" class="channel-thumbnail">
+                            <div class="channel-name">Sports 4</div>
+                        </div>
+                        <div class="channel-item" onclick="changeChannel('tv5.html?stream=sports5', 'Sports Channel 5', 'Live: Extreme Sports')">
+                            <img src="https://placehold.co/420x300/000000/ffffff?text=LIVE%20TV" class="channel-thumbnail">
+                            <div class="channel-name">Sports 5</div>
+                        </div>
+                        <div class="channel-item" onclick="changeChannel('tv6.html?stream=movie1', 'Movie Channel', 'Avengers: Endgame')">
+                            <img src="https://placehold.co/420x300/000000/ffffff?text=LIVE%20TV" class="channel-thumbnail">
+                            <div class="channel-name">Movie Channel</div>
+                        </div>
+                        <div class="channel-item" onclick="changeChannel('tv7.html?stream=news1', 'News 24', 'Breaking News')">
+                            <img src="https://placehold.co/420x300/000000/ffffff?text=LIVE%20TV" class="channel-thumbnail">
+                            <div class="channel-name">News 24</div>
+                        </div>
+                        <div class="channel-item" onclick="changeChannel('tv8.html?stream=music1', 'Music Channel', 'Top 40 Hits')">
+                            <img src="https://placehold.co/420x300/000000/ffffff?text=LIVE%20TV" class="channel-thumbnail">
+                            <div class="channel-name">Music Channel</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Theme Toggle Functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // Check for saved theme preference or use preferred color scheme
+        const savedTheme = localStorage.getItem('theme') || 
+                          (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+        
+        if (savedTheme === 'light') {
+            body.classList.add('light-theme');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('light-theme');
+            const isLight = body.classList.contains('light-theme');
+            
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            themeToggle.innerHTML = isLight ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+        });
+
+        // Channel Change Function
+        function changeChannel(url, channelName, programInfo) {
+            // Update the player
+            const player = document.getElementsByName('player')[0];
+            player.src = url;
+            
+            // Update the channel info
+            document.querySelector('.channel-title').textContent = channelName;
+            document.querySelector('.program-info').textContent = programInfo;
+            
+            // Update active channel in the list
+            const items = document.querySelectorAll('.channel-item');
+            items.forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            // Smooth scroll to keep active channel in view (for mobile)
+            event.currentTarget.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Keyboard Shortcuts
+        document.addEventListener('keydown', function(e) {
+            const items = document.querySelectorAll('.channel-item');
+            const currentActive = document.querySelector('.channel-item.active');
+            let currentIndex = Array.from(items).indexOf(currentActive);
+            
+            if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+                e.preventDefault();
+                currentIndex = (currentIndex - 1 + items.length) % items.length;
+            } else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+                e.preventDefault();
+                currentIndex = (currentIndex + 1) % items.length;
+            } else if (e.key >= '1' && e.key <= '8') {
+                currentIndex = parseInt(e.key) - 1;
+                if (currentIndex >= items.length) currentIndex = items.length - 1;
+            } else {
+                return;
+            }
+            
+            const nextItem = items[currentIndex];
+            nextItem.click();
+        });
+
+        // Initialize with first channel active
+        document.querySelector('.channel-item').click();
+    </script>
+	
+	
+	<!-- BEGIN-->
+<center>
+<img src="https://hitscounter.dev/api/hit?url=https%3A%2F%2Fgithub.com%2Fsohag1192%2FLive-Tv-Server&label=&icon=github&color=%23198754&message=&style=flat&tz=UTC">
+<a hidden  target="_blank" href="https://smallcounter.com/conline/1713617336/"><img alt="visitors by country counter" border="0" src="https://smallcounter.com/online/fcc.php?id=1713617336"></a><br>
+</center>
+<!-- END-->
+
+	<div style="text-align: center; background-size: cover;">© Copyright 2013 Md Sohag Rana, Developed  By: <a  href="https://t.me/MdSohagRana" target="_blank">Md Sohag Rana</a></div>
+      
+</body>
+</html>
+
+

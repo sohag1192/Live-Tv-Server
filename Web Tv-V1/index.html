@@ -1,0 +1,571 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Premium Live TV Streaming Service">
+    <link rel="shortcut icon" href="https://placehold.co/16x16/000000/ffffff?text=Premium+Live+TV+Streaming"/>
+    <title>Premium Live TV Streaming</title>
+    <link rel="icon" href="favicon.png">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Video.js -->
+    <link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet">
+
+    <style>
+        :root{
+            --primary: #e50914;
+            --dark: #0f0f0f;
+            --light: #f5f5f5;
+            --semi-transparent: rgba(15,15,15,0.85);
+            --dark-transparent: rgba(20,20,20,0.95);
+            --muted: #b3b3b3;
+        }
+
+        html,body {
+            height: 100%;
+        }
+
+        body {
+            background: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url(common5e1f.jpg?v=2);
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            color: var(--light);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding-top: 70px; /* leave space for fixed navbar */
+        }
+
+        /* ---------- NAVBAR (Bootstrap-based) ---------- */
+        .navbar-custom {
+            background-color: var(--dark-transparent);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+        }
+        .navbar-custom .navbar-brand {
+            color: var(--light);
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            font-size: 15px;
+            padding: 10px 12px;
+            border-radius:6px;
+            text-decoration:none;
+        }
+        .navbar-custom .navbar-brand:hover { color: var(--primary); background: rgba(255,255,255,0.03); }
+
+        .navbar-custom .nav-link {
+            color: var(--light) !important;
+            padding: 10px 12px;
+        }
+        .navbar-custom .nav-link:hover {
+            color: var(--primary) !important;
+            background: rgba(255,255,255,0.03);
+            border-radius: 6px;
+        }
+
+        /* Keep collapse background same as navbar when expanded on mobile */
+        .navbar-custom .navbar-collapse {
+            background: linear-gradient(rgba(15,15,15,0.92), rgba(15,15,15,0.92));
+            border-top: 1px solid rgba(255,255,255,0.03);
+        }
+
+        /* Player Column Sticky - Sticky on ALL screens */
+        .player-sticky {
+            position: sticky;
+            top: 86px; /* navbar height + small gap */
+            z-index: 100;
+            align-self: start;
+        }
+
+        /* Player design */
+        .player-container {
+            width:100%;
+            background:black;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            border-radius:8px;
+            overflow:hidden;
+        }
+
+        .video-js {
+            width:100% !important;
+            height: 60vh !important; /* default desktop height */
+            object-fit: contain;
+            border-radius: 6px;
+        }
+
+        @media (max-width: 991px) {
+            /* Mobile adjustments */
+            .video-js { height: 70vh !important; }
+            .player-sticky {
+                margin-bottom: 5px;
+            }
+
+            /* Controls: keep first brand visible and toggler on the right */
+            .navbar-custom .navbar-brand { display:flex; align-items:center; gap:8px; }
+
+            body { padding-top: 70px; }
+
+            /* Channel list spacing adjustments */
+            .channel-list {
+                margin-top: 10px !important;
+            }
+        }
+
+        /* Now Playing (Desktop/Tablet) */
+        .now-playing {
+            display:inline-block;
+            background: linear-gradient(90deg,var(--primary), #c70f12);
+            color:white;
+            padding:10px 16px;
+            border-radius:40px;
+            font-weight:600;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+        }
+
+        /* Channel List Panel */
+        .channel-list {
+            background-color: var(--semi-transparent);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 18px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+            border: 1px solid rgba(255,255,255,0.06);
+
+            /* Default desktop vertical scroll */
+            height: calc(100vh - 120px);
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        @media (max-width: 991px) {
+             /* Mobile view: Auto height for the panel, remove side padding for full width scroll */
+            .channel-list {
+                height: auto;
+                overflow-y: visible;
+                padding: 10px 0 10px 0;
+            }
+            .channel-list h5,
+            .channel-list p.small,
+            .channel-search {
+                padding-left: 18px;
+                padding-right: 18px;
+            }
+        }
+
+        /* Header within channel list */
+        .channel-list h5 {
+            color: var(--light);
+            font-weight:700;
+            margin-bottom:2px;
+        }
+        .channel-list p.small { color: var(--muted); margin-bottom:12px; }
+
+        /* Search input styling (Only applies when visible on desktop) */
+        .channel-search input {
+            width:100%;
+            padding:10px 12px;
+            border-radius:8px;
+            border: 1px solid rgba(255,255,255,0.06);
+            background: rgba(255,255,255,0.03);
+            color: var(--light);
+        }
+        .channel-search input::placeholder { color: rgba(255,255,255,0.5); }
+
+        /* Channel grid - BASE (Desktop Vertical Scroll) */
+        #vidlink {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 14px;
+            padding: 0 18px 0 18px; /* Padding for desktop list items */
+            margin: 0;
+            list-style: none;
+        }
+
+        /* Mobile horizontal scroll */
+        @media (max-width: 991px) {
+            #vidlink {
+                display: flex; /* Use flexbox for horizontal layout */
+                flex-direction: row;
+                flex-wrap: nowrap; /* Forces items onto a single line */
+                overflow-x: auto; /* Enables horizontal scrolling */
+                overflow-y: hidden;
+                gap: 10px;
+                padding: 0 18px 10px 18px; /* Padding for horizontal scroll area */
+            }
+            #vidlink > li {
+                flex: 0 0 100px; /* Define channel tile width for horizontal scrolling */
+            }
+        }
+
+        /* Desktop grid views (keep as is) */
+        @media (min-width: 992px) {
+            #vidlink {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                padding: 0;
+            }
+        }
+        @media (min-width: 1200px) {
+            #vidlink { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        /* Channel tile */
+        #vidlink .channel {
+            display:flex;
+            flex-direction: column;
+            align-items: center;
+            gap:8px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+            border: 1px solid rgba(255,255,255,0.04);
+            padding: 10px;
+            cursor: pointer;
+            position: relative;
+        }
+        #vidlink .channel:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+            border-color: var(--primary);
+        }
+
+        /* Thumbnail - FIXED to ensure uniform look */
+        #vidlink .thumb {
+            width: 96px;
+            height: 96px;
+            display: block;
+            border-radius: 8px;
+            object-fit: contain; /* avoid cropping logos */
+            background: #111;
+            padding: 6px;
+        }
+
+        /* Slightly smaller thumbs on narrower mobile */
+        @media (max-width: 575px) {
+            #vidlink .thumb { width: 76px; height: 76px; padding:5px; border-radius:8px; }
+            #vidlink > li { flex: 0 0 88px; }
+        }
+
+        /* Channel label */
+        .channel-label {
+            width:100%;
+            text-align:center;
+            color: var(--light);
+            font-weight:600;
+            font-size: 14px;
+            padding: 6px 6px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 6px;
+        }
+
+        /* selected channel */
+        .channel.selected {
+            border: 2px solid var(--primary);
+            box-shadow: 0 14px 36px rgba(229,9,20,0.14);
+        }
+
+        /* Hide channel text on mobile (since logos contain numbers) */
+        @media (max-width: 991px) {
+            .channel-label {
+                display: none !important;
+            }
+        }
+
+        /* Footer */
+        .copyright-footer {
+            background-color: var(--dark-transparent);
+            color: var(--light);
+            text-align: center;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 14px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px;
+        }
+        .copyright-footer a { color: var(--primary); text-decoration:none; }
+        .copyright-footer a:hover { text-decoration:underline; }
+
+        /* scrollbar styling for channel-list (optional) */
+        .channel-list::-webkit-scrollbar { width: 10px; height: 8px; }
+        .channel-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.06); border-radius:10px; }
+        .channel-list::-webkit-scrollbar-track { background: transparent; }
+
+        /* Hide horizontal scrollbar on mobile (optional, but cleaner) */
+        @media (max-width: 991px) {
+             .channel-list::-webkit-scrollbar { height: 0; }
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Bootstrap navbar (Option C) -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/"><i class="fas fa-home"></i> LIVE TV</a>
+
+            <!-- Toggler -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+                    aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Collapsible menu -->
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="http://172.16.50.4"><i class="fas fa-tv me-1"></i> FTP 1</a></li>
+                    <li class="nav-item"><a class="nav-link" href="http://10.16.100.244"><i class="fas fa-mobile-screen me-1"></i> FTP 2</a></li>
+                    <li class="nav-item"><a class="nav-link" href="http://172.50.50.20/"><i class="fas fa-server me-1"></i> FTP 3</a></li>
+                    <li class="nav-item"><a class="nav-link" href="http://100.100.100.6"><i class="fas fa-server me-1"></i> FTP 4</a></li>
+                    <li class="nav-item"><a class="nav-link" href="http://100.100.100.6:8096/"><i class="fas fa-film me-1"></i> FTP 5</a></li>
+                    <li class="nav-item"><a class="nav-link" href="http://10.30.30.30/"><i class="fas fa-server me-1"></i> IPTV 1</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid p-3">
+        <div class="row justify-content-center g-4">
+
+            <div class="col-12 col-lg-8 mt-4 player-sticky">
+                <div class="player-container">
+                    <video id="Sohag_Player"
+                            class="video-js vjs-default-skin vjs-big-play-centered vjs-fill"
+                            controls
+                            preload="auto"
+                            data-setup='{}'>
+                        <source src="http://172.16.234.30:9090/hls/channel_1.m3u8" type="application/x-mpegURL" />
+                    </video>
+                </div>
+
+                <div id="nowPlayingWrapper" class="mt-3 d-none d-lg-flex justify-content-between align-items-center">
+                    <span id="nowPlaying" class="now-playing">
+                        <i class="fas fa-circle-play me-2"></i>Now Playing: Channel 1
+                    </span>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-4 mt-4">
+                <div class="channel-list">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5><i class="fas fa-broadcast-tower me-2"></i>Channels</h5>
+                    </div>
+                    <p class="small">Click any channel to switch</p>
+
+                    <div class="channel-search d-none d-lg-block">
+                        <input id="channelFilter" type="text" placeholder="Search channels (name or number)..." oninput="filterChannels()" />
+                    </div>
+
+                    <ul id="vidlink" class="thumbnail-slider">
+                        <li class="Sports">
+                            <div class="channel" onclick="switchChannel('http://172.16.234.30:9090/hls/channel_1.m3u8','Channel 1', this)" title="Channel 1">
+                                <img class="thumb" src="assets/images/1.jpg" alt="Channel 1">
+                                <div class="channel-label">Channel 1</div>
+                            </div>
+                        </li>
+
+                        <li class="Sports">
+                            <div class="channel" onclick="switchChannel('http://172.16.234.30:9090/hls2/ch2.m3u8','Channel 2', this)" title="Channel 2">
+                                <img class="thumb" src="assets/images/2.jpg" alt="Channel 2">
+                                <div class="channel-label">Channel 2</div>
+                            </div>
+                        </li>
+
+                        <li class="Sports">
+                            <div class="channel" onclick="switchChannel('http://172.16.234.30:9090/hls3/ch3.m3u8','Channel 3', this)" title="Channel 3">
+                                <img class="thumb" src="assets/images/3.jpg" alt="Channel 3">
+                                <div class="channel-label">Channel 3</div>
+                            </div>
+                        </li>
+
+                        <li class="Sports">
+                            <div class="channel" onclick="switchChannel('http://172.16.234.30:9090/hls4/ch4.m3u8','Channel 4', this)" title="Channel 4">
+                                <img class="thumb" src="assets/images/4.jpg" alt="Channel 4">
+                                <div class="channel-label">Channel 4</div>
+                            </div>
+                        </li>
+
+                        <li class="Sports">
+                            <div class="channel" onclick="switchChannel('http://172.16.234.30:9090/hls5/ch5.m3u8','Channel 5', this)" title="Channel 5">
+                                <img class="thumb" src="assets/images/5.jpg" alt="Channel 5">
+                                <div class="channel-label">Channel 5</div>
+                            </div>
+                        </li>
+
+                        <li class="Sports">
+                            <div class="channel" onclick="switchChannel('http://172.16.234.30:9090/hls6/ch6.m3u8','Channel 6', this)" title="Channel 6">
+                                <img class="thumb" src="assets/images/6.jpg" alt="Channel 6">
+                                <div class="channel-label">Channel 6</div>
+                            </div>
+                        </li>
+
+                        <li class="Sports">
+                            <div class="channel" onclick="switchChannel('http://172.16.234.30:9090/hls7/ch7.m3u8','Channel 7', this)" title="Channel 7">
+                                <img class="thumb" src="assets/images/7.jpg" alt="Channel 7">
+                                <div class="channel-label">Channel 7</div>
+                            </div>
+                        </li>
+
+                        <li class="Sports">
+                            <div class="channel" onclick="switchChannel('http://172.16.234.30:8080/ch4/index.m3u8','Channel 8', this)" title="Channel 8">
+                                <img class="thumb" src="assets/images/8.jpg" alt="Channel 8">
+                                <div class="channel-label">Channel 8</div>
+                            </div>
+                        </li>
+
+                        <li class="Sports">
+                            <div class="channel" onclick="switchChannel('http://172.16.234.30:8080/ch9/index.m3u8','Channel 9', this)" title="Channel 9">
+                                <img class="thumb" src="assets/images/9.jpg" alt="Channel 9">
+                                <div class="channel-label">Channel 9</div>
+                            </div>
+                        </li>
+
+                        <li class="Sports">
+                            <div class="channel" onclick="switchChannel('http://172.16.234.30:8080/ch11/index.m3u8','Channel 10', this)" title="Channel 10">
+                                <img class="thumb" src="assets/images/10.jpg" alt="Channel 10">
+                                <div class="channel-label">Channel 10</div>
+                            </div>
+                        </li>
+
+                    </ul>
+
+                    <div style="height:14px"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="container p-3">
+        <div class="copyright-footer">
+            &copy; 2025 Bdix Live TV. All Rights Reserved.
+            <span style="color: var(--primary); font-weight: bold;">
+                <a href="https://github.com/sohag1192" target="_blank">Developed by Sohag1192</a>
+            </span>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
+
+    <script>
+        // Initialize Video.js player
+        const player = videojs('Sohag_Player');
+
+        // Keep a reference to the currently selected channel element (for highlight)
+        let currentSelectedChannel = null;
+
+        /**
+         * switchChannel(url, name, element)
+         */
+        function switchChannel(url, name, element) {
+            if (!url) return;
+
+            // update player src and play
+            player.src({ src: url, type: 'application/x-mpegURL' });
+            player.play().catch((e) => {
+                console.debug('Autoplay blocked or failed:', e);
+            });
+
+            // update Now Playing label (only visible on desktop)
+            const now = document.getElementById('nowPlaying');
+            if (now) now.innerHTML = `<i class="fas fa-circle-play me-2"></i>Now Playing: ${name}`;
+
+            // highlight selected tile
+            try {
+                if (currentSelectedChannel) currentSelectedChannel.classList.remove('selected');
+                const channelEl = element && element.classList && element.classList.contains('channel') ? element : element.closest('.channel');
+                if (channelEl) {
+                    channelEl.classList.add('selected');
+                    currentSelectedChannel = channelEl;
+                }
+            } catch (ex) {
+                console.warn('Highlighting channel failed', ex);
+            }
+
+            // scroll the channel tile into view (works for mobile horizontal)
+            if (element) {
+                const parentPanel = element.closest('.channel-list');
+                if (parentPanel) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                }
+            }
+        }
+
+        // Filter/search functionality (only available on desktop)
+        function filterChannels() {
+            // Check if the search input is actually displayed before running search
+            const searchContainer = document.querySelector('.channel-search');
+            if (!searchContainer) return;
+            if (window.getComputedStyle(searchContainer).display === 'none') return;
+
+            const q = document.getElementById('channelFilter').value.trim().toLowerCase();
+            const items = document.querySelectorAll('#vidlink .channel');
+            items.forEach(ch => {
+                const label = (ch.querySelector('.channel-label')?.textContent || '').toLowerCase();
+                const title = (ch.getAttribute('title') || '').toLowerCase();
+                const alt = (ch.querySelector('.thumb')?.alt || '').toLowerCase();
+                if (!q || label.includes(q) || title.includes(q) || alt.includes(q)) {
+                    ch.parentElement.style.display = ''; // li wrapper
+                } else {
+                    ch.parentElement.style.display = 'none';
+                }
+            });
+        }
+
+        // Initialize: mark the first channel as selected on load
+        document.addEventListener('DOMContentLoaded', function() {
+            const first = document.querySelector('#vidlink .channel');
+            if (first) {
+                first.classList.add('selected');
+                currentSelectedChannel = first;
+            }
+        });
+
+        // Optional: keyboard navigation (left/right up/down)
+        document.addEventListener('keydown', function(e) {
+            if (!currentSelectedChannel) return;
+            const all = Array.from(document.querySelectorAll('#vidlink .channel')).filter(n => n.parentElement.style.display !== 'none');
+            const idx = all.indexOf(currentSelectedChannel);
+            if (idx === -1) return;
+
+            let targetIdx = -1;
+
+            if (window.innerWidth < 992) {
+                // Mobile: Use left/right keys for horizontal scroll
+                if (e.key === 'ArrowRight') {
+                    targetIdx = idx + 1;
+                } else if (e.key === 'ArrowLeft') {
+                    targetIdx = idx - 1;
+                }
+            } else {
+                // Desktop: Use up/down keys for vertical grid navigation
+                if (e.key === 'ArrowDown') {
+                    targetIdx = idx + 1;
+                } else if (e.key === 'ArrowUp') {
+                    targetIdx = idx - 1;
+                }
+            }
+
+            if (targetIdx >= 0 && targetIdx < all.length) {
+                all[targetIdx].click();
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>
+

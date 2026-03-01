@@ -12,46 +12,117 @@
     <link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet">
 
     <style>
+        /* ---------- THEME VARIABLES ---------- */
         :root {
+            /* Default Dark Theme (Red) */
             --primary: #e50914;
             --primary-glow: rgba(229, 9, 20, 0.5);
-            --dark: #0f0f0f;
-            --light: #f5f5f5;
+            --bg-gradient-1: rgba(0, 0, 0, 0.85);
+            --bg-gradient-2: rgba(0, 0, 0, 0.95);
+            --text-color: #f5f5f5;
+            --muted-color: #b3b3b3;
             --glass-bg: rgba(15, 15, 15, 0.75);
             --glass-border: rgba(255, 255, 255, 0.08);
-            --muted: #b3b3b3;
+            --nav-bg: rgba(10, 10, 10, 0.85);
+            --btn-grad-1: var(--primary);
+            --btn-grad-2: #9e060e;
             --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
+        [data-theme="light"] {
+            /* Light Theme (Blue) */
+            --primary: #0d6efd;
+            --primary-glow: rgba(13, 110, 253, 0.4);
+            --bg-gradient-1: rgba(255, 255, 255, 0.85);
+            --bg-gradient-2: rgba(240, 240, 245, 0.95);
+            --text-color: #212529;
+            --muted-color: #6c757d;
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --nav-bg: rgba(255, 255, 255, 0.9);
+            --btn-grad-1: var(--primary);
+            --btn-grad-2: #0a58ca;
+        }
+
+        [data-theme="green"] {
+            /* Neon Green Theme */
+            --primary: #00ff00;
+            --primary-glow: rgba(0, 255, 0, 0.4);
+            --bg-gradient-1: rgba(0, 15, 0, 0.85);
+            --bg-gradient-2: rgba(0, 25, 0, 0.95);
+            --text-color: #e0ffe0;
+            --muted-color: #8ab88a;
+            --glass-bg: rgba(0, 25, 0, 0.75);
+            --glass-border: rgba(0, 255, 0, 0.15);
+            --nav-bg: rgba(0, 15, 0, 0.85);
+            --btn-grad-1: #00cc00;
+            --btn-grad-2: #006600;
+        }
+
+        [data-theme="yellow"] {
+            /* Cyber Yellow Theme */
+            --primary: #ffc107;
+            --primary-glow: rgba(255, 193, 7, 0.4);
+            --bg-gradient-1: rgba(15, 10, 0, 0.85);
+            --bg-gradient-2: rgba(25, 15, 0, 0.95);
+            --text-color: #fffbea;
+            --muted-color: #c7b895;
+            --glass-bg: rgba(25, 20, 0, 0.75);
+            --glass-border: rgba(255, 193, 7, 0.15);
+            --nav-bg: rgba(15, 10, 0, 0.85);
+            --btn-grad-1: #e0a800;
+            --btn-grad-2: #b38600;
+        }
+
+        [data-theme="purple"] {
+            /* Synth Purple Theme */
+            --primary: #b829ff;
+            --primary-glow: rgba(184, 41, 255, 0.4);
+            --bg-gradient-1: rgba(15, 0, 25, 0.85);
+            --bg-gradient-2: rgba(25, 0, 35, 0.95);
+            --text-color: #f5e6ff;
+            --muted-color: #a890b3;
+            --glass-bg: rgba(25, 0, 35, 0.75);
+            --glass-border: rgba(184, 41, 255, 0.15);
+            --nav-bg: rgba(15, 0, 25, 0.85);
+            --btn-grad-1: var(--primary);
+            --btn-grad-2: #7a1ab3;
+        }
+
+        /* ---------- BASE STYLES ---------- */
         html, body {
             height: 100%;
         }
 
         body {
-            background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.95)), url('https://images.unsplash.com/photo-1593784991095-a205069470b6?q=80&w=2070&auto=format&fit=crop');
+            background: linear-gradient(var(--bg-gradient-1), var(--bg-gradient-2)), url('https://images.unsplash.com/photo-1593784991095-a205069470b6?q=80&w=2070&auto=format&fit=crop');
             background-size: cover;
             background-attachment: fixed;
             background-position: center;
-            color: var(--light);
+            color: var(--text-color);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             min-height: 100vh;
             margin: 0;
             padding-top: 85px;
+            transition: var(--transition); /* Smooth theme switching */
         }
+
+        .theme-text { color: var(--text-color) !important; }
+        .text-muted-custom { color: var(--muted-color) !important; }
 
         /* ---------- PREMIUM NAVBAR ---------- */
         .navbar-custom {
-            background-color: rgba(10, 10, 10, 0.85);
+            background-color: var(--nav-bg);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--glass-border);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
             padding: 12px 0;
             transition: var(--transition);
         }
 
         .navbar-brand {
-            color: var(--light) !important;
+            color: var(--text-color) !important;
             font-weight: 800;
             font-size: 1.3rem;
             display: flex;
@@ -67,12 +138,9 @@
             filter: drop-shadow(0 0 10px var(--primary-glow));
         }
 
-        .navbar-brand:hover {
-            color: #fff !important;
-        }
-
         .nav-link {
-            color: var(--muted) !important;
+            color: var(--text-color) !important;
+            opacity: 0.8;
             font-weight: 500;
             padding: 8px 16px !important;
             margin: 0 4px;
@@ -84,100 +152,96 @@
         }
 
         .nav-link:hover {
-            color: #fff !important;
-            background: rgba(255, 255, 255, 0.08);
+            opacity: 1;
+            background: rgba(128, 128, 128, 0.1);
             transform: translateY(-2px);
         }
 
         .nav-link i {
             color: var(--primary);
-            opacity: 0.8;
             transition: var(--transition);
         }
 
         .nav-link:hover i {
-            opacity: 1;
             transform: scale(1.1);
             filter: drop-shadow(0 0 5px var(--primary-glow));
         }
 
+        /* Dropdown Theme Menu */
+        .dropdown-menu {
+            background-color: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+        }
+        
+        .dropdown-item {
+            color: var(--text-color);
+            transition: var(--transition);
+        }
+        
+        .dropdown-item:hover {
+            background-color: rgba(128, 128, 128, 0.2);
+            color: var(--primary);
+        }
+
         /* Special IPTV Button */
         .btn-iptv {
-            background: linear-gradient(135deg, var(--primary), #b80710);
+            background: linear-gradient(135deg, var(--btn-grad-1), var(--btn-grad-2));
             box-shadow: 0 4px 15px var(--primary-glow);
             color: white !important;
+            opacity: 1;
             border: none;
             padding: 8px 20px !important;
             border-radius: 50px !important;
         }
         
         .btn-iptv:hover {
-            box-shadow: 0 6px 20px rgba(229, 9, 20, 0.6);
+            box-shadow: 0 6px 20px var(--primary-glow);
             transform: translateY(-2px) scale(1.02);
-            background: linear-gradient(135deg, #f00a16, #d10812);
+            filter: brightness(1.1);
         }
-
         .btn-iptv i { color: white !important; }
 
-        .navbar-toggler {
-            border: none;
-            padding: 5px 10px;
-        }
-        
-        .navbar-toggler:focus {
-            box-shadow: none;
-            outline: none;
-        }
+        .navbar-toggler { border: none; padding: 5px 10px; }
+        .navbar-toggler-icon { filter: invert(var(--icon-invert, 0)); } /* Handles icon color in light mode */
+        [data-theme="light"] .navbar-toggler-icon { filter: invert(1); }
+
+        .navbar-toggler:focus { box-shadow: none; outline: none; }
 
         /* ---------- MOBILE COLLAPSE MENU ---------- */
         @media (max-width: 991px) {
             .navbar-collapse {
-                background: rgba(15, 15, 15, 0.95);
+                background: var(--nav-bg);
                 backdrop-filter: blur(20px);
                 -webkit-backdrop-filter: blur(20px);
                 border-radius: 12px;
                 padding: 15px;
                 margin-top: 15px;
                 border: 1px solid var(--glass-border);
-                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
             }
-            .nav-link {
-                margin: 4px 0;
-                padding: 12px 15px !important;
-            }
-            .btn-iptv {
-                margin-top: 10px !important;
-                justify-content: center;
-            }
+            .nav-link { margin: 4px 0; padding: 12px 15px !important; }
+            .btn-iptv { margin-top: 10px !important; justify-content: center; }
         }
 
         /* ---------- PLAYER SECTION ---------- */
-        .player-sticky {
-            position: sticky;
-            top: 100px;
-            z-index: 90;
-            align-self: start;
-        }
+        .player-sticky { position: sticky; top: 100px; z-index: 90; align-self: start; }
 
         .player-container {
             width: 100%;
             background: #000;
             border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(229, 9, 20, 0.1);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), 0 0 25px var(--primary-glow);
             border: 1px solid var(--glass-border);
         }
 
-        .video-js {
-            width: 100% !important;
-            height: 65vh !important;
-            object-fit: contain;
-        }
+        .video-js { width: 100% !important; height: 65vh !important; object-fit: contain; }
 
         .now-playing {
             display: inline-flex;
             align-items: center;
-            background: linear-gradient(135deg, var(--primary), #9e060e);
+            background: linear-gradient(135deg, var(--btn-grad-1), var(--btn-grad-2));
             color: white;
             padding: 10px 24px;
             border-radius: 50px;
@@ -195,15 +259,16 @@
             -webkit-backdrop-filter: blur(12px);
             border-radius: 16px;
             padding: 24px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
             border: 1px solid var(--glass-border);
             height: calc(100vh - 130px);
             overflow-y: auto;
             overflow-x: hidden;
+            transition: var(--transition);
         }
 
         .channel-list::-webkit-scrollbar { width: 8px; }
-        .channel-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
+        .channel-list::-webkit-scrollbar-thumb { background: rgba(128,128,128,0.3); border-radius: 10px; }
         .channel-list::-webkit-scrollbar-track { background: transparent; }
 
         .channel-search input {
@@ -211,18 +276,20 @@
             padding: 14px 20px;
             border-radius: 12px;
             border: 1px solid var(--glass-border);
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--light);
+            background: rgba(128, 128, 128, 0.1);
+            color: var(--text-color);
             font-size: 0.95rem;
             transition: var(--transition);
             margin-bottom: 24px;
         }
 
+        .channel-search input::placeholder { color: var(--muted-color); }
+
         .channel-search input:focus {
             outline: none;
             border-color: var(--primary);
-            background: rgba(255, 255, 255, 0.08);
-            box-shadow: 0 0 0 4px rgba(229, 9, 20, 0.25);
+            background: rgba(128, 128, 128, 0.15);
+            box-shadow: 0 0 0 4px var(--primary-glow);
         }
 
         #vidlink {
@@ -239,7 +306,7 @@
             flex-direction: column;
             align-items: center;
             gap: 12px;
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(128, 128, 128, 0.05);
             border-radius: 14px;
             padding: 16px 12px;
             cursor: pointer;
@@ -249,14 +316,14 @@
 
         #vidlink .channel:hover {
             transform: translateY(-6px);
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.3);
-            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.5);
+            background: rgba(128, 128, 128, 0.15);
+            border-color: var(--primary);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
         }
 
         #vidlink .channel.selected {
             border-color: var(--primary);
-            background: rgba(229, 9, 20, 0.08);
+            background: var(--primary-glow);
             box-shadow: 0 0 20px var(--primary-glow);
             transform: scale(1.02);
         }
@@ -265,7 +332,7 @@
             width: 100%;
             aspect-ratio: 1/1;
             object-fit: contain;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.3);
             border-radius: 10px;
             padding: 10px;
         }
@@ -273,7 +340,7 @@
         .channel-label {
             width: 100%;
             text-align: center;
-            color: var(--light);
+            color: var(--text-color);
             font-weight: 600;
             font-size: 0.9rem;
             white-space: nowrap;
@@ -308,10 +375,7 @@
 
             #vidlink::-webkit-scrollbar { display: none; }
             
-            #vidlink > li {
-                flex: 0 0 120px;
-                scroll-snap-align: start;
-            }
+            #vidlink > li { flex: 0 0 120px; scroll-snap-align: start; }
             .channel-label { display: none; }
         }
 
@@ -319,22 +383,23 @@
         .copyright-footer {
             background-color: var(--glass-bg);
             backdrop-filter: blur(10px);
-            color: var(--muted);
+            color: var(--muted-color);
             text-align: center;
             padding: 20px;
             margin-top: 40px;
             font-size: 0.95rem;
             border-top: 1px solid var(--glass-border);
             border-radius: 12px;
+            transition: var(--transition);
         }
         
         .copyright-footer a { color: var(--primary); text-decoration: none; transition: var(--transition); }
-        .copyright-footer a:hover { color: #fff; text-shadow: 0 0 10px var(--primary-glow); }
+        .copyright-footer a:hover { color: var(--text-color); text-shadow: 0 0 10px var(--primary-glow); }
     </style>
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
         <div class="container-fluid px-3 px-lg-4">
             <a class="navbar-brand" href="/"><i class="fas fa-play"></i> PREMIUM TV</a>
 
@@ -351,6 +416,19 @@
                     <li class="nav-item"><a class="nav-link" href="http://100.100.100.6"><i class="fas fa-server me-1"></i> FTP 4</a></li>
                     <li class="nav-item"><a class="nav-link" href="http://100.100.100.6:8096/"><i class="fas fa-film me-1"></i> FTP 5</a></li>
                     
+                    <li class="nav-item dropdown ms-lg-2">
+                        <a class="nav-link dropdown-toggle" href="#" id="themeMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-palette me-1"></i> Theme
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="themeMenu">
+                            <li><a class="dropdown-item" href="#" onclick="changeTheme('dark')"><i class="fas fa-moon me-2" style="color:#e50914;"></i> Dark Red</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="changeTheme('light')"><i class="fas fa-sun me-2" style="color:#0d6efd;"></i> Light Blue</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="changeTheme('green')"><i class="fas fa-leaf me-2" style="color:#00ff00;"></i> Neon Green</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="changeTheme('yellow')"><i class="fas fa-bolt me-2" style="color:#ffc107;"></i> Cyber Yellow</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="changeTheme('purple')"><i class="fas fa-star me-2" style="color:#b829ff;"></i> Synth Purple</a></li>
+                        </ul>
+                    </li>
+
                     <li class="nav-item ms-lg-3 mt-2 mt-lg-0">
                         <a class="nav-link btn-iptv" href="http://10.30.30.30/">
                             <i class="fas fa-satellite-dish me-1"></i> IPTV 1
@@ -381,9 +459,9 @@
             <div class="col-12 col-lg-4 mt-lg-4 mt-2">
                 <div class="channel-list">
                     <div class="d-flex justify-content-between align-items-center mb-2">
-                        <h5 class="text-white fw-bold mb-0"><i class="fas fa-list-ul me-2 text-danger"></i> Channels</h5>
+                        <h5 class="theme-text fw-bold mb-0"><i class="fas fa-list-ul me-2" style="color: var(--primary);"></i> Channels</h5>
                     </div>
-                    <p class="small text-muted mb-4">Select a channel to start streaming</p>
+                    <p class="small text-muted-custom mb-4">Select a channel to start streaming</p>
 
                     <div class="channel-search d-none d-lg-block">
                         <input id="channelFilter" type="text" placeholder="Search channels..." oninput="filterChannels()" />
@@ -445,6 +523,21 @@
     <script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
 
     <script>
+        // --- THEME ENGINE ---
+        function changeTheme(themeName) {
+            // Apply theme to HTML tag
+            document.documentElement.setAttribute('data-theme', themeName);
+            // Save to browser memory
+            localStorage.setItem('snc_tv_theme', themeName);
+        }
+
+        // Load saved theme on startup
+        document.addEventListener("DOMContentLoaded", () => {
+            const savedTheme = localStorage.getItem('snc_tv_theme') || 'dark';
+            changeTheme(savedTheme);
+        });
+
+        // --- VIDEO PLAYER LOGIC ---
         const player = videojs('sncPlayer');
         let currentSelectedChannel = document.querySelector('#vidlink .channel.selected');
 
@@ -463,7 +556,6 @@
             if (channelEl) {
                 channelEl.classList.add('selected');
                 currentSelectedChannel = channelEl;
-                
                 channelEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
             }
         }

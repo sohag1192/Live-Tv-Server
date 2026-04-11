@@ -5,7 +5,7 @@ REM  Author    : sohag1192
 REM  Date      : %date% %time%
 REM ============================================
 
-cd /d "C:\Users\sohag\Downloads\GitHub_Upload\Live-Tv-Server"
+cd /d "C:\Users\sohag\OneDrive\Desktop\My Project\Live-Tv-Server"
 
 IF NOT EXIST ".git" (
     echo Initializing new Git repository...

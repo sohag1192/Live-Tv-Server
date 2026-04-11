@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Premium Live TV Streaming Service">
+    <link rel="shortcut icon" href="https://placehold.co/16x16/000000/ffffff?text=Premium+Live+TV+Streaming"/>
+    <title>Premium Live TV Streaming</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <style>
+        :root {
+            /* Sleek Dark Slate Theme */
+            --primary-dark: #0f172a; 
+            --secondary-dark: #1e293b;
+            /* Vibrant Cyan Highlight */
+            --accent-dark: #00e5ff; 
+            --text-dark: #f8fafc;
+            
+            /* Clean Light Theme */
+            --primary-light: #f8fafc;
+            --secondary-light: #ffffff;
+            --accent-light: #0ea5e9; 
+            --text-light: #0f172a;
+            
+            --current-primary: var(--primary-dark);
+            --current-secondary: var(--secondary-dark);
+            --current-accent: var(--accent-dark);
+            --current-text: var(--text-dark);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--current-text);
+            background-color: var(--current-primary);
+            transition: all 0.5s ease;
+            min-height: 100vh;
+        }
+
+        /* Updated Premium Animated Background */
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.6;
+            background: linear-gradient(-45deg, #020617, #1e1b4b, #0f172a, #172554);
+            background-size: 400% 400%;
+            animation: gradient 18s ease infinite;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(0,0,0,0.4);
+            border-radius: 50px;
+            padding: 5px;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            border-color: var(--current-accent);
+            box-shadow: 0 0 10px var(--current-accent);
+        }
+
+        .theme-toggle i {
+            font-size: 1.5rem;
+            padding: 10px;
+            color: var(--current-accent);
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 30px;
+            padding-top: 80px;
+        }
+
+        /* Player Section */
+        .player-section {
+            background-color: var(--current-secondary);
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .player-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 45px rgba(0, 229, 255, 0.15);
+            border-color: rgba(0, 229, 255, 0.3);
+        }
+
+        /* Responsive Embed */
+        .embed-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .embed-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            background-color: #000;
+        }
+
+        /* Player Info */
+        .player-info {
+            padding: 20px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.95));
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .channel-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.9);
+            color: var(--current-accent);
+        }
+
+        .program-info {
+            font-size: 1rem;
+            opacity: 0.9;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
+            color: #e2e8f0;
+        }
+
+        /* Channel List */
+        .channel-list {
+            background-color: var(--current-secondary);
+            border-radius: 16px;
+            padding: 20px;
+            height: 100%;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .channel-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .channel-list-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 0;
+            color: var(--current-text);
+        }
+
+        .channel-count {
+            background-color: rgba(0, 229, 255, 0.15);
+            color: var(--current-accent);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            border: 1px solid rgba(0, 229, 255, 0.3);
+        }
+
+        .channel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+            overflow-y: auto;
+            max-height: 70vh;
+            padding-right: 8px;
+        }
+        
+        /* Navbar Style Header */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .tv-link {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .tv-link i {
+            color: var(--current-accent);
+        }
+
+        .tv-link:hover {
+            color: var(--current-accent);
+            text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+        }
+
+        /* Highly Highlighted Channel Item */
+        .channel-item {
+            background-color: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            cursor: pointer;
+            border: 2px solid transparent;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .channel-item:hover {
+            transform: translateY(-5px);
+            border-color: var(--current-accent);
+            box-shadow: 0 8px 25px rgba(0, 229, 255, 0.3);
+            background-color: rgba(0, 229, 255, 0.05);
+            z-index: 2;
+        }
+
+        .channel-item.active {
+            border-color: var(--current-accent);
+            /* Strong glowing highlight for the active element */
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.6), inset 0 0 10px rgba(0, 229, 255, 0.2);
+            background-color: rgba(0, 229, 255, 0.15);
+            transform: scale(1.02);
+            z-index: 3;
+        }
+
+        .channel-thumbnail-wrapper {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background-color: rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            overflow: hidden;
+        }
+
+        .channel-thumbnail {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: transform 0.4s ease;
+        }
+
+        .channel-item:hover .channel-thumbnail,
+        .channel-item.active .channel-thumbnail {
+            transform: scale(1.15);
+        }
+
+        .channel-name {
+            padding: 12px 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .channel-item.active .channel-name {
+            color: var(--current-accent);
+            font-weight: 700;
+        }
+
+        /* Light Theme Adjustments */
+        body.light-theme .background {
+            background: linear-gradient(-45deg, #e0f2fe, #bae6fd, #f8fafc, #f1f5f9);
+            opacity: 1;
+        }
+
+        body.light-theme .top-nav {
+            background: rgba(255, 255, 255, 0.85);
+        }
+
+        body.light-theme .tv-link {
+            color: var(--text-light);
+        }
+
+        body.light-theme .channel-list {
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        body.light-theme .channel-item {
+            background-color: #ffffff;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 2px solid #e2e8f0;
+        }
+
+        body.light-theme .channel-item:hover {
+            border-color: var(--current-accent);
+            box-shadow: 0 8px 25px rgba(14, 165, 233, 0.2);
+        }
+
+        body.light-theme .channel-item.active {
+            border-color: var(--current-accent);
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.3), 0 10px 25px rgba(14, 165, 233, 0.2);
+            background-color: rgba(14, 165, 233, 0.05);
+        }
+
+        body.light-theme .channel-thumbnail-wrapper {
+            background-color: #f1f5f9;
+        }
+
+        body.light-theme .channel-name {
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+
+        body.light-theme .player-info {
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+        }
+        
+        body.light-theme .channel-count {
+            background-color: rgba(14, 165, 233, 0.1);
+            border-color: rgba(14, 165, 233, 0.2);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 25px;
+            margin-top: 40px;
+            font-size: 0.95rem;
+            opacity: 0.8;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            background-color: rgba(0,0,0,0.2);
+        }
+
+        .footer a {
+            color: var(--current-accent);
+            text-decoration: none;
+            font-weight: 600;
+            transition: text-shadow 0.3s;
+        }
+
+        .footer a:hover {
+            text-shadow: 0 0 8px rgba(0, 229, 255, 0.6);
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 992px) {
+            .channel-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 15px;
+                padding-top: 80px;
+            }
+            
+            .channel-grid {
+                grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+                gap: 12px;
+            }
+            
+            .channel-name {
+                font-size: 0.8rem;
+                padding: 8px 4px;
+            }
+            
+            .channel-list-title {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Custom scrollbar matched to highlight color */
+        .channel-grid::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .channel-grid::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+        }
+
+        .channel-grid::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            border: 2px solid var(--current-secondary);
+        }
+
+        .channel-grid::-webkit-scrollbar-thumb:hover {
+            background: var(--current-accent);
+            box-shadow: 0 0 10px var(--current-accent);
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+
+    <header class="top-nav">
+        <a href="/" class="tv-link"><i class="fas fa-tv me-2"></i>TV Version</a>
+        <div class="theme-toggle" id="themeToggle">
+            <i class="fas fa-moon"></i>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="row g-4">
+            <div class="col-lg-9 col-md-8">
+                <div class="player-section">
+                    <div class="embed-container">
+                        <video id="video-player" controls autoplay></video>
+                        <div class="player-info">
+                            <div class="channel-title">Loading...</div>
+                            <div class="program-info">Please select a channel</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-4">
+                <div class="channel-list">
+                    <div class="channel-list-header">
+                        <h2 class="channel-list-title">Channels</h2>
+                        <div class="channel-count" id="channelCount">0</div>
+                    </div>
+                    <div class="channel-grid" id="channelGrid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div>
+            <img src="https://hitscounter.dev/api/hit?url=https%3A%2F%2Fgithub.com%2Fsohag1192%2FLive-Tv-Server&label=&icon=github&color=%23198754&message=&style=flat&tz=UTC" alt="GitHub hits">
+        </div>
+        <div class="mt-2">
+            © Copyright 2013 Md Sohag Rana, Developed By: <a href="https://t.me/MdSohagRana" target="_blank">Md Sohag Rana</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // --- 1. M3U Data Injection ---
+        const rawM3U = `#EXTM3U
+#EXTINF:-1 group-title="Bangladesh" tvg-logo="https://www.lyngsat.com/logo/tv/bb/btv-national-bd.png",BTV
+https://owrcovcrpy.gpcdn.net/bpk-tv/1709/output/index.m3u8
+#EXTINF:-1 group-title="Bangladesh" tvg-logo="https://images.seeklogo.com/logo-png/53/2/somoy-tv-logo-png_seeklogo-536972.png",Somoy TV
+https://owrcovcrpy.gpcdn.net/bpk-tv/1702/output/index.m3u8
+#EXTINF:-1 group-title="Bangladesh" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQmf72clI7qIdqCPgKgD0GXdYYZ15e30F05OQ&s",Ekattor TV
+https://owrcovcrpy.gpcdn.net/bpk-tv/1705/output/index.m3u8
+#EXTINF:-1 group-title="Bangladesh" tvg-logo="https://images.seeklogo.com/logo-png/42/2/channel-24-logo-png_seeklogo-424910.png",Channel 24
+https://owrcovcrpy.gpcdn.net/bpk-tv/1703/output/index.m3u8
+#EXTINF:-1 group-title="Bangladesh" tvg-logo="https://i.pinimg.com/1200x/ac/77/97/ac7797ddb5afad6326689b90fafab611.jpg",Jamuna TV
+https://owrcovcrpy.gpcdn.net/bpk-tv/1701/output/index.m3u8
+#EXTINF:-1 group-title="Bangladesh" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQjF6ug1nuWWIN5F8UohpV6fVEyjXMeKAqoQ&s",Star News
+https://owrcovcrpy.gpcdn.net/bpk-tv/1710/output/1710-audio_113402_eng=113200-video=3224800.m3u8
+#EXTINF:-1 group-title="Bangladesh" tvg-logo="https://dl.dropbox.com/s/bl983avhouqd47c/news_24_bd.png",News 24
+https://owrcovcrpy.gpcdn.net/bpk-tv/1708/output/index.m3u8
+#EXTINF:-1 group-title="Bangladesh" tvg-logo="https://i.postimg.cc/vZZGMT6C/dbc.png",DBC News
+https://owrcovcrpy.gpcdn.net/bpk-tv/1728/output/index.m3u8
+#EXTINF:-1 group-title="Bangladesh" tvg-logo="https://www.lyngsat.com/logo/tv/aa/atn_news_bd.png",ATN News
+https://owrcovcrpy.gpcdn.net/bpk-tv/1706/output/index.m3u8
+#EXTINF:-1 group-title="Bangladesh" tvg-logo="https://i.pinimg.com/736x/8a/ee/0e/8aee0e3d926b0406ec1091acf09346bd.jpg",Independent TV
+https://owrcovcrpy.gpcdn.net/bpk-tv/1704/output/index.m3u8
+#EXTINF:-1 group-title="Bangladesh" tvg-logo="https://images.seeklogo.com/logo-png/51/2/bangla-vision-tv-channel-logo-png_seeklogo-513051.png",BanglaVision
+https://owrcovcrpy.gpcdn.net/bpk-tv/1715/output/index.m3u8
+#EXTINF:-1 group-title="Bangladesh" tvg-logo="https://images.seeklogo.com/logo-png/39/2/ntv-channel-logo-png_seeklogo-396286.png",NTV
+https://owrcovcrpy.gpcdn.net/bpk-tv/1716/output/index.m3u8
+#EXTINF:-1 group-title="Bangladesh" tvg-logo="https://images.seeklogo.com/logo-png/53/2/channel-i-logo-png_seeklogo-532023.png",Channel I
+https://owrcovcrpy.gpcdn.net/bpk-tv/1723/output/index.m3u8
+#EXTINF:-1 group-title="Bangladesh" tvg-logo="https://dl.dropbox.com/s/xolazzofexo6ub8/boishakhi.png",Boishakhi TV
+http://103.229.254.25:7001/play/a067/index.m3u8
+#EXTINF:-1 group-title="Bangladesh" tvg-logo="https://images.seeklogo.com/logo-png/51/2/deepto-tv-logo-png_seeklogo-513994.png",Deepto TV
+https://owrcovcrpy.gpcdn.net/bpk-tv/1711/output/index.m3u8
+#EXTINF:-1 group-title="Bangladesh" tvg-logo="https://i.postimg.cc/GhSkJ8ry/cropped-Logo-for-website-1.jpg",Maasranga TV
+https://owrcovcrpy.gpcdn.net/bpk-tv/1722/output/1722-audio_113522_eng=113200-video=2202800.m3u8
+#EXTINF:-1 group-title="Bangladesh" tvg-logo="https://i.ibb.co/xgfM1sf/2021-06-14-fff22-19-07.jpg",Channel 9
+https://owrcovcrpy.gpcdn.net/bpk-tv/1729/output/index.m3u8
+#EXTINF:-1 group-title="Bangladesh" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRV5h2rW-OwrD_J4wZUztePangnyyd-85kghw&s",Bijoy TV
+http://103.229.254.25:7001/play/a066/index.m3u8
+#EXTINF:-1 group-title="Bangladesh" tvg-logo="https://www.pngfind.com/pngs/m/162-1620250_asian-tv-bd-logo-hd-png-download.png",Asian TV
+http://103.229.254.25:7001/play/a063/index.m3u8
+#EXTINF:-1 group-title="Bangladesh" tvg-logo="https://raw.githubusercontent.com/subirkumarpaul/Logo/main/Mohona%20TV.png",Mohona TV
+http://103.229.254.25:7001/play/a05t/index.m3u8
+#EXTINF:-1 group-title="Kalkata News" tvg-logo="https://images.seeklogo.com/logo-png/60/2/republic-bangla-logo-png_seeklogo-605858.png",Republic Bangla
+https://vg-republictvlive.akamaized.net/v1/manifest/611d79b11b77e2f571934fd80ca1413453772ac7/vglive-sk-456368/06e5afc2-a022-4e51-9131-4e33a6207c5c/1.m3u8
+#EXTINF:-1 group-title="Kalkata News" tvg-logo="https://i.postimg.cc/qqJ6Kp6P/asff.jpg",TV9 Bangla
+https://dyjmyiv3bp2ez.cloudfront.net/pub-iotv9banaen8yq/liveabr/playlist.m3u8
+#EXTINF:-1 group-title="Kalkata News" tvg-logo="https://dtil.tmsimg.com/assets/s142518_ld_h15_aa.png?lock=720x54",ABP Ananda
+https://d2l4ar6y3mrs4k.cloudfront.net/live-streaming/ananda-livetv/master.m3u8
+#EXTINF:-1 group-title="Kalkata News" tvg-logo="https://i.postimg.cc/RVxbjyxN/asfasf.png",News18 Bangla
+https://amg01448-samsungin-news18bangla-samsungin-ad-qy.amagi.tv/playlist/amg01448-samsungin-news18bangla-samsungin/playlist.m3u8
+#EXTINF:-1 group-title="Kalkata News" tvg-logo="https://i.postimg.cc/MTZFrjCt/kolkata-tv.png",Kolkata TV
+https://cdn.ottlive.co.in/kolkatatv/index.m3u8
+#EXTINF:-1 group-title="Kalkata News" tvg-logo="https://i.imgur.com/XUnWcZF.png",R plus
+https://thelegitpro.in/pntv/rplusnews24x7/index.m3u8
+#EXTINF:-1 group-title="Kalkata News" tvg-logo="https://yt3.ggpht.com/ytc/AKedOLStHh2dnAyRzexuxwISlK8CPWNQb09Xr4tpYGBM=s900-c-k-c0x00ffffff-no-rj",Akaash Aat
+https://mumt03.tangotv.in/AAKASHAATH/index.m3u8
+#EXTINF:-1 group-title="Hindi News" tvg-logo="https://i.postimg.cc/Z5bZhCz6/sdgedg.png",Republic Bharat
+https://vg-republictvlive.akamaized.net/v1/master/611d79b11b77e2f571934fd80ca1413453772ac7/vglive-sk-275673/main.m3u8
+#EXTINF:-1 group-title="Hindi News" tvg-logo="https://xstreamcp-assets-msp.streamready.in/assets/LIVETV/LIVECHANNEL/LIVETV_LIVETVCHANNEL_NDTV_INDIA/images/LOGO_HD/image.png",NDTV India
+https://ndtvindiaelemarchana.akamaized.net/hls/live/2003679/ndtvindia/master.m3u8
+#EXTINF:-1 group-title="Hindi News" tvg-logo="https://dtil.tmsimg.com/assets/s158138_ld_h15_aa.png?lock=720x540",ABP News
+https://d2l4ar6y3mrs4k.cloudfront.net/live-streaming/abpnews-livetv/master.m3u8
+#EXTINF:-1 group-title="Hindi News" tvg-logo="https://dtil.tmsimg.com/assets/GNLZZGG0023VWYC.png",Zee News
+https://dknttpxmr0dwf.cloudfront.net/index_57.m3u8
+#EXTINF:-1 group-title="Hindi News" tvg-logo="https://xstreamcp-assets-msp.streamready.in/assets/LIVETV/LIVECHANNEL/LIVETV_LIVETVCHANNEL_NEWS18_INDIA/images/LOGO_HD/image.png",News18 India
+https://n18syndication.akamaized.net/bpk-tv/News18_India_NW18_MOB/output01/master.m3u8
+#EXTINF:-1 group-title="Hindi News" tvg-logo="https://xstreamcp-assets-msp.streamready.in/assets/LIVETV/LIVECHANNEL/LIVETV_LIVETVCHANNEL_INDIA_TV/images/LOGO_HD/image.png",India TV
+https://pl-indiatvnews.akamaized.net/out/v1/db79179b608641ceaa5a4d0dd0dca8da/index.m3u8
+#EXTINF:-1 group-title="Hindi News" tvg-logo="https://jiotvimages.cdn.jio.com/dare_images/images/India_Daily_24x7.png",India Daily Live
+https://indiadaily.ottlive.co.in/indiadailylive/index.m3u8
+#EXTINF:-1 group-title="Hindi News" tvg-logo="https://xstreamcp-assets-msp.streamready.in/assets/LIVETV/LIVECHANNEL/LIVETV_LIVETVCHANNEL_INDIA_TV_SPEED_NEWS/images/LOGO_HD/image.png",India  Speed News
+https://cc-lyf4c0hwzg5dd.akamaized.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-lyf4c0hwzg5dd/v1/vglive-sk-479089/main.m3u8
+#EXTINF:-1 group-title="Hindi News" tvg-logo="https://xstreamcp-assets-msp.streamready.in/assets/LIVETV/LIVECHANNEL/LIVETV_LIVETVCHANNEL_NEWS_NATION/images/LOGO_HD/image.png",News Nation
+https://d3qs3d2rkhfqrt.cloudfront.net/out/v1/6cd2f649739a45ca9de1daf81cc7d0f2/index.m3u8
+#EXTINF:-1 group-title="Hindi News" tvg-logo="https://xstreamcp-assets-msp.streamready.in/assets/LIVETV/LIVECHANNEL/LIVETV_LIVETVCHANNEL_TIMES_NOW_NAVBHARAT_HD/images/LOGO_HD/image.png",Times Now Navbharat
+https://amg01448-samsungin-tinnavbharat-samsungin-ad-m8.amagi.tv/playlist/amg01448-samsungin-tinnavbharat-samsungin/playlist.m3u8
+#EXTINF:-1 group-title="Hindi News" tvg-logo="https://dtil.tmsimg.com/assets/GNLZZGG00230YYJ.png",Zee Business
+https://dwby15d04agvq.cloudfront.net/index_5.m3u8
+#EXTINF:-1 group-title="Hindi News" tvg-logo="https://xstreamcp-assets-msp.streamready.in/assets/LIVETV/LIVECHANNEL/LIVETV_LIVETVCHANNEL_ANB_NEWS/images/LOGO_HD/image.png",ANB News
+https://mumt05.tangotv.in/ANBNEWSNATIONAL/index.m3u8
+#EXTINF:-1 group-title="Hindi News" tvg-logo="https://dtil.tmsimg.com/assets/s142710_ld_h15_aa.png?lock=720x540",Bharat 24
+https://cdn.ottlive.co.in/bharat24/index.fmp4.m3u8
+#EXTINF:-1 group-title="Hindi News" tvg-logo="https://jiotvimages.cdn.jio.com/dare_images/images/Darshan_24.png",Darshan24
+https://mumt05.tangotv.in/DARSHAN24/index.m3u8
+#EXTINF:-1 group-title="Islamic" tvg-logo="https://i.postimg.cc/XvDnL3h0/wrrhg.jpg",Islamic TV
+https://owrcovcrpy.gpcdn.net/bpk-tv/1724/output/index.m3u8
+#EXTINF:-1 group-title="Islamic" tvg-logo="https://yt3.ggpht.com/ytc/AMLnZu_Gxy8ywjMY6_YPX-1uYtUGA56FOfDoBsH62-ekNA=s900-c-k-c0x00ffffff-no-rj",Saudi Quran
+https://cdn-globecast.akamaized.net/live/eds/saudi_quran/hls_roku/index.m3u8
+#EXTINF:-1 group-title="Islamic" tvg-logo="https://images-na.ssl-images-amazon.com/images/I/71CywdrFaZL.png",Madina Live
+https://cdn-globecast.akamaized.net/live/eds/saudi_sunnah/hls_roku/index.m3u8
+#EXTINF:-1 group-title="Entertain" tvg-logo="https://i.postimg.cc/g2t9FsK3/eueu.png",Discovery Bangla
+http://202.70.146.135:8000/play/a05z/index.m3u8
+#EXTINF:-1 group-title="Entertain" tvg-logo="https://i.postimg.cc/g2t9FsK3/eueu.png",Discovery Hindi
+http://103.229.254.25:7001/play/a071/index.m3u8
+#EXTINF:-1 group-title="Entertain" tvg-logo="https://logos-world.net/wp-content/uploads/2020/09/National-Geographic-Logo.png",National Geographic HD
+http://202.70.146.135:8000/play/a05o/index.m3u8
+#EXTINF:-1 group-title="Entertain" tvg-logo="https://logos-world.net/wp-content/uploads/2020/09/National-Geographic-Logo.png",National Geographic HD Bangla
+http://103.229.254.25:7001/play/a038/index.m3u8
+#EXTINF:-1 group-title="Entertain" tvg-logo="https://i.imgur.com/CIYnLWz.png",FearFactor
+https://amg00627-banijaygroup-fearfactor-samsungau-9vdod.amagi.tv/playlist/amg00627-banijaygroup-fearfactor-samsungau/playlist.m3u8
+#EXTINF:-1 group-title="Entertain" tvg-logo="https://images.toffeelive.com/images/program/2429/logo/240x240/mobile_logo_009938001674474908.png",History TV 18
+http://103.229.254.25:7001/play/a02z/index.m3u8
+#EXTINF:-1 group-title="Entertain" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/4/43/SonySABlogo.png",Sony SAB
+http://206.212.244.71:8080/BRIDGITS@YAHOO.COM/BRIDGITS@2022/125809
+#EXTINF:-1 group-title="Entertain" tvg-logo="https://raw.githubusercontent.com/subirkumarpaul/Logo/main/Star%20Plus.png",Star Plus
+http://103.229.254.25:7001/play/a09z/index.m3u8
+#EXTINF:-1 group-title="International" tvg-logo="https://xstreamcp-assets-msp.streamready.in/assets/LIVETV/LIVECHANNEL/LIVETV_LIVETVCHANNEL_NDTV_24X7/images/LOGO_HD/image.png",NDTV International
+https://ndtv24x7elemarchana.akamaized.net/hls/live/2003678/ndtv24x7/master.m3u8
+#EXTINF:-1 group-title="International" tvg-logo="https://i.imgur.com/Wc5Z3iS.png",WION
+https://d7x8z4yuq42qn.cloudfront.net/index_7.m3u8
+#EXTINF:-1 group-title="International" tvg-logo="https://i.imgur.com/8MRNFb9.png",DW English
+https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/master.m3u8
+#EXTINF:-1 group-title="Sports" tvg-logo="https://dtil.tmsimg.com/assets/GNLZZGG0025TCMR.png?lock=720x540",Sony Sports Ten 3 Hindi
+http://103.229.254.25:7001/play/a09q/index.m3u8
+#EXTINF:-1 group-title="Cartoon" tvg-logo="https://xstreamcp-assets-msp.streamready.in/assets/LIVETV/LIVECHANNEL/LIVETV_LIVETVCHANNEL_RONGEEN_TV/images/LOGO_HD/image.png",Rongen TV
+https://server.thelegitpro.in/rongeentv/rongeentv/index.m3u8
+#EXTINF:-1 group-title="Cartoon",ZB Cartoon
+https://server.zillarbarta.com/zbcatun/video.m3u8
+#EXTINF:-1 group-title="Cartoon" tvg-logo="https://i.imgur.com/ubZMeQv.jpg",Jungle Book
+https://cc-4bhi5osabejc9.akamaized.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-4bhi5osabejc9/junglebook.m3u8
+#EXTINF:-1 group-title="Bangladesh" tvg-logo="https://www.lyngsat.com/logo/tv/bb/btv-national-bd.png",BTV World
+http://103.229.254.25:7001/play/a064/index.m3u8`;
+
+        // --- 2. Parse M3U ---
+        function parseM3U(data) {
+            const lines = data.split('\n');
+            const channels = [];
+            let currentChannel = {};
+
+            for (let line of lines) {
+                line = line.trim();
+                if (line.startsWith('#EXTINF:')) {
+                    const logoMatch = line.match(/tvg-logo="([^"]+)"/);
+                    currentChannel.logo = logoMatch ? logoMatch[1] : 'https://placehold.co/420x300/1a1a1a/ffffff?text=LIVE%20TV';
+
+                    const groupMatch = line.match(/group-title="([^"]+)"/);
+                    currentChannel.group = groupMatch ? groupMatch[1] : 'Live TV';
+
+                    const parts = line.split(',');
+                    currentChannel.name = parts[parts.length - 1];
+                } else if (line.startsWith('http')) {
+                    currentChannel.url = line;
+                    channels.push(currentChannel);
+                    currentChannel = {}; 
+                }
+            }
+            return channels;
+        }
+
+        const channelData = parseM3U(rawM3U);
+
+        // --- 3. Render Channels to DOM ---
+        const channelGrid = document.getElementById('channelGrid');
+        document.getElementById('channelCount').textContent = channelData.length + " Channels";
+
+        channelData.forEach((ch, index) => {
+            const item = document.createElement('div');
+            item.className = 'channel-item';
+            
+            // Thumbnail handling (fallback if image fails to load)
+            const fallbackImg = `https://placehold.co/420x300/1a1a1a/ffffff?text=${encodeURIComponent(ch.name)}`;
+            
+            // Updated HTML structure for the new image view
+            item.innerHTML = `
+                <div class="channel-thumbnail-wrapper">
+                    <img src="${ch.logo}" class="channel-thumbnail" alt="${ch.name}" onerror="this.src='${fallbackImg}'">
+                </div>
+                <div class="channel-name">${ch.name}</div>
+            `;
+            
+            item.addEventListener('click', function(e) {
+                changeChannel(ch.url, ch.name, ch.group, this);
+            });
+
+            channelGrid.appendChild(item);
+        });
+
+        // Global variable to hold HLS instance
+        let hlsInstance = null;
+
+        // --- 4. Video Player & Channel Change Logic ---
+        function changeChannel(url, channelName, programInfo, element) {
+            const video = document.getElementById('video-player');
+            
+            if (hlsInstance) {
+                hlsInstance.destroy();
+            }
+
+            if (Hls.isSupported()) {
+                hlsInstance = new Hls();
+                hlsInstance.loadSource(url);
+                hlsInstance.attachMedia(video);
+                hlsInstance.on(Hls.Events.MANIFEST_PARSED, function() {
+                    video.play().catch(e => console.log("Auto-play prevented", e));
+                });
+            } 
+            else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = url;
+                video.addEventListener('loadedmetadata', function() {
+                    video.play();
+                });
+            }
+
+            // Update UI
+            document.querySelector('.channel-title').textContent = channelName;
+            document.querySelector('.program-info').textContent = "Group: " + programInfo;
+            
+            const items = document.querySelectorAll('.channel-item');
+            items.forEach(item => item.classList.remove('active'));
+            if (element) {
+                element.classList.add('active');
+                element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        // --- 5. Theme & Initialization ---
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        const savedTheme = localStorage.getItem('theme') || 
+                          (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+        
+        if (savedTheme === 'light') {
+            body.classList.add('light-theme');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('light-theme');
+            const isLight = body.classList.contains('light-theme');
+            
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            themeToggle.innerHTML = isLight ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+        });
+
+        // Keyboard Shortcuts
+        document.addEventListener('keydown', function(e) {
+            const items = document.querySelectorAll('.channel-item');
+            if(items.length === 0) return;
+
+            const currentActive = document.querySelector('.channel-item.active');
+            let currentIndex = currentActive ? Array.from(items).indexOf(currentActive) : 0;
+            
+            if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+                e.preventDefault();
+                currentIndex = (currentIndex - 1 + items.length) % items.length;
+            } else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+                e.preventDefault();
+                currentIndex = (currentIndex + 1) % items.length;
+            } else if (e.key >= '1' && e.key <= '9') {
+                currentIndex = parseInt(e.key) - 1;
+                if (currentIndex >= items.length) currentIndex = items.length - 1;
+            } else {
+                return;
+            }
+            
+            items[currentIndex].click();
+        });
+
+        // Initialize with first channel active on load
+        document.addEventListener('DOMContentLoaded', function() {
+            if (channelData.length > 0) {
+                document.querySelector('.channel-item').click();
+            }
+        });
+    </script>
+</body>
+</html>

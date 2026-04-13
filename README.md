@@ -97,4 +97,3 @@ Track the popularity of this project over time:
 
 ---
 
-Let me know if you'd like to add contributor credits, license info, or automate deployment with GitHub Actions. I can also help modularize your codebase or prepare a changelog for future releases.

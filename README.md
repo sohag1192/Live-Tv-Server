@@ -91,6 +91,21 @@ sudo systemctl restart nginx
 
 ---
 
+## 🙋 Contributing
+
+- Issues and pull requests are welcome.  
+- If you find bugs or want to suggest improvements, please open an issue or PR.  
+
+📬 **Contact via Mail:** [sohag1192@gmail.com](mailto:sohag1192@gmail.com)
+
+📬 **Contact via Telegram:** [Md_Sohag_Rana](https://t.me/Md_Sohag_Rana)
+
+---
+
+## 🌟 Support
+
+If you enjoy this project, please ⭐ it on GitHub — your support motivates future updates!
+
 ## ⭐ Star History  
 Track the popularity of this project over time:  
 [![Star History Chart](https://api.star-history.com/svg?repos=sohag1192/Live-Tv-Server&type=Date)](https://www.star-history.com/#sohag1192/Live-Tv-Server&Date)

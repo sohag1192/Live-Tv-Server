@@ -106,9 +106,6 @@ sudo systemctl restart nginx
 
 If you enjoy this project, please ⭐ it on GitHub — your support motivates future updates!
 
-## ⭐ Star History  
-Track the popularity of this project over time:  
-[![Star History Chart](https://api.star-history.com/svg?repos=sohag1192/Live-Tv-Server&type=Date)](https://www.star-history.com/#sohag1192/Live-Tv-Server&Date)
 
 ---
 

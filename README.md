@@ -1,111 +1,146 @@
+# 📺 Live TV Server & Web Streaming Platform
+
+<div align="center">
+
+![Live TV Banner](https://placehold.co/1200x400/0c0d14/a855f7?text=📺+Live+TV+Streaming+Platform&font=montserrat)
+
+[![Live Demo](https://img.shields.io/badge/Live-Demo-7c3aed?style=for-the-badge&logo=googlechrome&logoColor=white)](https://sohag1192.github.io/Live-Tv-Server/)
+[![Channels](https://img.shields.io/badge/Channels-54%2B%20Live%20HD-ef4444?style=for-the-badge&logo=youtube&logoColor=white)](https://sohag1192.github.io/Live-Tv-Server/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
+[![Visitor Count](https://hitscounter.dev/api/hit?url=https%3A%2F%2Fgithub.com%2Fsohag1192%2FLive-Tv-Server&label=Visitors&icon=github&color=%237c3aed&message=&style=for-the-badge&tz=UTC)](https://github.com/sohag1192/Live-Tv-Server)
+
+A modern, responsive, and high-performance web-based Live TV streaming platform featuring **54+ Bangladeshi and International HD TV channels**. Built with support for **HLS (`.m3u8`)** via Hls.js and **MPEG-DASH (`.mpd`) + Widevine DRM** via Google Shaka Player, wrapped in an encrypted stream security vault.
+
+[Explore Features](#-key-features) • [Quick Start](#-quick-start) • [Player Views](#-player-views) • [Keyboard Shortcuts](#-keyboard-shortcuts) • [Security](#-stream-security--encryption)
+
+</div>
 
 ---
 
-# **Live TV Server v1.3.0 – Unified UI, Dynamic Playback & Visitor Insights**  
-![Badge](https://hitscounter.dev/api/hit?url=https%3A%2F%2Fgithub.com%2Fsohag1192%2FLive-Tv-Server&label=&icon=github&color=%23198754&message=&style=flat-square&tz=UTC)
+## ✨ Key Features
+
+- 🛰️ **54+ Live HD Channels**: Complete lineup spanning **News, Sports, Entertainment, Movies, Kids, Music, and Infotainment**.
+- 🛡️ **Encrypted Stream Vault**: Stream URLs (`.m3u8`, `.mpd`) and Widevine DRM licenses are fully encrypted into an obfuscated payload with dynamic in-memory decryption. Zero raw stream links are exposed in plain HTML.
+- ⚡ **Dual Streaming Engines**:
+  - **HLS.js**: Low-latency HLS manifest parsing and adaptive bitrate playback.
+  - **Google Shaka Player**: MPEG-DASH manifest parser with hardware-accelerated Widevine DRM decryption.
+- 🔍 **Instant Search & Category Filtering**: Real-time filtering by channel name, channel number, or category with live channel count badges.
+- 🌓 **Dynamic Theme Switcher**:
+  - **Standard Player**: Ambient Glassmorphism Dark & Clean High-Contrast Light mode with persistent `localStorage` memory.
+  - **Cinema Player**: Multi-theme support (**Netflix Dark**, **Light Blue**, **Cyber Green**, **Synth Purple**).
+- 🎮 **Full Player Controls**: Play/Pause, Next/Previous Channel, Reload Stream, Picture-in-Picture (PiP), Fullscreen, and Volume slider with memory.
+- ⌨️ **Global Keyboard Shortcuts**: Control your TV experience seamlessly using your keyboard.
+- 📱 **100% Mobile & Smart TV Responsive**: Optimized touch UI, sticky player modes, and adaptable channel grids.
 
 ---
 
-## 🎬 Live Demo Versions
+## 🎛️ Player Views
 
-Explore the evolution of the Live-Tv-Server through its key iterations:
-
-| Version        | Description                            | Link |
-|----------------|----------------------------------------|------|
-| `index.html`   | Branding & identity foundation         | [View](https://sohag1192.github.io/Live-Tv-Server/index.html) |
-| `index_v0.html`| Minimalist single-channel prototype    | [View](https://sohag1192.github.io/Live-Tv-Server/index_v0.html) |
-| `index_v1.html`| Channel expansion with metadata        | [View](https://sohag1192.github.io/Live-Tv-Server/index_v1.html) |
-| `index_v2.html`| Interactive grid with JW Player & stats| [View](https://sohag1192.github.io/Live-Tv-Server/index_v2.html) |
-| `index_v3.html`| Finalized layout with branded polish   | [View](https://sohag1192.github.io/Live-Tv-Server/index_v3.html) |
-
-🔗 **Latest Unified Interface:**  
-[Live-Tv-Server Web Interface](https://sohag1192.github.io/Live-Tv-Server)
+| Player View | Path | Description |
+| :--- | :--- | :--- |
+| **Primary Web TV Player** | [`index.html`](index.html) | Glassmorphic interface with full player controls, channel grid list, search, category chips, and dark/light mode. |
+| **Cinema / Netflix Mode** | [`Web Tv-V1/index.html`](Web%20Tv-V1/index.html) | Netflix-inspired cinematic layout with sticky 16:9 player, multi-theme selector, and channel catalog. |
+| **TV Guide View** | [`Web Tv-V2/index.html`](Web%20Tv-V2/index.html) | Multi-channel TV guide view with quick preview switching. |
+| **Standalone Stream Players** | [`Web Tv-V2/tv1.html`](Web%20Tv-V2/tv1.html) ... `tv12.html` | Minimalist dedicated channel players for embeds and iframe integration. |
 
 ---
 
-## 🔧 Version Highlights & Evolution Summary
+## ⌨️ Keyboard Shortcuts
 
-The Live TV Server has evolved through five major iterations, each introducing key improvements:
-
-### 🟢 `index.html` – Branding & Identity
-- Premium branding with clean header  
-- Developer credit and copyright  
-- Foundation for modular layout
-
-### 🟡 `index_v0.html` – Minimalist Prototype
-- Single-channel streaming (Sports Channel 1)  
-- Lightweight demo for initial testing
-
-### 🔵 `index_v1.html` – Channel Expansion & Metadata
-- Multi-channel listing (12/250)  
-- Live sports metadata (Premier League match)  
-- Categorization: Sports, Movies, News, Music, Kids
-
-### 🟣 `index_v2.html` – Interactive Demo & Visual Grid
-- JW Player with keyboard shortcuts  
-- Placeholder thumbnails for previews  
-- Visitor counters and GitHub hit tracking
-
-### 🔴 `index_v3.html` – Finalized Layout & Branding Polish
-- Branded thumbnails and enhanced layout  
-- Fullscreen support and streaming controls  
-- GitHub + country-based visitor analytics
+| Shortcut | Action |
+| :---: | :--- |
+| <kbd>↑</kbd> / <kbd>←</kbd> | Previous Channel |
+| <kbd>↓</kbd> / <kbd>→</kbd> | Next Channel |
+| <kbd>Space</kbd> | Play / Pause Stream |
+| <kbd>M</kbd> | Mute / Unmute Audio |
+| <kbd>F</kbd> | Toggle Fullscreen Mode |
+| <kbd>P</kbd> | Toggle Picture-in-Picture (PiP) |
+| <kbd>/</kbd> | Focus Instant Search Bar |
+| <kbd>Esc</kbd> | Exit Search / Exit Fullscreen |
 
 ---
 
-## 🚀 What’s New in `v1.3.0`
-- Unified layout combining best elements from all versions  
-- Modular CSS/JS for dynamic channel loading  
-- Optimized JW Player setup for modern devices  
-- Visitor analytics integration (GitHub hits + country stats)  
-- Responsive design for mobile and desktop  
-- Metadata-ready for channel grouping (e.g., Bangla group)
+## 🔒 Stream Security & Encryption
+
+To prevent stream scraping and safeguard media sources:
+- All `.m3u8` and `.mpd` endpoints along with Widevine DRM license configurations are encoded with a **multi-round stream cipher and Base64 vault**.
+- Decryption happens **in-memory at runtime** in the browser right before attaching to the player instance.
+- DOM attributes do not expose raw stream URLs.
 
 ---
 
-## 🛠️ Installation Guide for Live-Tv-Server V.110.0
+## 🚀 Quick Start
 
-### 📦 Step-by-Step Setup on Ubuntu
-
-#### 1️⃣ Update Your System
+### 1. Clone the Repository
 ```bash
-sudo apt update && sudo apt upgrade -y
+git clone https://github.com/sohag1192/Live-Tv-Server.git
+cd Live-Tv-Server
 ```
 
-#### 2️⃣ Install Required Packages
+### 2. Run Locally
+You can open `index.html` directly in any modern browser, or run a local static server:
+
 ```bash
-sudo apt install nginx ffmpeg php php-fpm unzip -y
+# Using Python
+python -m http.server 8080
+
+# Using Node.js (npx)
+npx serve .
 ```
 
-#### 3️⃣ Download the Release
-```bash
-wget https://github.com/sohag1192/Live-Tv-Server/archive/refs/tags/V.110.0.zip
-unzip V.110.0.zip
-cd Live-Tv-Server-V.110.0
-```
+Visit `http://localhost:8080` in your web browser.
 
-#### 4️⃣ Restart NGINX
-```bash
-sudo systemctl restart nginx
+---
+
+## 📁 Repository Structure
+
+```text
+Live-Tv-Server/
+├── index.html              # Primary Web TV Player (Glassmorphic UI + Full Controls)
+├── README.md               # Project documentation & guide
+├── upload.bat              # Quick Git deployment script
+├── Web Tv-V1/
+│   └── index.html          # Cinema / Netflix-style player with multi-theme switcher
+└── Web Tv-V2/
+    ├── index.html          # Interactive TV Guide player
+    ├── test.html           # Standalone stream tester
+    ├── tv1.html            # ATN News standalone player
+    ├── tv2.html            # ATN Bangla standalone player
+    ├── tv3.html            # Banglavision standalone player
+    ├── tv4.html            # BTV standalone player
+    ├── tv5.html            # Channel I standalone player
+    ├── tv6.html            # Channel 24 standalone player
+    ├── tv7.html            # Deepto TV standalone player
+    ├── tv8.html            # Ekattor TV standalone player
+    ├── tv9.html            # Independent TV standalone player
+    ├── tv10.html           # Jamuna TV standalone player
+    ├── tv11.html           # NTV standalone player
+    └── tv12.html           # News 24 standalone player
 ```
 
 ---
 
-## 🙋 Contributing
+## 🛠️ Built With
 
-- Issues and pull requests are welcome.  
-- If you find bugs or want to suggest improvements, please open an issue or PR.  
-
-📬 **Contact via Mail:** [sohag1192@gmail.com](mailto:sohag1192@gmail.com)
-
-📬 **Contact via Telegram:** [Md_Sohag_Rana](https://t.me/Md_Sohag_Rana)
-
----
-
-## 🌟 Support
-
-If you enjoy this project, please ⭐ it on GitHub — your support motivates future updates!
-
+- **HTML5 / CSS3 / JavaScript (ES6+)**
+- [**Hls.js**](https://github.com/video-dev/hls.js) – JavaScript HLS client
+- [**Google Shaka Player**](https://github.com/shaka-project/shaka-player) – JavaScript DASH/DRM player
+- [**Bootstrap 5**](https://getbootstrap.com/) – Responsive grid layout
+- [**Font Awesome 6**](https://fontawesome.com/) – Icons
+- [**Google Fonts**](https://fonts.google.com/) – *Plus Jakarta Sans* typography
 
 ---
 
+## 👤 Author & Support
+
+- **Developer**: **Md Sohag Rana**
+- **Telegram**: [@MdSohagRana](https://t.me/MdSohagRana)
+- **GitHub**: [@sohag1192](https://github.com/sohag1192)
+
+---
+
+<div align="center">
+
+Made with ❤️ by **Md Sohag Rana** • &copy; 2026 Live TV Server
+
+</div>

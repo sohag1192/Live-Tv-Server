@@ -340,17 +340,21 @@ Your donations help cover hosting, proxy bandwidth, and server maintenance costs
 
 <div align="center">
 
-| Payment Method | Address / Details | Action |
+| Payment Method | Details | Action |
 | :--- | :--- | :---: |
-| **Crypto (SOL / USDT / Multi-Chain)** | `9YEThZFaqmqPbPJt8f4jLxPKELMzUmgncsrqvCv44BjE` | [![Crypto](https://img.shields.io/badge/Crypto-Wallet_Address-26A17B?style=for-the-badge&logo=tether&logoColor=white)](https://t.me/Md_Sohag_Rana) |
+| **Crypto (SOL / USDT / Multi-Chain)** | Multi-Network Wallet | [![Crypto](https://img.shields.io/badge/Crypto-Wallet_Address-26A17B?style=for-the-badge&logo=tether&logoColor=white)](https://t.me/Md_Sohag_Rana) |
 | **bKash (Personal)** | Send Money (BD) — Contact on Telegram | [![bKash](https://img.shields.io/badge/bKash-Contact-E2136E?style=for-the-badge&logo=bkash&logoColor=white)](https://t.me/Md_Sohag_Rana) |
 | **Nagad (Personal)** | Send Money (BD) — Contact on Telegram | [![Nagad](https://img.shields.io/badge/Nagad-Contact-F7941D?style=for-the-badge&logoColor=white)](https://t.me/Md_Sohag_Rana) |
 | **Buy Me A Coffee** | Global Creator Support | [![BuyMeACoffee](https://img.shields.io/badge/Buy_Me_A_Coffee-Support-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://t.me/Md_Sohag_Rana) |
 
-> 💎 **Crypto Wallet Address (Click to Copy):**  
-> `9YEThZFaqmqPbPJt8f4jLxPKELMzUmgncsrqvCv44BjE`
-
 </div>
+
+> [!TIP]
+> ### 💎 Crypto Wallet Address (SOL / USDT / Multi-Chain):
+> ```text
+> 9YEThZFaqmqPbPJt8f4jLxPKELMzUmgncsrqvCv44BjE
+> ```
+> *(Click the **Copy button 📋** on the top-right corner of the box above to copy instantly)*
 
 ---
 

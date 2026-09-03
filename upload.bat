@@ -5,12 +5,12 @@ REM  Author    : sohag1192
 REM  Date      : %date% %time%
 REM ============================================
 
-cd /d "C:\Users\sohag\OneDrive\Desktop\My Project\Live-Tv-Server"
+cd /d "D:\My_Project\Live-Tv-Server"
 
 IF NOT EXIST ".git" (
     echo Initializing new Git repository...
     git init
-    git remote add origin https://github.com/sohag1192/how-to-forward-dns-TCP-UDP-to-mikrotik-dns.git
+    git remote add origin https://github.com/sohag1192/Live-Tv-Server.git
     git branch -M master
 )
 

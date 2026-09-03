@@ -21,8 +21,8 @@
         :root {
             --bg-base: #0f111a;
             --bg-surface: #171926;
-            --bg-card: rgba(255, 255, 255, 0.04);
-            --bg-card-hover: rgba(255, 255, 255, 0.08);
+            --bg-card: rgba(255, 255, 255, 0.05);
+            --bg-card-hover: rgba(255, 255, 255, 0.1);
             --border-color: rgba(255, 255, 255, 0.08);
             --accent: #a855f7;
             --accent-glow: rgba(168, 85, 247, 0.35);
@@ -33,8 +33,8 @@
         body.light-theme {
             --bg-base: #f3f4f6;
             --bg-surface: #ffffff;
-            --bg-card: rgba(0, 0, 0, 0.03);
-            --bg-card-hover: rgba(0, 0, 0, 0.06);
+            --bg-card: rgba(0, 0, 0, 0.04);
+            --bg-card-hover: rgba(0, 0, 0, 0.08);
             --border-color: rgba(0, 0, 0, 0.08);
             --accent: #7c3aed;
             --text-main: #111827;
@@ -53,7 +53,6 @@
             transition: all 0.3s ease;
         }
 
-        /* Top Nav */
         .guide-navbar {
             position: sticky;
             top: 0;
@@ -74,7 +73,6 @@
             padding: 24px;
         }
 
-        /* Player Box */
         .guide-player-card {
             background: var(--bg-surface);
             border-radius: 16px;
@@ -107,13 +105,13 @@
             border-bottom: 1px solid var(--border-color);
         }
 
-        /* Sidebar Channel Guide */
         .guide-sidebar {
             background: var(--bg-surface);
             border-radius: 16px;
             border: 1px solid var(--border-color);
             padding: 18px;
             height: calc(100vh - 120px);
+            min-height: 580px;
             display: flex;
             flex-direction: column;
         }
@@ -166,71 +164,87 @@
         .guide-grid-area {
             flex: 1;
             overflow-y: auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(115px, 1fr));
-            gap: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
             padding-right: 4px;
-            align-content: start;
         }
 
         .guide-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 12px;
+            min-height: 60px;
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 10px;
-            overflow: hidden;
             cursor: pointer;
             transition: all 0.2s ease;
         }
 
         .guide-card:hover {
-            transform: translateY(-3px);
+            transform: translateX(4px);
             border-color: var(--accent);
             background: var(--bg-card-hover);
         }
 
         .guide-card.active {
             border-color: var(--accent);
-            box-shadow: 0 0 0 2px var(--accent), 0 6px 20px var(--accent-glow);
+            background: rgba(168, 85, 247, 0.16);
+            box-shadow: 0 0 0 1.5px var(--accent), 0 4px 20px var(--accent-glow);
         }
 
         .guide-thumb-wrap {
-            width: 100%;
-            aspect-ratio: 16/10;
+            width: 50px;
+            min-width: 50px;
+            height: 40px;
+            border-radius: 8px;
             background: #000;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 6px;
+            padding: 3px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            flex-shrink: 0;
         }
 
         .guide-thumb-wrap img {
-            max-width: 90%;
-            max-height: 90%;
+            max-width: 100%;
+            max-height: 100%;
             object-fit: contain;
+            display: block;
         }
 
         .guide-card-info {
-            padding: 6px 8px;
-            text-align: center;
-            border-top: 1px solid var(--border-color);
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 2px;
+            text-align: left;
         }
 
         .guide-card-name {
-            font-size: 0.8rem;
+            font-size: 0.86rem;
             font-weight: 700;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            color: var(--text-main);
         }
 
         .guide-card-group {
-            font-size: 0.68rem;
+            font-size: 0.72rem;
             color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
     </style>
 </head>
 <body>
-    <!-- Top Nav -->
     <header class="guide-navbar">
         <div class="d-flex align-items-center justify-content-between max-width-1720 mx-auto">
             <a href="../index.html" class="d-flex align-items-center gap-2 text-decoration-none text-white fw-bold">
@@ -248,10 +262,8 @@
         </div>
     </header>
 
-    <!-- Main Container -->
     <main class="guide-container">
         <div class="row g-4">
-            <!-- Left: Video Player -->
             <div class="col-lg-8 col-xl-9">
                 <div class="guide-player-card">
                     <div class="guide-info-header">
@@ -268,7 +280,6 @@
                 </div>
             </div>
 
-            <!-- Right: Channel Guide Sidebar -->
             <div class="col-lg-4 col-xl-3">
                 <div class="guide-sidebar">
                     <div class="position-relative">
@@ -398,13 +409,17 @@
             filtered.forEach(c => {
                 const card = document.createElement('div');
                 card.className = `guide-card ${c.index === curIdx ? 'active' : ''}`;
+                const isDrm = c.url.includes('.mpd') || !!c.licenseKey;
                 card.innerHTML = `
                     <div class="guide-thumb-wrap">
                         <img src="${c.logo}" alt="${c.name}" onerror="this.src='https://placehold.co/420x300/111/fff?text=${encodeURIComponent(c.name)}'">
                     </div>
                     <div class="guide-card-info">
-                        <div class="guide-card-name">${c.name}</div>
-                        <div class="guide-card-group">${c.group}</div>
+                        <div class="guide-card-name">#${c.chno} ${c.name}</div>
+                        <div class="guide-card-group">
+                            <span>${c.group}</span>
+                            ${isDrm ? '<span class="badge bg-danger" style="font-size:0.6rem;padding:2px 4px;">DRM</span>' : ''}
+                        </div>
                     </div>
                 `;
                 card.onclick = () => playCh(c.index);
@@ -449,7 +464,6 @@
 
         search.oninput = renderGrid;
 
-        // Theme Toggle
         const themeToggle = document.getElementById('guideThemeToggle');
         const themeIcon = document.getElementById('guideThemeIcon');
         themeToggle.onclick = () => {

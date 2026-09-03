@@ -1,539 +1,589 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <title>Premium Live TV Streaming | Watch HD Channels Online</title>
-    <meta name="description" content="Experience high-quality Premium Live TV Streaming. Watch your favorite sports, news, and entertainment channels seamlessly in HD anywhere, anytime.">
-    <meta name="keywords" content="Live TV, HD Streaming, IPTV, Premium TV, Watch TV Online, Sports Streaming, Bdix Live TV, Web Player">
-    <meta name="author" content="Sohag1192">
-    <meta name="robots" content="index, follow">
-    
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://yourwebsite.com/">
-    <meta property="og:title" content="Premium Live TV Streaming | Watch HD Channels Online">
-    <meta property="og:description" content="Experience high-quality Premium Live TV Streaming. Watch your favorite sports, news, and entertainment channels seamlessly in HD.">
-    <meta property="og:image" content="https://placehold.co/1200x630/e50914/ffffff?text=Premium+Live+TV">
-    
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://yourwebsite.com/">
-    <meta property="twitter:title" content="Premium Live TV Streaming | Watch HD Channels Online">
-    <meta property="twitter:description" content="Experience high-quality Premium Live TV Streaming. Watch your favorite sports, news, and entertainment channels seamlessly in HD.">
-    <meta property="twitter:image" content="https://placehold.co/1200x630/e50914/ffffff?text=Premium+Live+TV">
-    <link rel="shortcut icon" href="https://placehold.co/16x16/000000/ffffff?text=TV"/>
-    <link rel="icon" href="favicon.png">
+    <meta name="description" content="Cinema Live TV Streaming - Watch 54+ HD Channels in Cinema View">
+    <link rel="shortcut icon" href="https://placehold.co/16x16/e50914/ffffff?text=TV"/>
+    <title>Cinema Live TV | Premium Streaming Service</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Streaming Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.compiled.js"></script>
 
     <style>
-        :root{
-            --primary: #e50914; /* Netflix Red */
-            --primary-hover: #ff0f1e;
-            --dark: #0a0a0a;
-            --light: #f5f5f5;
-            --semi-transparent: rgba(20, 20, 20, 0.75);
-            --dark-transparent: rgba(10, 10, 10, 0.85);
-            --card-bg: rgba(255, 255, 255, 0.04);
-            --muted: #a3a3a3;
+        :root, [data-theme="dark"] {
+            --primary: #e50914;
+            --primary-glow: rgba(229, 9, 20, 0.4);
+            --bg-base: #0a0a0a;
+            --bg-surface: rgba(18, 18, 18, 0.9);
+            --bg-card: rgba(255, 255, 255, 0.04);
+            --bg-card-hover: rgba(255, 255, 255, 0.08);
             --border-glass: rgba(255, 255, 255, 0.08);
+            --text-color: #f5f5f5;
+            --text-muted: #a3a3a3;
+            --nav-bg: rgba(10, 10, 10, 0.88);
         }
 
-        html, body {
-            height: 100%;
-            scroll-behavior: smooth;
+        [data-theme="light"] {
+            --primary: #0d6efd;
+            --primary-glow: rgba(13, 110, 253, 0.35);
+            --bg-base: #f0f2f5;
+            --bg-surface: rgba(255, 255, 255, 0.92);
+            --bg-card: rgba(0, 0, 0, 0.03);
+            --bg-card-hover: rgba(0, 0, 0, 0.06);
+            --border-glass: rgba(0, 0, 0, 0.08);
+            --text-color: #111827;
+            --text-muted: #4b5563;
+            --nav-bg: rgba(255, 255, 255, 0.9);
         }
+
+        [data-theme="green"] {
+            --primary: #10b981;
+            --primary-glow: rgba(16, 185, 129, 0.4);
+            --bg-base: #061810;
+            --bg-surface: rgba(8, 28, 19, 0.9);
+            --bg-card: rgba(16, 185, 129, 0.06);
+            --bg-card-hover: rgba(16, 185, 129, 0.12);
+            --border-glass: rgba(16, 185, 129, 0.15);
+            --text-color: #ecfdf5;
+            --text-muted: #6ee7b7;
+            --nav-bg: rgba(6, 24, 16, 0.9);
+        }
+
+        [data-theme="purple"] {
+            --primary: #a855f7;
+            --primary-glow: rgba(168, 85, 247, 0.4);
+            --bg-base: #0e071c;
+            --bg-surface: rgba(22, 12, 42, 0.9);
+            --bg-card: rgba(168, 85, 247, 0.06);
+            --bg-card-hover: rgba(168, 85, 247, 0.14);
+            --border-glass: rgba(168, 85, 247, 0.15);
+            --text-color: #faf5ff;
+            --text-muted: #c084fc;
+            --nav-bg: rgba(14, 7, 28, 0.9);
+        }
+
+        * { box-sizing: border-box; }
 
         body {
-            /* Premium cinematic gradient background */
-            background: radial-gradient(circle at top, #2b0b12 0%, #0a0a0a 40%, #000000 100%);
-            color: var(--light);
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            min-height: 100vh;
+            background: radial-gradient(circle at top, rgba(229,9,20,0.15) 0%, var(--bg-base) 60%);
+            color: var(--text-color);
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
             margin: 0;
-            padding-top: 76px; /* Space for navbar */
+            padding-top: 76px;
+            min-height: 100vh;
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
-        /* ---------- CUSTOM SCROLLBAR ---------- */
-        ::-webkit-scrollbar { width: 8px; height: 6px; }
+        /* Scrollbars */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-thumb { background: var(--border-glass); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
-        ::-webkit-scrollbar-track { background: transparent; }
 
-        /* ---------- NAVBAR ---------- */
+        /* Navbar */
         .navbar-custom {
-            background-color: var(--dark-transparent);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border-glass);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
-            padding: 12px 0;
-        }
-        
-        .navbar-custom .navbar-brand {
-            color: var(--light);
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 16px;
-            padding: 8px 14px;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-        
-        .navbar-custom .navbar-brand i { color: var(--primary); }
-        .navbar-custom .navbar-brand:hover { background: var(--card-bg); text-shadow: 0 0 8px rgba(229,9,20,0.4); }
-
-        .navbar-custom .nav-link {
-            color: var(--muted) !important;
-            font-weight: 500;
-            padding: 8px 14px;
-            margin: 0 2px;
-            transition: all 0.3s ease;
-            border-radius: 6px;
-        }
-        
-        .navbar-custom .nav-link:hover {
-            color: var(--light) !important;
-            background: var(--card-bg);
-            transform: translateY(-1px);
-        }
-
-        .navbar-custom .navbar-collapse {
-            background: transparent;
-        }
-
-        @media (max-width: 991px) {
-            .navbar-custom .navbar-collapse {
-                background: #111;
-                border-radius: 8px;
-                padding: 10px;
-                margin-top: 10px;
-                border: 1px solid var(--border-glass);
-            }
-        }
-
-        /* ---------- PLAYER ---------- */
-        .player-sticky {
-            position: sticky;
-            top: 96px; 
-            z-index: 100;
-            align-self: start;
-        }
-
-        .player-container {
-            width: 100%;
-            background: #000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
-            border: 1px solid var(--border-glass);
-        }
-
-        .video-js {
-            width: 100% !important;
-            height: 65vh !important;
-            object-fit: contain;
-        }
-
-        /* ---------- NOW PLAYING ---------- */
-        .now-playing {
-            display: inline-block;
-            background: linear-gradient(135deg, var(--primary) 0%, #a0060e 100%);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 50px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            box-shadow: 0 4px 15px rgba(229, 9, 20, 0.4);
-            letter-spacing: 0.5px;
-        }
-
-        /* ---------- CHANNEL LIST PANEL ---------- */
-        .channel-list {
-            background-color: var(--semi-transparent);
+            background-color: var(--nav-bg);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border-radius: 16px;
-            padding: 22px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            border: 1px solid var(--border-glass);
-            height: calc(100vh - 130px);
-            overflow-y: auto;
-            overflow-x: hidden;
+            border-bottom: 1px solid var(--border-glass);
+            padding: 12px 0;
         }
 
-        .channel-list h5 {
-            color: var(--light);
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-
-        /* ---------- SEARCH BOX ---------- */
-        .channel-search input {
-            width: 100%;
-            padding: 12px 16px;
-            border-radius: 10px;
-            border: 1px solid var(--border-glass);
-            background: rgba(0,0,0,0.5);
-            color: var(--light);
-            transition: 0.3s;
-            margin-bottom: 20px;
-        }
-        .channel-search input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 10px rgba(229,9,20,0.2);
-            background: rgba(0,0,0,0.8);
-        }
-
-        /* ---------- CHANNEL GRID & CARDS ---------- */
-        #vidlink {
-            display: grid;
-            grid-template-columns: repeat(1, 1fr);
-            gap: 16px;
-            padding: 0 4px 10px 4px;
-            margin: 0;
-            list-style: none;
-        }
-
-        @media (min-width: 992px) { #vidlink { grid-template-columns: repeat(2, 1fr); } }
-        @media (min-width: 1400px) { #vidlink { grid-template-columns: repeat(3, 1fr); } }
-
-        #vidlink .channel {
-            display: flex;
-            flex-direction: column;
+        .navbar-brand {
+            color: var(--text-color) !important;
+            font-weight: 800;
+            display: inline-flex;
             align-items: center;
             gap: 10px;
-            background: var(--card-bg);
-            border-radius: 12px;
-            overflow: hidden;
-            transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
-            border: 1px solid transparent;
-            padding: 12px;
+            font-size: 1.2rem;
+        }
+
+        .navbar-brand i { color: var(--primary); }
+
+        .nav-link {
+            color: var(--text-muted) !important;
+            font-weight: 600;
+            font-size: 0.88rem;
+            padding: 8px 14px !important;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--text-color) !important;
+            background: var(--bg-card);
+        }
+
+        /* Theme Dropdown */
+        .theme-select {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            color: var(--text-color);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            outline: none;
             cursor: pointer;
         }
-        
-        #vidlink .channel:hover {
-            transform: translateY(-4px) scale(1.02);
-            background: rgba(255,255,255,0.08);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            border-color: rgba(255,255,255,0.2);
-        }
 
-        #vidlink .thumb {
-            width: 100%;
-            max-width: 110px;
-            aspect-ratio: 1/1;
-            display: block;
-            border-radius: 8px;
-            object-fit: contain;
-            background: rgba(0,0,0,0.3);
-            padding: 8px;
-            transition: 0.3s;
-        }
-
-        .channel-label {
-            width: 100%;
-            text-align: center;
-            color: var(--muted);
-            font-weight: 600;
-            font-size: 13px;
-            padding: 6px;
-            border-radius: 6px;
-            transition: 0.3s;
-        }
-
-        /* ---------- ACTIVE STATE ---------- */
-        .channel.selected {
-            border: 1px solid var(--primary) !important;
-            background: linear-gradient(to bottom, rgba(229,9,20,0.1), rgba(0,0,0,0.5)) !important;
-            box-shadow: 0 8px 25px rgba(229,9,20,0.2) !important;
-        }
-        .channel.selected .channel-label {
-            color: var(--light);
-            background: var(--primary);
-        }
-
-        /* ---------- MOBILE RESPONSIVENESS ---------- */
-        @media (max-width: 991px) {
-            .video-js { height: 40vh !important; }
-            .player-sticky { margin-bottom: 0px; top: 76px; }
-            body { padding-top: 76px; }
-
-            .channel-list {
-                height: auto;
-                padding: 15px 0;
-                background: transparent;
-                box-shadow: none;
-                border: none;
-            }
-            .channel-list h5, .channel-list p.small { padding: 0 15px; }
-
-            #vidlink {
-                display: flex;
-                flex-direction: row;
-                overflow-x: auto;
-                scroll-snap-type: x mandatory;
-                gap: 12px;
-                padding: 5px 15px 15px 15px;
-            }
-            #vidlink > li {
-                flex: 0 0 100px;
-                scroll-snap-align: start;
-            }
-            .channel-label { display: none !important; }
-        }
-
-        /* ---------- FOOTER ---------- */
-        .copyright-footer {
-            background-color: var(--dark-transparent);
-            backdrop-filter: blur(10px);
-            color: var(--muted);
-            text-align: center;
+        /* Main Layout */
+        .cinema-container {
+            max-width: 1720px;
+            margin: 0 auto;
             padding: 20px;
-            margin-top: 30px;
-            font-size: 14px;
-            border-top: 1px solid var(--border-glass);
-            border-radius: 12px;
         }
-        .copyright-footer a { color: var(--light); text-decoration: none; transition: 0.2s; }
-        .copyright-footer a:hover { color: var(--primary); }
+
+        .player-sticky {
+            position: sticky;
+            top: 96px;
+            z-index: 50;
+        }
+
+        .player-wrapper {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%;
+            background: #000;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-glass);
+        }
+
+        .player-wrapper video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .cinema-info-bar {
+            margin-top: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            background: var(--bg-surface);
+            padding: 12px 18px;
+            border-radius: 12px;
+            border: 1px solid var(--border-glass);
+        }
+
+        .now-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .live-tag {
+            background: var(--primary);
+            color: #fff;
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 20px;
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        /* Sidebar Channel List */
+        .cinema-sidebar {
+            background: var(--bg-surface);
+            backdrop-filter: blur(16px);
+            border-radius: 16px;
+            padding: 18px;
+            border: 1px solid var(--border-glass);
+            height: calc(100vh - 120px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 14px 10px 36px;
+            border-radius: 10px;
+            border: 1px solid var(--border-glass);
+            background: rgba(0, 0, 0, 0.25);
+            color: var(--text-color);
+            outline: none;
+            font-size: 0.88rem;
+            margin-bottom: 12px;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .cat-chips-row {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            scrollbar-width: none;
+        }
+
+        .cat-chips-row::-webkit-scrollbar { display: none; }
+
+        .chip-btn {
+            white-space: nowrap;
+            padding: 4px 10px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border-radius: 20px;
+            background: var(--bg-card);
+            color: var(--text-muted);
+            border: 1px solid var(--border-glass);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .chip-btn.active, .chip-btn:hover {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+
+        .cinema-channel-list {
+            flex: 1;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(115px, 1fr));
+            gap: 10px;
+            padding-right: 4px;
+            align-content: start;
+        }
+
+        .cinema-channel-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+            position: relative;
+        }
+
+        .cinema-channel-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+            background: var(--bg-card-hover);
+        }
+
+        .cinema-channel-card.active {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px var(--primary), 0 6px 20px var(--primary-glow);
+        }
+
+        .card-img-wrap {
+            width: 100%;
+            aspect-ratio: 16/10;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px;
+        }
+
+        .card-img-wrap img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+        }
+
+        .card-info {
+            padding: 6px 8px;
+            text-align: center;
+            border-top: 1px solid var(--border-glass);
+        }
+
+        .card-name-text {
+            font-size: 0.8rem;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-group-text {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+        }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/"><i class="fas fa-play"></i> PREMIUM TV</a>
-
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
-                    aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
+    <!-- Top Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand" href="../index.html">
+                <i class="fas fa-film"></i>
+                <span>Cinema TV</span>
+            </a>
+            
+            <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                <i class="fas fa-bars"></i>
             </button>
 
-            <div class="collapse navbar-collapse" id="mainNav">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link" href="http://172.16.50.4"><i class="fas fa-tv me-1"></i> FTP 1</a></li>
-                    <li class="nav-item"><a class="nav-link" href="http://10.16.100.244"><i class="fas fa-mobile-screen me-1"></i> FTP 2</a></li>
-                    <li class="nav-item"><a class="nav-link" href="http://172.50.50.20/"><i class="fas fa-server me-1"></i> FTP 3</a></li>
-                    <li class="nav-item"><a class="nav-link" href="http://100.100.100.6"><i class="fas fa-server me-1"></i> FTP 4</a></li>
-                    <li class="nav-item"><a class="nav-link" href="http://100.100.100.6:8096/"><i class="fas fa-film me-1"></i> FTP 5</a></li>
-                    <li class="nav-item"><a class="nav-link" href="http://10.30.30.30/"><i class="fas fa-satellite-dish me-1"></i> IPTV 1</a></li>
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html"><i class="fas fa-border-all me-1"></i>Standard View</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html"><i class="fas fa-clapperboard me-1"></i>Cinema View</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../Web%20Tv-V2/index.html"><i class="fas fa-table-list me-1"></i>TV Guide</a>
+                    </li>
                 </ul>
+
+                <div class="d-flex align-items-center gap-3">
+                    <select class="theme-select" id="themeSelect">
+                        <option value="dark">🍿 Netflix Dark</option>
+                        <option value="light">☀️ Light Blue</option>
+                        <option value="green">🍃 Cyber Green</option>
+                        <option value="purple">🔮 Synth Purple</option>
+                    </select>
+                </div>
             </div>
         </div>
     </nav>
 
-    <div class="container-fluid px-3 px-lg-4">
-        <div class="row justify-content-center g-4">
+    <!-- Main Container -->
+    <div class="cinema-container">
+        <div class="row g-4">
+            <!-- Video Player Column -->
+            <div class="col-lg-8 col-xl-9">
+                <div class="player-sticky">
+                    <div class="player-wrapper">
+                        <video id="cinemaVideo" controls autoplay playsinline></video>
+                    </div>
 
-            <div class="col-12 col-lg-8 mt-4 player-sticky">
-                <div class="player-container">
-                    <video id="Sohag_Player"
-                            class="video-js vjs-default-skin vjs-big-play-centered vjs-fill"
-                            controls
-                            preload="auto"
-                            data-setup='{}'>
-                        <source src="http://172.16.234.30:9090/hls/channel_1.m3u8" type="application/x-mpegURL" />
-                    </video>
-                </div>
-
-                <div id="nowPlayingWrapper" class="mt-4 d-none d-lg-flex justify-content-between align-items-center">
-                    <span id="nowPlaying" class="now-playing">
-                        <i class="fas fa-circle-play me-2"></i>Now Playing: Channel 1
-                    </span>
+                    <div class="cinema-info-bar">
+                        <h2 class="now-title" id="cinemaTitle">
+                            <span class="live-tag" id="cinemaChno">#1 LIVE</span>
+                            <span id="cinemaName">Somoy tv</span>
+                        </h2>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-secondary" id="cinemaGroup">News</span>
+                            <button class="btn btn-sm btn-outline-light" id="cinemaReloadBtn">
+                                <i class="fas fa-rotate-right"></i> Reload
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="col-12 col-lg-4 mt-lg-4 mt-2">
-                <div class="channel-list">
-                    <div class="d-flex justify-content-between align-items-center mb-1">
-                        <h5><i class="fas fa-broadcast-tower me-2 text-danger"></i>Channels</h5>
-                    </div>
-                    <p class="small text-muted mb-3">Click any channel to start streaming</p>
-
-                    <div class="channel-search d-none d-lg-block">
-                        <input id="channelFilter" type="text" placeholder="Search channels..." oninput="filterChannels()" />
+            <!-- Channels Column -->
+            <div class="col-lg-4 col-xl-3">
+                <div class="cinema-sidebar">
+                    <div class="position-relative">
+                        <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                        <input type="text" class="search-input" id="cinemaSearch" placeholder="Search 54+ channels...">
                     </div>
 
-                    <ul id="vidlink" class="thumbnail-slider">
-                        <li class="Sports">
-                            <div class="channel" onclick="switchChannel('http://172.16.234.30:9090/hls/channel_1.m3u8','Channel 1', this)" title="Channel 1">
-                                <img class="thumb" src="assets/images/1.jpg" alt="Channel 1" onerror="this.src='https://placehold.co/100x100/111/fff?text=CH1'">
-                                <div class="channel-label">Channel 1</div>
-                            </div>
-                        </li>
-                        <li class="Sports">
-                            <div class="channel" onclick="switchChannel('http://172.16.234.30:9090/hls2/ch2.m3u8','Channel 2', this)" title="Channel 2">
-                                <img class="thumb" src="assets/images/2.jpg" alt="Channel 2" onerror="this.src='https://placehold.co/100x100/111/fff?text=CH2'">
-                                <div class="channel-label">Channel 2</div>
-                            </div>
-                        </li>
-                        <li class="Sports">
-                            <div class="channel" onclick="switchChannel('http://172.16.234.30:9090/hls3/ch3.m3u8','Channel 3', this)" title="Channel 3">
-                                <img class="thumb" src="assets/images/3.jpg" alt="Channel 3" onerror="this.src='https://placehold.co/100x100/111/fff?text=CH3'">
-                                <div class="channel-label">Channel 3</div>
-                            </div>
-                        </li>
-                        <li class="Sports">
-                            <div class="channel" onclick="switchChannel('http://172.16.234.30:9090/hls4/ch4.m3u8','Channel 4', this)" title="Channel 4">
-                                <img class="thumb" src="assets/images/4.jpg" alt="Channel 4" onerror="this.src='https://placehold.co/100x100/111/fff?text=CH4'">
-                                <div class="channel-label">Channel 4</div>
-                            </div>
-                        </li>
-                        <li class="Sports">
-                            <div class="channel" onclick="switchChannel('http://172.16.234.30:9090/hls5/ch5.m3u8','Channel 5', this)" title="Channel 5">
-                                <img class="thumb" src="assets/images/5.jpg" alt="Channel 5" onerror="this.src='https://placehold.co/100x100/111/fff?text=CH5'">
-                                <div class="channel-label">Channel 5</div>
-                            </div>
-                        </li>
-                        <li class="Sports">
-                            <div class="channel" onclick="switchChannel('http://172.16.234.30:9090/hls6/ch6.m3u8','Channel 6', this)" title="Channel 6">
-                                <img class="thumb" src="assets/images/6.jpg" alt="Channel 6" onerror="this.src='https://placehold.co/100x100/111/fff?text=CH6'">
-                                <div class="channel-label">Channel 6</div>
-                            </div>
-                        </li>
-                        <li class="Sports">
-                            <div class="channel" onclick="switchChannel('http://172.16.234.30:9090/hls7/ch7.m3u8','Channel 7', this)" title="Channel 7">
-                                <img class="thumb" src="assets/images/7.jpg" alt="Channel 7" onerror="this.src='https://placehold.co/100x100/111/fff?text=CH7'">
-                                <div class="channel-label">Channel 7</div>
-                            </div>
-                        </li>
-                        <li class="Sports">
-                            <div class="channel" onclick="switchChannel('http://172.16.234.30:8080/ch4/index.m3u8','Channel 8', this)" title="Channel 8">
-                                <img class="thumb" src="assets/images/8.jpg" alt="Channel 8" onerror="this.src='https://placehold.co/100x100/111/fff?text=CH8'">
-                                <div class="channel-label">Channel 8</div>
-                            </div>
-                        </li>
-                        <li class="Sports">
-                            <div class="channel" onclick="switchChannel('http://172.16.234.30:8080/ch9/index.m3u8','Channel 9', this)" title="Channel 9">
-                                <img class="thumb" src="assets/images/9.jpg" alt="Channel 9" onerror="this.src='https://placehold.co/100x100/111/fff?text=CH9'">
-                                <div class="channel-label">Channel 9</div>
-                            </div>
-                        </li>
-                        <li class="Sports">
-                            <div class="channel" onclick="switchChannel('http://172.16.234.30:8080/ch11/index.m3u8','Channel 10', this)" title="Channel 10">
-                                <img class="thumb" src="assets/images/10.jpg" alt="Channel 10" onerror="this.src='https://placehold.co/100x100/111/fff?text=CH10'">
-                                <div class="channel-label">Channel 10</div>
-                            </div>
-                        </li>
-                    </ul>
+                    <div class="cat-chips-row" id="cinemaCategories"></div>
+
+                    <div class="cinema-channel-list" id="cinemaChannelGrid"></div>
                 </div>
             </div>
-
         </div>
     </div>
-
-    <div class="container p-3 mb-3">
-        <div class="copyright-footer">
-            &copy; 2025 Bdix Live TV. All Rights Reserved.<br>
-            <span class="mt-1 d-block">
-                Developed by <a href="https://github.com/sohag1192" target="_blank" style="font-weight: 600;">Sohag1192</a>
-            </span>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
 
     <script>
-        // Initialize Video.js player
-        const player = videojs('Sohag_Player');
+        // --- Protected Encrypted Stream Vault ---
+        const _0xVaultKey = "LiveTvServer_SecureKey_2026@SohagRana";
+        const _0xVaultPayload = "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";
 
-        // Keep a reference to the currently selected channel element (for highlight)
-        let currentSelectedChannel = null;
-
-        function switchChannel(url, name, element) {
-            if (!url) return;
-
-            // update player src and play
-            player.src({ src: url, type: 'application/x-mpegURL' });
-            player.play().catch((e) => {
-                console.debug('Autoplay blocked or failed:', e);
-            });
-
-            // update Now Playing label (only visible on desktop)
-            const now = document.getElementById('nowPlaying');
-            if (now) now.innerHTML = `<i class="fas fa-circle-play me-2"></i>Now Playing: ${name}`;
-
-            // highlight selected tile
-            try {
-                if (currentSelectedChannel) currentSelectedChannel.classList.remove('selected');
-                const channelEl = element && element.classList && element.classList.contains('channel') ? element : element.closest('.channel');
-                if (channelEl) {
-                    channelEl.classList.add('selected');
-                    currentSelectedChannel = channelEl;
-                }
-            } catch (ex) {
-                console.warn('Highlighting channel failed', ex);
+        function _0xUnlock(encData, key) {
+            const raw = atob(encData);
+            const S = Array.from({length: 256}, (_, i) => i);
+            let j = 0;
+            const keyBytes = Array.from(key).map(c => c.charCodeAt(0));
+            for (let i = 0; i < 256; i++) {
+                j = (j + S[i] + keyBytes[i % keyBytes.length]) % 256;
+                [S[i], S[j]] = [S[j], S[i]];
             }
-
-            // scroll the channel tile into view (works for mobile horizontal)
-            if (element) {
-                const parentPanel = element.closest('.channel-list');
-                if (parentPanel) {
-                    element.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-                }
+            let i = 0;
+            j = 0;
+            const out = new Uint8Array(raw.length);
+            for (let x = 0; x < raw.length; x++) {
+                i = (i + 1) % 256;
+                j = (j + S[i]) % 256;
+                [S[i], S[j]] = [S[j], S[i]];
+                const k = S[(S[i] + S[j]) % 256];
+                out[x] = raw.charCodeAt(x) ^ k;
             }
+            return new TextDecoder().decode(out);
         }
 
-        // Filter/search functionality
-        function filterChannels() {
-            const searchContainer = document.querySelector('.channel-search');
-            if (!searchContainer) return;
-            if (window.getComputedStyle(searchContainer).display === 'none') return;
+        const rawM3U = _0xUnlock(_0xVaultPayload, _0xVaultKey);
 
-            const q = document.getElementById('channelFilter').value.trim().toLowerCase();
-            const items = document.querySelectorAll('#vidlink .channel');
-            items.forEach(ch => {
-                const label = (ch.querySelector('.channel-label')?.textContent || '').toLowerCase();
-                const title = (ch.getAttribute('title') || '').toLowerCase();
-                const alt = (ch.querySelector('.thumb')?.alt || '').toLowerCase();
-                if (!q || label.includes(q) || title.includes(q) || alt.includes(q)) {
-                    ch.parentElement.style.display = ''; 
-                } else {
-                    ch.parentElement.style.display = 'none';
+        function parseM3U(data) {
+            const lines = data.split('\n');
+            const chs = [];
+            let cur = {};
+            for (let l of lines) {
+                l = l.trim();
+                if (!l) continue;
+                if (l.startsWith('#KODIPROP:inputstream.adaptive.license_key=')) {
+                    cur.licenseKey = l.substring(44).trim();
+                } else if (l.startsWith('#EXTINF:')) {
+                    const idM = l.match(/tvg-id="([^"]+)"/);
+                    cur.id = idM ? idM[1] : (chs.length + 1);
+                    const chnoM = l.match(/tvg-chno="([^"]+)"/);
+                    cur.chno = chnoM ? chnoM[1] : (chs.length + 1);
+                    const logoM = l.match(/tvg-logo="([^"]+)"/);
+                    cur.logo = logoM ? logoM[1] : 'https://placehold.co/420x300/1e1e2f/ffffff?text=LIVE%20TV';
+                    const grpM = l.match(/group-title="([^"]+)"/);
+                    cur.group = grpM ? grpM[1] : 'General';
+                    const comma = l.lastIndexOf(',');
+                    cur.name = comma !== -1 ? l.substring(comma + 1).trim() : 'Live Channel';
+                } else if (l.startsWith('http://') || l.startsWith('https://')) {
+                    cur.url = l;
+                    cur.index = chs.length;
+                    chs.push(cur);
+                    cur = {};
                 }
+            }
+            return chs;
+        }
+
+        const channelData = parseM3U(rawM3U);
+        let curIdx = 0;
+        let curCat = 'ALL';
+        let hlsInst = null;
+        let shakaInst = null;
+
+        if (window.shaka) shaka.polyfill.installAll();
+
+        const video = document.getElementById('cinemaVideo');
+        const grid = document.getElementById('cinemaChannelGrid');
+        const catBox = document.getElementById('cinemaCategories');
+        const search = document.getElementById('cinemaSearch');
+
+        function initCatChips() {
+            const groups = {};
+            channelData.forEach(c => groups[c.group] = (groups[c.group] || 0) + 1);
+            catBox.innerHTML = '';
+            
+            const allBtn = document.createElement('button');
+            allBtn.className = 'chip-btn active';
+            allBtn.textContent = `All (${channelData.length})`;
+            allBtn.onclick = () => {
+                curCat = 'ALL';
+                document.querySelectorAll('.chip-btn').forEach(b => b.classList.remove('active'));
+                allBtn.classList.add('active');
+                renderGrid();
+            };
+            catBox.appendChild(allBtn);
+
+            Object.keys(groups).sort().forEach(g => {
+                const btn = document.createElement('button');
+                btn.className = 'chip-btn';
+                btn.textContent = `${g} (${groups[g]})`;
+                btn.onclick = () => {
+                    curCat = g;
+                    document.querySelectorAll('.chip-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    renderGrid();
+                };
+                catBox.appendChild(btn);
             });
         }
 
-        // Initialize: mark the first channel as selected on load
-        document.addEventListener('DOMContentLoaded', function() {
-            const first = document.querySelector('#vidlink .channel');
-            if (first) {
-                first.classList.add('selected');
-                currentSelectedChannel = first;
-            }
-        });
+        function renderGrid() {
+            grid.innerHTML = '';
+            const q = search.value.trim().toLowerCase();
+            const filtered = channelData.filter(c => {
+                const mCat = curCat === 'ALL' || c.group.toLowerCase() === curCat.toLowerCase();
+                const mSearch = !q || c.name.toLowerCase().includes(q) || c.group.toLowerCase().includes(q);
+                return mCat && mSearch;
+            });
 
-        // Keyboard navigation (left/right up/down)
-        document.addEventListener('keydown', function(e) {
-            if (!currentSelectedChannel) return;
-            const all = Array.from(document.querySelectorAll('#vidlink .channel')).filter(n => n.parentElement.style.display !== 'none');
-            const idx = all.indexOf(currentSelectedChannel);
-            if (idx === -1) return;
+            filtered.forEach(c => {
+                const card = document.createElement('div');
+                card.className = `cinema-channel-card ${c.index === curIdx ? 'active' : ''}`;
+                card.innerHTML = `
+                    <div class="card-img-wrap">
+                        <img src="${c.logo}" alt="${c.name}" onerror="this.src='https://placehold.co/420x300/111/fff?text=${encodeURIComponent(c.name)}'">
+                    </div>
+                    <div class="card-info">
+                        <div class="card-name-text">${c.name}</div>
+                        <div class="card-group-text">${c.group}</div>
+                    </div>
+                `;
+                card.onclick = () => playCh(c.index);
+                grid.appendChild(card);
+            });
+        }
 
-            let targetIdx = -1;
+        async function playCh(idx) {
+            curIdx = idx;
+            const ch = channelData[idx];
+            document.getElementById('cinemaChno').textContent = `#${ch.chno} LIVE`;
+            document.getElementById('cinemaName').textContent = ch.name;
+            document.getElementById('cinemaGroup').textContent = ch.group;
 
-            if (window.innerWidth < 992) {
-                if (e.key === 'ArrowRight') targetIdx = idx + 1;
-                else if (e.key === 'ArrowLeft') targetIdx = idx - 1;
+            if (hlsInst) { hlsInst.destroy(); hlsInst = null; }
+            if (shakaInst) { await shakaInst.destroy(); shakaInst = null; }
+
+            document.querySelectorAll('.cinema-channel-card').forEach((el, i) => {
+                el.classList.toggle('active', i === idx);
+            });
+
+            const isMpd = ch.url.includes('.mpd');
+            if (isMpd && window.shaka && shaka.Player.isBrowserSupported()) {
+                shakaInst = new shaka.Player(video);
+                if (ch.licenseKey) {
+                    shakaInst.configure({ drm: { servers: { 'com.widevine.alpha': ch.licenseKey } } });
+                }
+                try {
+                    await shakaInst.load(ch.url);
+                    video.play().catch(() => { video.muted = true; video.play(); });
+                } catch(e) { console.error('Shaka load error:', e); }
+            } else if (Hls.isSupported() && !isMpd) {
+                hlsInst = new Hls();
+                hlsInst.loadSource(ch.url);
+                hlsInst.attachMedia(video);
+                hlsInst.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(() => { video.muted = true; video.play(); }));
             } else {
-                if (e.key === 'ArrowDown') targetIdx = idx + 1;
-                else if (e.key === 'ArrowUp') targetIdx = idx - 1;
+                video.src = ch.url;
+                video.play().catch(() => { video.muted = true; video.play(); });
             }
+        }
 
-            if (targetIdx >= 0 && targetIdx < all.length) {
-                all[targetIdx].click();
-                e.preventDefault();
-            }
+        document.getElementById('cinemaReloadBtn').onclick = () => playCh(curIdx);
+        search.oninput = renderGrid;
+
+        // Theme Handling
+        const themeSelect = document.getElementById('themeSelect');
+        themeSelect.onchange = (e) => {
+            document.documentElement.setAttribute('data-theme', e.target.value);
+            localStorage.setItem('cinema_theme', e.target.value);
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedT = localStorage.getItem('cinema_theme') || 'dark';
+            themeSelect.value = savedT;
+            document.documentElement.setAttribute('data-theme', savedT);
+
+            initCatChips();
+            renderGrid();
+            playCh(0);
         });
     </script>
 </body>

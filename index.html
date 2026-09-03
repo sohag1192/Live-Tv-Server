@@ -3,746 +3,1574 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Premium Live TV Streaming Service">
-    <link rel="shortcut icon" href="https://placehold.co/16x16/000000/ffffff?text=Premium+Live+TV+Streaming"/>
-    <title>Premium Live TV Streaming</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="description" content="Premium Live TV Streaming - Watch 54+ HD Channels Online">
+    <meta name="theme-color" content="#121212">
+    <link rel="shortcut icon" href="https://placehold.co/16x16/e50914/ffffff?text=TV"/>
+    <title>Premium Live TV Streaming | Watch 54+ HD Channels</title>
+
+    <!-- Google Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Video Streaming Libraries (HLS + Shaka DASH/Widevine DRM) -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.compiled.js"></script>
+
     <style>
         :root {
-            --primary-dark: #121212;
-            --secondary-dark: #1E1E1E;
-            --accent-dark: #BB86FC;
-            --text-dark: #E1E1E1;
+            --bg-base: #0c0d14;
+            --bg-surface: #141622;
+            --bg-card: rgba(25, 28, 44, 0.75);
+            --bg-card-hover: rgba(38, 43, 68, 0.85);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-focus: rgba(187, 134, 252, 0.5);
             
-            --primary-light: #FFFFFF;
-            --secondary-light: #F5F5F5;
-            --accent-light: #6200EE;
-            --text-light: #333333;
+            --accent: #a855f7;
+            --accent-glow: rgba(168, 85, 247, 0.35);
+            --accent-hover: #9333ea;
+            --live-red: #ef4444;
+            --live-glow: rgba(239, 68, 68, 0.4);
+
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --text-dim: #6b7280;
+
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --radius-pill: 9999px;
             
-            --current-primary: var(--primary-dark);
-            --current-secondary: var(--secondary-dark);
-            --current-accent: var(--accent-dark);
-            --current-text: var(--text-dark);
+            --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body.light-theme {
+            --bg-base: #f0f2f5;
+            --bg-surface: #ffffff;
+            --bg-card: rgba(255, 255, 255, 0.9);
+            --bg-card-hover: #f3f4f6;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --border-focus: rgba(124, 58, 237, 0.4);
+
+            --accent: #7c3aed;
+            --accent-glow: rgba(124, 58, 237, 0.25);
+            --accent-hover: #6d28d9;
+
+            --text-main: #111827;
+            --text-muted: #4b5563;
+            --text-dim: #9ca3af;
+        }
+
+        * {
+            box-sizing: border-box;
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
             margin: 0;
             padding: 0;
-            color: var(--current-text);
-            background-color: var(--current-primary);
-            transition: all 0.5s ease;
+            color: var(--text-main);
+            background-color: var(--bg-base);
             min-height: 100vh;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* Animated Background */
-        .background {
+        /* Ambient Glowing Background */
+        .ambient-bg {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.1;
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-            background-size: 400% 400%;
-            animation: gradient 15s ease infinite;
-        }
-
-        @keyframes gradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* Theme Toggle */
-        .theme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            background: rgba(0,0,0,0.3);
-            border-radius: 50px;
-            padding: 5px;
-            cursor: pointer;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: all 0.3s ease;
-        }
-
-        .theme-toggle:hover {
-            transform: scale(1.1);
-        }
-
-        .theme-toggle i {
-            font-size: 1.5rem;
-            padding: 10px;
-            color: var(--current-text);
-        }
-
-        /* Main Container */
-        .main-container {
-            max-width: 1600px;
-            margin: 0 auto;
-            padding: 30px;
-            padding-top: 80px;
-        }
-
-        /* Player Section */
-        .player-section {
-            background-color: var(--current-secondary);
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            overflow: hidden;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .player-section:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-        }
-
-        /* Responsive Embed */
-        .embed-container {
-            position: relative;
-            padding-bottom: 56.25%;
-            height: 0;
-            overflow: hidden;
-            background: #000;
-        }
-
-        .embed-container video {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-            background-color: #000;
-        }
-
-        /* Player Info */
-        .player-info {
-            padding: 15px 20px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.9));
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            z-index: 10;
+            width: 100vw;
+            height: 100vh;
             pointer-events: none;
-        }
-
-        .channel-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 5px;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
-            color: #fff;
-        }
-
-        .program-info {
-            font-size: 0.9rem;
-            opacity: 0.9;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
-            color: #ccc;
-        }
-
-        /* Channel List */
-        .channel-list {
-            background-color: var(--current-secondary);
-            border-radius: 16px;
-            padding: 20px;
-            height: 100%;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .channel-list-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .channel-list-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin: 0;
-        }
-
-        .channel-count {
-            background-color: var(--current-accent);
-            color: var(--current-primary);
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .channel-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 15px;
-            overflow-y: auto;
-            max-height: 70vh;
-            padding-right: 5px;
-        }
-        
-        /* Navbar Style Header */
-        .top-nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 1000;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(10px);
-        }
-
-        .tv-link {
-            color: #fff;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 1.2rem;
-            transition: color 0.3s;
-        }
-
-        .tv-link:hover {
-            color: var(--current-accent);
-        }
-
-        /* Updated Channel Item & Image Views */
-        .channel-item {
-            background-color: rgba(255,255,255,0.03);
-            border-radius: 12px;
+            z-index: -1;
             overflow: hidden;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            cursor: pointer;
-            border: 2px solid transparent;
+        }
+
+        .ambient-blob {
+            position: absolute;
+            filter: blur(120px);
+            opacity: 0.15;
+            border-radius: 50%;
+            transition: all 0.5s ease;
+        }
+
+        .ambient-blob-1 {
+            top: -10%;
+            left: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+        }
+
+        .ambient-blob-2 {
+            bottom: -15%;
+            right: -10%;
+            width: 55vw;
+            height: 55vw;
+            background: radial-gradient(circle, #3b82f6 0%, transparent 70%);
+        }
+
+        /* Navigation Bar */
+        .app-navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(12, 13, 20, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 24px;
+            transition: var(--transition-smooth);
+        }
+
+        body.light-theme .app-navbar {
+            background: rgba(255, 255, 255, 0.88);
+        }
+
+        .nav-content {
+            max-width: 1720px;
+            margin: 0 auto;
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
         }
 
-        .channel-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-            border-color: var(--current-accent);
-            background-color: rgba(255,255,255,0.06);
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text-main);
+            font-weight: 800;
+            font-size: 1.25rem;
+            letter-spacing: -0.5px;
         }
 
-        .channel-item.active {
-            border-color: var(--current-accent);
-            box-shadow: 0 0 0 3px rgba(187, 134, 252, 0.3);
-            background-color: rgba(187, 134, 252, 0.1);
-        }
-
-        .channel-thumbnail-wrapper {
-            width: 100%;
-            aspect-ratio: 16/9;
-            background-color: #0a0a0a;
+        .brand-icon-box {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--accent), #3b82f6);
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 12px;
+            color: #fff;
+            font-size: 1rem;
+            box-shadow: 0 4px 12px var(--accent-glow);
+        }
+
+        .live-badge-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--live-red);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: var(--radius-pill);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .pulse-dot {
+            width: 7px;
+            height: 7px;
+            background-color: var(--live-red);
+            border-radius: 50%;
+            animation: pulse-ring 1.8s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { transform: scale(1.1); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+            100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            color: var(--text-muted);
+            border: 1px solid transparent;
+            background: transparent;
+            transition: var(--transition-smooth);
+            cursor: pointer;
+        }
+
+        .nav-btn:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--border-color);
+        }
+
+        body.light-theme .nav-btn:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-btn.active {
+            color: var(--accent);
+            background: var(--accent-glow);
+            border-color: rgba(168, 85, 247, 0.3);
+        }
+
+        .theme-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .theme-btn:hover {
+            transform: scale(1.05);
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px var(--accent-glow);
+        }
+
+        /* Main App Container */
+        .app-container {
+            max-width: 1720px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* Player Section */
+        .player-card {
+            background: var(--bg-surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            backdrop-filter: blur(12px);
+        }
+
+        .player-header {
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.15);
+        }
+
+        .player-channel-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+        }
+
+        .now-playing-badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: var(--radius-pill);
+            background: var(--accent);
+            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+
+        .player-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--text-main);
+        }
+
+        .player-tags {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .player-tag {
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+        }
+
+        body.light-theme .player-tag {
+            background: rgba(0, 0, 0, 0.06);
+        }
+
+        /* 16:9 Video Wrapper */
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%; /* 16:9 aspect ratio */
+            background: #000;
             overflow: hidden;
         }
 
-        .channel-thumbnail {
+        .video-wrapper video {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
+            object-fit: contain;
+            background: #000;
+        }
+
+        /* Video Overlay States */
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 20;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .video-overlay.active {
+            display: flex;
+        }
+
+        .spinner-custom {
+            width: 48px;
+            height: 48px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+            margin-bottom: 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .overlay-msg {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+
+        .overlay-btn {
+            padding: 8px 18px;
+            border-radius: var(--radius-sm);
+            background: var(--accent);
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.88rem;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition-smooth);
+        }
+
+        .overlay-btn:hover {
+            background: var(--accent-hover);
+            transform: scale(1.03);
+        }
+
+        /* Player Controls Toolbar */
+        .player-toolbar {
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .toolbar-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tool-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .tool-btn:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent);
+        }
+
+        body.light-theme .tool-btn {
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        .tool-btn.active {
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        /* Volume slider */
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .volume-slider {
+            width: 80px;
+            height: 5px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 4px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        body.light-theme .volume-slider {
+            background: rgba(0, 0, 0, 0.15);
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            box-shadow: 0 0 6px var(--accent-glow);
+        }
+
+        /* Sidebar Channel List */
+        .sidebar-card {
+            background: var(--bg-surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 120px);
+            min-height: 600px;
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+        }
+
+        .sidebar-header {
+            padding: 16px 18px 12px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .sidebar-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sidebar-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .channel-counter-badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: var(--radius-pill);
+            background: rgba(168, 85, 247, 0.15);
+            color: var(--accent);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+        }
+
+        /* Search Box */
+        .search-box {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 9px 36px 9px 36px;
+            font-size: 0.88rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.2);
+            color: var(--text-main);
+            outline: none;
+            transition: var(--transition-smooth);
+        }
+
+        body.light-theme .search-input {
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        .search-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            pointer-events: none;
+        }
+
+        .search-clear {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            font-size: 0.85rem;
+            display: none;
+            padding: 4px;
+        }
+
+        .search-clear:hover {
+            color: var(--text-main);
+        }
+
+        /* Category Filter Chips */
+        .category-scroll {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            scrollbar-width: none;
+        }
+
+        .category-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .cat-chip {
+            white-space: nowrap;
+            padding: 5px 11px;
+            border-radius: var(--radius-pill);
+            font-size: 0.78rem;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        body.light-theme .cat-chip {
+            background: rgba(0, 0, 0, 0.04);
+        }
+
+        .cat-chip:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .cat-chip.active {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+            box-shadow: 0 2px 8px var(--accent-glow);
+        }
+
+        /* Channel Grid List */
+        .channels-scroll-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 10px;
+            align-content: start;
+        }
+
+        /* Custom Scrollbar */
+        .channels-scroll-area::-webkit-scrollbar {
+            width: 6px;
+        }
+        .channels-scroll-area::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .channels-scroll-area::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 10px;
+        }
+        .channels-scroll-area::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
+        }
+
+        /* Channel Card Item */
+        .channel-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            position: relative;
+            text-align: left;
+        }
+
+        .channel-card:hover {
+            transform: translateY(-3px);
+            background: var(--bg-card-hover);
+            border-color: var(--border-focus);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .channel-card.active {
+            border-color: var(--accent);
+            background: rgba(168, 85, 247, 0.12);
+            box-shadow: 0 0 0 2px var(--accent), 0 8px 24px var(--accent-glow);
+        }
+
+        .card-thumb-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/10;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            overflow: hidden;
+        }
+
+        .card-thumb {
+            max-width: 90%;
+            max-height: 90%;
             object-fit: contain;
             transition: transform 0.3s ease;
         }
 
-        .channel-item:hover .channel-thumbnail {
-            transform: scale(1.1);
+        .channel-card:hover .card-thumb {
+            transform: scale(1.08);
         }
 
-        .channel-name {
-            padding: 10px 8px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            text-align: center;
+        .card-chno {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            font-size: 0.65rem;
+            font-weight: 800;
+            background: rgba(0, 0, 0, 0.75);
+            color: #fff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            backdrop-filter: blur(4px);
+        }
+
+        .card-drm-badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            font-size: 0.62rem;
+            font-weight: 800;
+            background: rgba(168, 85, 247, 0.85);
+            color: #fff;
+            padding: 2px 5px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .card-body-content {
+            padding: 8px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .card-name {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-main);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            border-top: 1px solid rgba(255,255,255,0.05);
         }
 
-        /* Light Theme Adjustments */
-        body.light-theme {
-            --current-primary: var(--primary-light);
-            --current-secondary: var(--secondary-light);
-            --current-accent: var(--accent-light);
-            --current-text: var(--text-light);
+        .card-group {
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--text-dim);
         }
 
-        body.light-theme .channel-list {
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        .card-playing-indicator {
+            display: none;
+            align-items: flex-end;
+            gap: 2px;
+            height: 12px;
         }
 
-        body.light-theme .channel-item {
-            background-color: #ffffff;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        .channel-card.active .card-playing-indicator {
+            display: flex;
         }
 
-        body.light-theme .channel-thumbnail-wrapper {
-            background-color: #f8f9fa;
+        .eq-bar {
+            width: 2.5px;
+            background: var(--accent);
+            border-radius: 1px;
+            animation: eq-bounce 0.8s ease infinite alternate;
         }
 
-        body.light-theme .channel-name {
-            border-top: 1px solid rgba(0,0,0,0.05);
+        .eq-bar:nth-child(2) { animation-delay: 0.2s; height: 10px; }
+        .eq-bar:nth-child(3) { animation-delay: 0.4s; height: 6px; }
+        .eq-bar:nth-child(1) { height: 8px; }
+
+        @keyframes eq-bounce {
+            0% { height: 3px; }
+            100% { height: 12px; }
         }
 
-        body.light-theme .player-info {
-            background: linear-gradient(transparent, rgba(0,0,0,0.6));
+        /* Empty State */
+        .empty-channels {
+            grid-column: 1 / -1;
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .empty-icon {
+            font-size: 2.5rem;
+            color: var(--text-dim);
+            margin-bottom: 12px;
         }
 
         /* Footer */
-        .footer {
-            text-align: center;
-            padding: 20px;
+        .app-footer {
             margin-top: 40px;
-            font-size: 0.9rem;
-            opacity: 0.7;
-            border-top: 1px solid rgba(255,255,255,0.1);
+            padding: 24px;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-dim);
+            font-size: 0.85rem;
         }
 
-        .footer a {
-            color: var(--current-accent);
+        .app-footer a {
+            color: var(--accent);
             text-decoration: none;
+            font-weight: 600;
         }
 
-        .footer a:hover {
+        .app-footer a:hover {
             text-decoration: underline;
         }
 
-        /* Responsive Adjustments */
+        /* Keyboard Hints Toast / Bar */
+        .keyboard-shortcuts-bar {
+            margin-top: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 14px;
+            font-size: 0.78rem;
+            color: var(--text-dim);
+        }
+
+        .kbd-key {
+            display: inline-block;
+            padding: 2px 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: var(--text-muted);
+            font-family: monospace;
+            font-size: 0.75rem;
+        }
+
+        /* Responsive Breakpoints */
         @media (max-width: 992px) {
-            .channel-grid {
-                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            .app-container {
+                padding: 14px;
+            }
+            .sidebar-card {
+                height: 520px;
+                margin-top: 16px;
+            }
+            .channels-scroll-area {
+                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
             }
         }
 
-        @media (max-width: 768px) {
-            .main-container {
-                padding: 15px;
-                padding-top: 70px;
+        @media (max-width: 576px) {
+            .nav-links .nav-btn span {
+                display: none;
             }
-            
-            .channel-grid {
-                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-                gap: 10px;
+            .player-title {
+                font-size: 0.98rem;
             }
-            
-            .channel-name {
-                font-size: 0.75rem;
-                padding: 6px 4px;
+            .channels-scroll-area {
+                grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
+                gap: 8px;
             }
-            
-            .channel-list-title {
-                font-size: 1.2rem;
-            }
-        }
-
-        /* Custom scrollbar */
-        .channel-grid::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .channel-grid::-webkit-scrollbar-track {
-            background: rgba(255,255,255,0.05);
-            border-radius: 10px;
-        }
-
-        .channel-grid::-webkit-scrollbar-thumb {
-            background: var(--current-accent);
-            border-radius: 10px;
-        }
-
-        .channel-grid::-webkit-scrollbar-thumb:hover {
-            background: rgba(187, 134, 252, 0.8);
         }
     </style>
 </head>
 <body>
-    <div class="background"></div>
+    <!-- Ambient Background Blobs -->
+    <div class="ambient-bg">
+        <div class="ambient-blob ambient-blob-1"></div>
+        <div class="ambient-blob ambient-blob-2"></div>
+    </div>
 
-    <header class="top-nav">
-        <a href="/" class="tv-link"><i class="fas fa-tv me-2"></i>TV Version</a>
-        <div class="theme-toggle" id="themeToggle">
-            <i class="fas fa-moon"></i>
+    <!-- Navigation Header -->
+    <header class="app-navbar">
+        <div class="nav-content">
+            <a href="index.html" class="brand-logo">
+                <div class="brand-icon-box">
+                    <i class="fas fa-tv"></i>
+                </div>
+                <span>Live TV</span>
+                <span class="live-badge-nav"><span class="pulse-dot"></span>Live</span>
+            </a>
+
+            <div class="nav-links">
+                <a href="index.html" class="nav-btn active" title="Standard Grid Player">
+                    <i class="fas fa-border-all"></i>
+                    <span>Player</span>
+                </a>
+                <a href="Web%20Tv-V1/index.html" class="nav-btn" title="Cinema / Netflix Mode">
+                    <i class="fas fa-film"></i>
+                    <span>Cinema</span>
+                </a>
+                <a href="Web%20Tv-V2/index.html" class="nav-btn" title="TV Guide">
+                    <i class="fas fa-table-list"></i>
+                    <span>Guide</span>
+                </a>
+                <a href="https://github.com/sohag1192/Live-Tv-Server" target="_blank" class="nav-btn" title="GitHub Repository">
+                    <i class="fab fa-github"></i>
+                </a>
+                <button class="theme-btn" id="themeToggle" aria-label="Toggle dark/light theme" title="Toggle Theme">
+                    <i class="fas fa-moon" id="themeIcon"></i>
+                </button>
+            </div>
         </div>
     </header>
 
-    <div class="main-container">
+    <!-- Main Container -->
+    <main class="app-container">
         <div class="row g-4">
-            <div class="col-lg-9 col-md-8">
-                <div class="player-section">
-                    <div class="embed-container">
-                        <video id="video-player" controls autoplay></video>
-                        <div class="player-info">
-                            <div class="channel-title">Loading...</div>
-                            <div class="program-info">Please select a channel</div>
+            <!-- Left: Video Player Column -->
+            <div class="col-lg-8 col-xl-9">
+                <div class="player-card">
+                    <!-- Player Header -->
+                    <div class="player-header">
+                        <div class="player-channel-info">
+                            <span class="now-playing-badge" id="nowPlayingBadge">#1 LIVE</span>
+                            <div>
+                                <h1 class="player-title" id="playerChannelTitle">Somoy tv</h1>
+                            </div>
+                        </div>
+                        <div class="player-tags" id="playerTags">
+                            <span class="player-tag" id="playerGroupTag">News</span>
+                            <span class="player-tag" id="playerStreamTypeTag">HLS</span>
+                        </div>
+                    </div>
+
+                    <!-- 16:9 Video Player -->
+                    <div class="video-wrapper">
+                        <video id="video-player" controls autoplay playsinline preload="auto"></video>
+                        
+                        <!-- Loading & Error Overlays -->
+                        <div class="video-overlay" id="loadingOverlay">
+                            <div class="spinner-custom"></div>
+                            <div class="overlay-msg" id="loadingMsg">Loading Stream...</div>
+                        </div>
+
+                        <div class="video-overlay" id="errorOverlay">
+                            <i class="fas fa-triangle-exclamation text-warning fa-2x mb-3"></i>
+                            <div class="overlay-msg" id="errorMsg">Unable to load stream directly.</div>
+                            <div class="d-flex gap-2">
+                                <button class="overlay-btn" id="retryBtn">
+                                    <i class="fas fa-rotate-right"></i> Retry
+                                </button>
+                                <button class="overlay-btn" id="nextChannelBtn" style="background: rgba(255,255,255,0.15)">
+                                    <i class="fas fa-forward-step"></i> Next Channel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Player Controls Toolbar -->
+                    <div class="player-toolbar">
+                        <div class="toolbar-group">
+                            <button class="tool-btn" id="prevBtn" title="Previous Channel (Left Arrow)">
+                                <i class="fas fa-backward-step"></i>
+                            </button>
+                            <button class="tool-btn" id="playPauseBtn" title="Play/Pause (Space)">
+                                <i class="fas fa-pause" id="playPauseIcon"></i>
+                            </button>
+                            <button class="tool-btn" id="nextBtn" title="Next Channel (Right Arrow)">
+                                <i class="fas fa-forward-step"></i>
+                            </button>
+                            <button class="tool-btn" id="reloadBtn" title="Reload Stream">
+                                <i class="fas fa-rotate-right"></i>
+                            </button>
+                        </div>
+
+                        <div class="toolbar-group">
+                            <div class="volume-control">
+                                <button class="tool-btn" id="muteBtn" title="Mute/Unmute (M)">
+                                    <i class="fas fa-volume-high" id="volumeIcon"></i>
+                                </button>
+                                <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.05" value="1" title="Volume">
+                            </div>
+                            <button class="tool-btn" id="pipBtn" title="Picture-in-Picture (P)">
+                                <i class="fas fa-arrow-up-right-from-square"></i>
+                            </button>
+                            <button class="tool-btn" id="fullscreenBtn" title="Fullscreen (F)">
+                                <i class="fas fa-expand"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
+
+                <!-- Keyboard Shortcuts Reference -->
+                <div class="keyboard-shortcuts-bar">
+                    <span><span class="kbd-key">↑</span> <span class="kbd-key">↓</span> / <span class="kbd-key">←</span> <span class="kbd-key">→</span> Channel</span>
+                    <span><span class="kbd-key">Space</span> Play/Pause</span>
+                    <span><span class="kbd-key">M</span> Mute</span>
+                    <span><span class="kbd-key">F</span> Fullscreen</span>
+                    <span><span class="kbd-key">P</span> PiP</span>
+                    <span><span class="kbd-key">/</span> Search</span>
+                </div>
             </div>
-            
-            <div class="col-lg-3 col-md-4">
-                <div class="channel-list">
-                    <div class="channel-list-header">
-                        <h2 class="channel-list-title">Channels</h2>
-                        <div class="channel-count" id="channelCount">0</div>
+
+            <!-- Right: Channels Browser Sidebar -->
+            <div class="col-lg-4 col-xl-3">
+                <div class="sidebar-card">
+                    <!-- Sidebar Header with Search and Categories -->
+                    <div class="sidebar-header">
+                        <div class="sidebar-title-row">
+                            <h2 class="sidebar-title">
+                                <i class="fas fa-list-ul text-muted"></i>
+                                <span>Channels</span>
+                            </h2>
+                            <span class="channel-counter-badge" id="channelCountBadge">54 Channels</span>
+                        </div>
+
+                        <!-- Instant Channel Search -->
+                        <div class="search-box">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" class="search-input" id="channelSearch" placeholder="Search channels... (Press / to focus)" autocomplete="off">
+                            <button class="search-clear" id="searchClear" aria-label="Clear Search">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+
+                        <!-- Category Filter Chips -->
+                        <div class="category-scroll" id="categoryContainer">
+                            <button class="cat-chip active" data-category="ALL">All</button>
+                        </div>
                     </div>
-                    <div class="channel-grid" id="channelGrid"></div>
+
+                    <!-- Channel Cards Grid -->
+                    <div class="channels-scroll-area" id="channelGrid">
+                        <!-- Dynamic Channel Cards Injected Here -->
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
-    <div class="footer">
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="mb-2">
+            <img src="https://hitscounter.dev/api/hit?url=https%3A%2F%2Fgithub.com%2Fsohag1192%2FLive-Tv-Server&label=&icon=github&color=%237c3aed&message=&style=flat&tz=UTC" alt="GitHub hits">
+        </div>
         <div>
-            <img src="https://hitscounter.dev/api/hit?url=https%3A%2F%2Fgithub.com%2Fsohag1192%2FLive-Tv-Server&label=&icon=github&color=%23198754&message=&style=flat&tz=UTC" alt="GitHub hits">
+            &copy; 2026 <strong>Live TV Server</strong>. Developed with <i class="fas fa-heart text-danger"></i> by <a href="https://t.me/MdSohagRana" target="_blank">Md Sohag Rana</a>
         </div>
-        <div class="mt-2">
-            © Copyright 2013 Md Sohag Rana, Developed By: <a href="https://t.me/MdSohagRana" target="_blank">Md Sohag Rana</a>
-        </div>
-    </div>
+    </footer>
 
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // --- 1. M3U Data Injection ---
-        const rawM3U = `#EXTM3U
-#EXTINF:-1 tvg-id="1" tvg-name="Somoy tv" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1784629064327.png" tvg-chno="1" group-title="News",Somoy tv
-https://akash.rootbd.xyz/stream.php?cid=318&format=.m3u8
-#KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://akash.rootbd.xyz/license.php?cid=117
-#EXTINF:-1 tvg-id="2" tvg-name="Sony Sports TEN 2" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1762850019257.png" tvg-chno="2" group-title="Sports",Sony Sports TEN 2
-https://akash.rootbd.xyz/stream.php?cid=117&format=.mpd
-#EXTINF:-1 tvg-id="3" tvg-name="Jamuna TV" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1735560213832.png" tvg-chno="3" group-title="News",Jamuna TV
-https://akash.rootbd.xyz/stream.php?cid=97&format=.m3u8
-#EXTINF:-1 tvg-id="4" tvg-name="Independent TV" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1739964387847.png" tvg-chno="4" group-title="News",Independent TV
-https://akash.rootbd.xyz/stream.php?cid=96&format=.m3u8
-#KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://akash.rootbd.xyz/license.php?cid=118
-#EXTINF:-1 tvg-id="5" tvg-name="Sony Sports TEN 1" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1762853147045.png" tvg-chno="5" group-title="Sports",Sony Sports TEN 1
-https://akash.rootbd.xyz/stream.php?cid=118&format=.mpd
-#KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://akash.rootbd.xyz/license.php?cid=153
-#EXTINF:-1 tvg-id="6" tvg-name="Ten Cricket" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1745304841482.png" tvg-chno="6" group-title="Sports",Ten Cricket
-https://akash.rootbd.xyz/stream.php?cid=153&format=.mpd
-#KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://akash.rootbd.xyz/license.php?cid=116
-#EXTINF:-1 tvg-id="7" tvg-name="Sony Sports TEN 5" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1739906861365.png" tvg-chno="7" group-title="Sports",Sony Sports TEN 5
-https://akash.rootbd.xyz/stream.php?cid=116&format=.mpd
-#EXTINF:-1 tvg-id="8" tvg-name="DBC News HD" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1770186306600.png" tvg-chno="8" group-title="News",DBC News HD
-https://akash.rootbd.xyz/stream.php?cid=185&format=.m3u8
-#KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://akash.rootbd.xyz/license.php?cid=289
-#EXTINF:-1 tvg-id="9" tvg-name="Sony Max" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1780310920616.png" tvg-chno="9" group-title="Movies",Sony Max
-https://akash.rootbd.xyz/stream.php?cid=289&format=.mpd
-#KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://akash.rootbd.xyz/license.php?cid=290
-#EXTINF:-1 tvg-id="10" tvg-name="Sony Pix" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1780311807965.png" tvg-chno="10" group-title="Movies",Sony Pix
-https://akash.rootbd.xyz/stream.php?cid=290&format=.mpd
-#EXTINF:-1 tvg-id="11" tvg-name="BTV Shangshad" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1773247382366.png" tvg-chno="11" group-title="News",BTV Shangshad
-https://akash.rootbd.xyz/stream.php?cid=228&format=.m3u8
-#EXTINF:-1 tvg-id="12" tvg-name="Ekattor HD" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1739963327549.png" tvg-chno="12" group-title="News",Ekattor HD
-https://akash.rootbd.xyz/stream.php?cid=102&format=.m3u8
-#EXTINF:-1 tvg-id="13" tvg-name="Channel 24 HD" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1735556516924.png" tvg-chno="13" group-title="News",Channel 24 HD
-https://akash.rootbd.xyz/stream.php?cid=94&format=.m3u8
-#EXTINF:-1 tvg-id="14" tvg-name="BTV" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1784629845642.png" tvg-chno="14" group-title="Entertainment",BTV
-https://akash.rootbd.xyz/stream.php?cid=122&format=.m3u8
-#EXTINF:-1 tvg-id="15" tvg-name="Maasranga TV" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1773680325498.png" tvg-chno="15" group-title="Entertainment",Maasranga TV
-https://akash.rootbd.xyz/stream.php?cid=229&format=.m3u8
-#KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://akash.rootbd.xyz/license.php?cid=143
-#EXTINF:-1 tvg-id="16" tvg-name="ZEE BANGLA" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1756017182009.png" tvg-chno="16" group-title="Entertainment",ZEE BANGLA
-https://akash.rootbd.xyz/stream.php?cid=143&format=.mpd
-#EXTINF:-1 tvg-id="17" tvg-name="Crazy Ex" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1770348753896.png" tvg-chno="17" group-title="Sports",Crazy Ex
-https://akash.rootbd.xyz/stream.php?cid=202&format=.m3u8
-#EXTINF:-1 tvg-id="18" tvg-name="Sports Range" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1770380601958.png" tvg-chno="18" group-title="Sports",Sports Range
-https://akash.rootbd.xyz/stream.php?cid=217&format=.m3u8
-#KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://akash.rootbd.xyz/license.php?cid=93
-#EXTINF:-1 tvg-id="19" tvg-name="ATN News" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1739962961772.png" tvg-chno="19" group-title="News",ATN News
-https://akash.rootbd.xyz/stream.php?cid=93&format=.mpd
-#KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://akash.rootbd.xyz/license.php?cid=142
-#EXTINF:-1 tvg-id="20" tvg-name="Sony AATH" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1739906659479.png" tvg-chno="20" group-title="Entertainment",Sony AATH
-https://akash.rootbd.xyz/stream.php?cid=142&format=.mpd
-#EXTINF:-1 tvg-id="21" tvg-name="Channel 9 HD" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1770188008067.png" tvg-chno="21" group-title="Entertainment",Channel 9 HD
-https://akash.rootbd.xyz/stream.php?cid=188&format=.m3u8
-#KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://akash.rootbd.xyz/license.php?cid=186
-#EXTINF:-1 tvg-id="22" tvg-name="News 24 HD" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1770186895850.png" tvg-chno="22" group-title="News",News 24 HD
-https://akash.rootbd.xyz/stream.php?cid=186&format=.mpd
-#EXTINF:-1 tvg-id="23" tvg-name="Deepto TV HD" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1742713000749.png" tvg-chno="23" group-title="Entertainment",Deepto TV HD
-https://akash.rootbd.xyz/stream.php?cid=134&format=.m3u8
-#EXTINF:-1 tvg-id="24" tvg-name="NTV" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1735560841094.png" tvg-chno="24" group-title="Entertainment",NTV
-https://akash.rootbd.xyz/stream.php?cid=99&format=.m3u8
-#EXTINF:-1 tvg-id="25" tvg-name="Al Jazeera" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1735547218986.png" tvg-chno="25" group-title="News",Al Jazeera
-https://akash.rootbd.xyz/stream.php?cid=85&format=.m3u8
-#EXTINF:-1 tvg-id="26" tvg-name="Channel I HD" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1740567626692.png" tvg-chno="26" group-title="Entertainment",Channel I HD
-https://akash.rootbd.xyz/stream.php?cid=132&format=.m3u8
-#KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://akash.rootbd.xyz/license.php?cid=90
-#EXTINF:-1 tvg-id="27" tvg-name="Euro Sports HD" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1765256371720.png" tvg-chno="27" group-title="Sports",Euro Sports HD
-https://akash.rootbd.xyz/stream.php?cid=90&format=.mpd
-#EXTINF:-1 tvg-id="28" tvg-name="Sports Legends" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1770377900139.png" tvg-chno="28" group-title="Sports",Sports Legends
-https://akash.rootbd.xyz/stream.php?cid=205&format=.m3u8
-#KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
-#KODIPROP:inputstream.adaptive.license_key=https://akash.rootbd.xyz/license.php?cid=124
-#EXTINF:-1 tvg-id="29" tvg-name="Sony Entertainment" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1740380280065.png" tvg-chno="29" group-title="Entertainment",Sony Entertainment
-https://akash.rootbd.xyz/stream.php?cid=124&format=.mpd
-#EXTINF:-1 tvg-id="30" tvg-name="Party Universe" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1770378215384.png" tvg-chno="30" group-title="Music",Party Universe
-https://akash.rootbd.xyz/stream.php?cid=207&format=.m3u8
-#EXTINF:-1 tvg-id="31" tvg-name="Bangla Vision" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1788231546532.png" tvg-chno="31" group-title="Entertainment",Bangla Vision
-https://akash.rootbd.xyz/stream.php?cid=100&format=.m3u8
-#EXTINF:-1 tvg-id="32" tvg-name="Thunder Er" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1770380791303.png" tvg-chno="32" group-title="Sports",Thunder Er
-https://akash.rootbd.xyz/stream.php?cid=218&format=.m3u8
-#EXTINF:-1 tvg-id="33" tvg-name="Fighters" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1770380942670.png" tvg-chno="33" group-title="Sports",Fighters
-https://akash.rootbd.xyz/stream.php?cid=219&format=.m3u8
-#EXTINF:-1 tvg-id="34" tvg-name="Flash Guys HD" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1770378074527.png" tvg-chno="34" group-title="Sports",Flash Guys HD
-https://akash.rootbd.xyz/stream.php?cid=206&format=.m3u8
-#EXTINF:-1 tvg-id="35" tvg-name="SRK TV" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1746005940155.png" tvg-chno="35" group-title="Entertainment",SRK TV
-https://akash.rootbd.xyz/stream.php?cid=141&format=.m3u8
-#EXTINF:-1 tvg-id="36" tvg-name="Nikki" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1770378704923.png" tvg-chno="36" group-title="Kids",Nikki
-https://akash.rootbd.xyz/stream.php?cid=210&format=.m3u8
-#EXTINF:-1 tvg-id="37" tvg-name="Channel 1" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1781163068414.png" tvg-chno="37" group-title="News",Channel 1
-https://akash.rootbd.xyz/stream.php?cid=299&format=.m3u8
-#EXTINF:-1 tvg-id="38" tvg-name="Originals" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1770313122372.png" tvg-chno="38" group-title="Movies",Originals
-https://akash.rootbd.xyz/stream.php?cid=193&format=.m3u8
-#EXTINF:-1 tvg-id="39" tvg-name="Joy" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1770378874717.png" tvg-chno="39" group-title="Kids",Joy
-https://akash.rootbd.xyz/stream.php?cid=211&format=.m3u8
-#EXTINF:-1 tvg-id="40" tvg-name="Delicious" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1770378370876.png" tvg-chno="40" group-title="Infotainment",Delicious
-https://akash.rootbd.xyz/stream.php?cid=208&format=.m3u8
-#EXTINF:-1 tvg-id="41" tvg-name="Funny Junior HD" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1770379573329.png" tvg-chno="41" group-title="Kids",Funny Junior HD
-https://akash.rootbd.xyz/stream.php?cid=213&format=.m3u8
-#EXTINF:-1 tvg-id="42" tvg-name="Kids Stars" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1770381398090.png" tvg-chno="42" group-title="Kids",Kids Stars
-https://akash.rootbd.xyz/stream.php?cid=222&format=.m3u8
-#EXTINF:-1 tvg-id="43" tvg-name="Cineedge HD" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1770347851305.png" tvg-chno="43" group-title="Movies",Cineedge HD
-https://akash.rootbd.xyz/stream.php?cid=197&format=.m3u8
-#EXTINF:-1 tvg-id="44" tvg-name="Crimes" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1770380126540.png" tvg-chno="44" group-title="Movies",Crimes
-https://akash.rootbd.xyz/stream.php?cid=214&format=.m3u8
-#EXTINF:-1 tvg-id="45" tvg-name="Screem" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1770312098339.png" tvg-chno="45" group-title="Movies",Screem
-https://akash.rootbd.xyz/stream.php?cid=192&format=.m3u8
-#EXTINF:-1 tvg-id="46" tvg-name="Superrix HD" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1770348388925.png" tvg-chno="46" group-title="Movies",Superrix HD
-https://akash.rootbd.xyz/stream.php?cid=198&format=.m3u8
-#EXTINF:-1 tvg-id="47" tvg-name="Uniques HD" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1770347327658.png" tvg-chno="47" group-title="Movies",Uniques HD
-https://akash.rootbd.xyz/stream.php?cid=196&format=.m3u8
-#EXTINF:-1 tvg-id="48" tvg-name="BuddyStar HD" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1770379038530.png" tvg-chno="48" group-title="Kids",BuddyStar HD
-https://akash.rootbd.xyz/stream.php?cid=212&format=.m3u8
-#EXTINF:-1 tvg-id="49" tvg-name="Lucky Family" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1770381248531.png" tvg-chno="49" group-title="Kids",Lucky Family
-https://akash.rootbd.xyz/stream.php?cid=221&format=.m3u8
-#EXTINF:-1 tvg-id="50" tvg-name="Smarty" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1770381107924.png" tvg-chno="50" group-title="Kids",Smarty
-https://akash.rootbd.xyz/stream.php?cid=220&format=.m3u8
-#EXTINF:-1 tvg-id="51" tvg-name="Intelligence" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1770380460488.png" tvg-chno="51" group-title="Movies",Intelligence
-https://akash.rootbd.xyz/stream.php?cid=216&format=.m3u8
-#EXTINF:-1 tvg-id="52" tvg-name="True Stories" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1770380306806.png" tvg-chno="52" group-title="Movies",True Stories
-https://akash.rootbd.xyz/stream.php?cid=215&format=.m3u8
-#EXTINF:-1 tvg-id="53" tvg-name="Luxell HD" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1770378560772.png" tvg-chno="53" group-title="Infotainment",Luxell HD
-https://akash.rootbd.xyz/stream.php?cid=209&format=.m3u8
-#EXTINF:-1 tvg-id="54" tvg-name="Program Promo" tvg-country="BD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1783925099346.png" tvg-chno="54" group-title="Infotainment",Program Promo
-https://akash.rootbd.xyz/stream.php?cid=248&format=.m3u8`;
+        // --- 1. Full 54 M3U Playlist Data ---
+        // --- Protected Encrypted Stream Vault ---
+        const _0xVaultKey = "LiveTvServer_SecureKey_2026@SohagRana";
+        const _0xVaultPayload = "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";
 
-        // --- 2. Parse M3U ---
+        function _0xUnlock(encData, key) {
+            const raw = atob(encData);
+            const S = Array.from({length: 256}, (_, i) => i);
+            let j = 0;
+            const keyBytes = Array.from(key).map(c => c.charCodeAt(0));
+            for (let i = 0; i < 256; i++) {
+                j = (j + S[i] + keyBytes[i % keyBytes.length]) % 256;
+                [S[i], S[j]] = [S[j], S[i]];
+            }
+            let i = 0;
+            j = 0;
+            const out = new Uint8Array(raw.length);
+            for (let x = 0; x < raw.length; x++) {
+                i = (i + 1) % 256;
+                j = (j + S[i]) % 256;
+                [S[i], S[j]] = [S[j], S[i]];
+                const k = S[(S[i] + S[j]) % 256];
+                out[x] = raw.charCodeAt(x) ^ k;
+            }
+            return new TextDecoder().decode(out);
+        }
+
+        const rawM3U = _0xUnlock(_0xVaultPayload, _0xVaultKey);
+
+        // --- 2. M3U Parser ---
         function parseM3U(data) {
             const lines = data.split('\n');
             const channels = [];
-            let currentChannel = {};
+            let current = {};
 
-            for (let line of lines) {
-                line = line.trim();
+            for (let rawLine of lines) {
+                const line = rawLine.trim();
+                if (!line) continue;
+
                 if (line.startsWith('#KODIPROP:inputstream.adaptive.license_key=')) {
-                    currentChannel.licenseKey = line.substring('#KODIPROP:inputstream.adaptive.license_key='.length).trim();
+                    current.licenseKey = line.substring(44).trim();
                 } else if (line.startsWith('#KODIPROP:inputstream.adaptive.license_type=')) {
-                    currentChannel.licenseType = line.substring('#KODIPROP:inputstream.adaptive.license_type='.length).trim();
+                    current.licenseType = line.substring(45).trim();
                 } else if (line.startsWith('#EXTINF:')) {
+                    const idMatch = line.match(/tvg-id="([^"]+)"/);
+                    current.id = idMatch ? idMatch[1] : (channels.length + 1);
+
+                    const chnoMatch = line.match(/tvg-chno="([^"]+)"/);
+                    current.chno = chnoMatch ? chnoMatch[1] : (channels.length + 1);
+
                     const logoMatch = line.match(/tvg-logo="([^"]+)"/);
-                    currentChannel.logo = logoMatch ? logoMatch[1] : 'https://placehold.co/420x300/1a1a1a/ffffff?text=LIVE%20TV';
+                    current.logo = logoMatch ? logoMatch[1] : 'https://placehold.co/420x300/1e1e2f/ffffff?text=LIVE%20TV';
 
                     const groupMatch = line.match(/group-title="([^"]+)"/);
-                    currentChannel.group = groupMatch ? groupMatch[1] : 'Live TV';
+                    current.group = groupMatch ? groupMatch[1] : 'General';
 
-                    const parts = line.split(',');
-                    currentChannel.name = parts[parts.length - 1];
-                } else if (line.startsWith('http')) {
-                    currentChannel.url = line;
-                    channels.push(currentChannel);
-                    currentChannel = {}; 
+                    const commaIdx = line.lastIndexOf(',');
+                    current.name = commaIdx !== -1 ? line.substring(commaIdx + 1).trim() : 'Live Channel';
+                } else if (line.startsWith('http://') || line.startsWith('https://')) {
+                    current.url = line;
+                    current.index = channels.length;
+                    channels.push(current);
+                    current = {};
                 }
             }
             return channels;
         }
 
-        const channelData = parseM3U(rawM3U);
-
-        // --- 3. Render Channels to DOM ---
-        const channelGrid = document.getElementById('channelGrid');
-        document.getElementById('channelCount').textContent = channelData.length + " Channels";
-
-        channelData.forEach((ch, index) => {
-            const item = document.createElement('div');
-            item.className = 'channel-item';
-            
-            // Thumbnail handling (fallback if image fails to load)
-            const fallbackImg = `https://placehold.co/420x300/1a1a1a/ffffff?text=${encodeURIComponent(ch.name)}`;
-            
-            // Updated HTML structure for the new image view
-            item.innerHTML = `
-                <div class="channel-thumbnail-wrapper">
-                    <img src="${ch.logo}" class="channel-thumbnail" alt="${ch.name}" onerror="this.src='${fallbackImg}'">
-                </div>
-                <div class="channel-name">${ch.name}</div>
-            `;
-            
-            item.addEventListener('click', function(e) {
-                changeChannel(ch, this);
-            });
-
-            channelGrid.appendChild(item);
-        });
-
-        // Global variables to hold player instances
+        // --- State Management ---
+        const channels = parseM3U(rawM3U);
+        let activeIndex = 0;
+        let selectedCategory = 'ALL';
+        let searchQuery = '';
         let hlsInstance = null;
         let shakaPlayer = null;
 
+        // Install Shaka Polyfills once
         if (window.shaka) {
             shaka.polyfill.installAll();
         }
 
-        // --- 4. Video Player & Channel Change Logic ---
-        async function changeChannel(ch, element) {
-            const video = document.getElementById('video-player');
-            const url = ch.url;
-            const channelName = ch.name;
-            const programInfo = ch.group;
+        // DOM References
+        const videoElement = document.getElementById('video-player');
+        const channelGrid = document.getElementById('channelGrid');
+        const categoryContainer = document.getElementById('categoryContainer');
+        const searchInput = document.getElementById('channelSearch');
+        const searchClear = document.getElementById('searchClear');
+        const counterBadge = document.getElementById('channelCountBadge');
+
+        const nowPlayingBadge = document.getElementById('nowPlayingBadge');
+        const playerChannelTitle = document.getElementById('playerChannelTitle');
+        const playerGroupTag = document.getElementById('playerGroupTag');
+        const playerStreamTypeTag = document.getElementById('playerStreamTypeTag');
+
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const errorOverlay = document.getElementById('errorOverlay');
+        const retryBtn = document.getElementById('retryBtn');
+        const nextChannelBtn = document.getElementById('nextChannelBtn');
+
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const playPauseIcon = document.getElementById('playPauseIcon');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const reloadBtn = document.getElementById('reloadBtn');
+        const muteBtn = document.getElementById('muteBtn');
+        const volumeIcon = document.getElementById('volumeIcon');
+        const volumeSlider = document.getElementById('volumeSlider');
+        const pipBtn = document.getElementById('pipBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+        // --- 3. Build Category Filter Chips ---
+        function initCategories() {
+            const groups = {};
+            channels.forEach(ch => {
+                groups[ch.group] = (groups[ch.group] || 0) + 1;
+            });
+
+            categoryContainer.innerHTML = '';
             
+            // "All" chip
+            const allBtn = document.createElement('button');
+            allBtn.className = 'cat-chip active';
+            allBtn.dataset.category = 'ALL';
+            allBtn.textContent = `All (${channels.length})`;
+            allBtn.addEventListener('click', () => setCategory('ALL', allBtn));
+            categoryContainer.appendChild(allBtn);
+
+            // Group chips
+            Object.keys(groups).sort().forEach(group => {
+                const btn = document.createElement('button');
+                btn.className = 'cat-chip';
+                btn.dataset.category = group;
+                btn.textContent = `${group} (${groups[group]})`;
+                btn.addEventListener('click', () => setCategory(group, btn));
+                categoryContainer.appendChild(btn);
+            });
+        }
+
+        function setCategory(cat, btnElement) {
+            selectedCategory = cat;
+            document.querySelectorAll('.cat-chip').forEach(b => b.classList.remove('active'));
+            if (btnElement) btnElement.classList.add('active');
+            renderChannelGrid();
+        }
+
+        // --- 4. Render Channel Grid ---
+        function renderChannelGrid() {
+            channelGrid.innerHTML = '';
+
+            const filtered = channels.filter(ch => {
+                const matchesCat = (selectedCategory === 'ALL' || ch.group.toLowerCase() === selectedCategory.toLowerCase());
+                const matchesSearch = !searchQuery || 
+                    ch.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                    ch.group.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    String(ch.chno).includes(searchQuery);
+                return matchesCat && matchesSearch;
+            });
+
+            counterBadge.textContent = `${filtered.length} / ${channels.length} Channels`;
+
+            if (filtered.length === 0) {
+                channelGrid.innerHTML = `
+                    <div class="empty-channels">
+                        <i class="fas fa-search empty-icon"></i>
+                        <h6>No channels found</h6>
+                        <p class="text-dim small mb-3">Try adjusting your search or category filter</p>
+                        <button class="overlay-btn" id="resetFilterBtn">Show All Channels</button>
+                    </div>
+                `;
+                document.getElementById('resetFilterBtn')?.addEventListener('click', () => {
+                    searchInput.value = '';
+                    searchQuery = '';
+                    searchClear.style.display = 'none';
+                    setCategory('ALL', document.querySelector('.cat-chip[data-category="ALL"]'));
+                });
+                return;
+            }
+
+            filtered.forEach(ch => {
+                const card = document.createElement('div');
+                card.className = `channel-card ${ch.index === activeIndex ? 'active' : ''}`;
+                card.dataset.index = ch.index;
+
+                const fallbackImg = `https://placehold.co/420x300/1e1e2f/ffffff?text=${encodeURIComponent(ch.name)}`;
+                const isDrm = ch.url.includes('.mpd') || !!ch.licenseKey;
+
+                card.innerHTML = `
+                    <div class="card-thumb-wrapper">
+                        <span class="card-chno">#${ch.chno}</span>
+                        ${isDrm ? '<span class="card-drm-badge">DRM</span>' : ''}
+                        <img src="${ch.logo}" class="card-thumb" alt="${ch.name}" loading="lazy" onerror="this.onerror=null;this.src='${fallbackImg}'">
+                    </div>
+                    <div class="card-body-content">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="card-name" title="${ch.name}">${ch.name}</div>
+                            <div class="card-playing-indicator">
+                                <div class="eq-bar"></div>
+                                <div class="eq-bar"></div>
+                                <div class="eq-bar"></div>
+                            </div>
+                        </div>
+                        <div class="card-group">${ch.group}</div>
+                    </div>
+                `;
+
+                card.addEventListener('click', () => playChannel(ch.index));
+                channelGrid.appendChild(card);
+            });
+
+            // Scroll active card into view
+            const activeCard = channelGrid.querySelector('.channel-card.active');
+            if (activeCard) {
+                activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        // --- 5. Play Channel Engine (Hls.js + Shaka Player for DASH/DRM) ---
+        async function playChannel(index) {
+            if (index < 0 || index >= channels.length) return;
+            activeIndex = index;
+            const ch = channels[activeIndex];
+
+            // Update UI Header
+            nowPlayingBadge.textContent = `#${ch.chno} LIVE`;
+            playerChannelTitle.textContent = ch.name;
+            playerGroupTag.textContent = ch.group;
+
+            const isMpd = ch.url.includes('.mpd') || ch.url.includes('format=.mpd');
+            playerStreamTypeTag.textContent = isMpd ? 'DASH / DRM' : 'HLS';
+
+            // Show loading state
+            loadingOverlay.classList.add('active');
+            errorOverlay.classList.remove('active');
+
+            // Cleanup existing instances
             if (hlsInstance) {
                 hlsInstance.destroy();
                 hlsInstance = null;
             }
             if (shakaPlayer) {
-                await shakaPlayer.destroy();
+                try {
+                    await shakaPlayer.destroy();
+                } catch (e) {
+                    console.warn('Shaka cleanup error:', e);
+                }
                 shakaPlayer = null;
             }
 
-            const isMpd = url.includes('.mpd') || url.includes('format=.mpd');
+            // Highlight active in channel grid
+            document.querySelectorAll('.channel-card').forEach(c => {
+                const isActive = parseInt(c.dataset.index, 10) === activeIndex;
+                c.classList.toggle('active', isActive);
+            });
 
-            if (isMpd && window.shaka && shaka.Player.isBrowserSupported()) {
-                shakaPlayer = new shaka.Player(video);
+            try {
+                if (isMpd && window.shaka && shaka.Player.isBrowserSupported()) {
+                    shakaPlayer = new shaka.Player(videoElement);
 
-                if (ch.licenseKey) {
-                    shakaPlayer.configure({
-                        drm: {
-                            servers: {
-                                'com.widevine.alpha': ch.licenseKey
+                    if (ch.licenseKey) {
+                        shakaPlayer.configure({
+                            drm: {
+                                servers: {
+                                    'com.widevine.alpha': ch.licenseKey
+                                }
+                            }
+                        });
+                    }
+
+                    shakaPlayer.addEventListener('error', (event) => {
+                        console.error('Shaka error:', event.detail);
+                        handleStreamError(ch);
+                    });
+
+                    await shakaPlayer.load(ch.url);
+                    loadingOverlay.classList.remove('active');
+                    videoElement.play().catch(handleAutoplayBlock);
+                } else if (Hls.isSupported() && !isMpd) {
+                    hlsInstance = new Hls({
+                        enableWorker: true,
+                        lowLatencyMode: true,
+                        manifestLoadingMaxRetry: 3
+                    });
+
+                    hlsInstance.loadSource(ch.url);
+                    hlsInstance.attachMedia(videoElement);
+
+                    hlsInstance.on(Hls.Events.MANIFEST_PARSED, function() {
+                        loadingOverlay.classList.remove('active');
+                        videoElement.play().catch(handleAutoplayBlock);
+                    });
+
+                    hlsInstance.on(Hls.Events.ERROR, function(event, data) {
+                        if (data.fatal) {
+                            console.warn('HLS Fatal Error:', data.type);
+                            switch (data.type) {
+                                case Hls.ErrorTypes.NETWORK_ERROR:
+                                    hlsInstance.startLoad();
+                                    break;
+                                case Hls.ErrorTypes.MEDIA_ERROR:
+                                    hlsInstance.recoverMediaError();
+                                    break;
+                                default:
+                                    handleStreamError(ch);
+                                    break;
                             }
                         }
                     });
+                } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+                    videoElement.src = ch.url;
+                    videoElement.addEventListener('loadedmetadata', function onLoaded() {
+                        loadingOverlay.classList.remove('active');
+                        videoElement.play().catch(handleAutoplayBlock);
+                        videoElement.removeEventListener('loadedmetadata', onLoaded);
+                    });
+                } else {
+                    videoElement.src = ch.url;
+                    loadingOverlay.classList.remove('active');
+                    videoElement.play().catch(handleAutoplayBlock);
                 }
-
-                shakaPlayer.addEventListener('error', (event) => {
-                    console.error('Shaka player error:', event.detail);
-                });
-
-                try {
-                    await shakaPlayer.load(url);
-                    video.play().catch(e => console.log("Auto-play prevented", e));
-                } catch (e) {
-                    console.error("Error loading MPD stream with Shaka Player", e);
-                }
-            } else if (Hls.isSupported() && !isMpd) {
-                hlsInstance = new Hls();
-                hlsInstance.loadSource(url);
-                hlsInstance.attachMedia(video);
-                hlsInstance.on(Hls.Events.MANIFEST_PARSED, function() {
-                    video.play().catch(e => console.log("Auto-play prevented", e));
-                });
-            } 
-            else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = url;
-                video.addEventListener('loadedmetadata', function() {
-                    video.play().catch(e => console.log("Auto-play prevented", e));
-                });
-            }
-            else {
-                video.src = url;
-                video.play().catch(e => console.log("Auto-play prevented", e));
-            }
-
-            // Update UI
-            document.querySelector('.channel-title').textContent = channelName;
-            document.querySelector('.program-info').textContent = "Group: " + programInfo;
-            
-            const items = document.querySelectorAll('.channel-item');
-            items.forEach(item => item.classList.remove('active'));
-            if (element) {
-                element.classList.add('active');
-                element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } catch (err) {
+                console.error('Playback initialization error:', err);
+                handleStreamError(ch);
             }
         }
 
-        // --- 5. Theme & Initialization ---
-        const themeToggle = document.getElementById('themeToggle');
-        const body = document.body;
-        
-        const savedTheme = localStorage.getItem('theme') || 
-                          (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
-        
-        if (savedTheme === 'light') {
-            body.classList.add('light-theme');
-            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        function handleAutoplayBlock(e) {
+            console.log('Autoplay prevented, retrying muted...', e);
+            videoElement.muted = true;
+            updateVolumeUI();
+            videoElement.play().catch(err => console.log('Muted autoplay also blocked:', err));
         }
-        
-        themeToggle.addEventListener('click', () => {
-            body.classList.toggle('light-theme');
-            const isLight = body.classList.contains('light-theme');
-            
-            localStorage.setItem('theme', isLight ? 'light' : 'dark');
-            themeToggle.innerHTML = isLight ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+
+        function handleStreamError(ch) {
+            loadingOverlay.classList.remove('active');
+            errorOverlay.classList.add('active');
+            document.getElementById('errorMsg').textContent = `Failed to load "${ch.name}". Stream might be offline or georestricted.`;
+        }
+
+        // --- 6. Toolbar & Control Interactions ---
+        function updatePlayPauseIcon() {
+            if (videoElement.paused) {
+                playPauseIcon.className = 'fas fa-play';
+                playPauseBtn.setAttribute('title', 'Play (Space)');
+            } else {
+                playPauseIcon.className = 'fas fa-pause';
+                playPauseBtn.setAttribute('title', 'Pause (Space)');
+            }
+        }
+
+        videoElement.addEventListener('play', updatePlayPauseIcon);
+        videoElement.addEventListener('pause', updatePlayPauseIcon);
+        videoElement.addEventListener('playing', () => loadingOverlay.classList.remove('active'));
+        videoElement.addEventListener('waiting', () => loadingOverlay.classList.add('active'));
+
+        playPauseBtn.addEventListener('click', () => {
+            if (videoElement.paused) {
+                videoElement.play();
+            } else {
+                videoElement.pause();
+            }
         });
 
-        // Keyboard Shortcuts
-        document.addEventListener('keydown', function(e) {
-            const items = document.querySelectorAll('.channel-item');
-            if(items.length === 0) return;
+        prevBtn.addEventListener('click', () => {
+            const nextIdx = (activeIndex - 1 + channels.length) % channels.length;
+            playChannel(nextIdx);
+        });
 
-            const currentActive = document.querySelector('.channel-item.active');
-            let currentIndex = currentActive ? Array.from(items).indexOf(currentActive) : 0;
-            
-            if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
-                e.preventDefault();
-                currentIndex = (currentIndex - 1 + items.length) % items.length;
-            } else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
-                e.preventDefault();
-                currentIndex = (currentIndex + 1) % items.length;
-            } else if (e.key >= '1' && e.key <= '9') {
-                currentIndex = parseInt(e.key) - 1;
-                if (currentIndex >= items.length) currentIndex = items.length - 1;
+        nextBtn.addEventListener('click', () => {
+            const nextIdx = (activeIndex + 1) % channels.length;
+            playChannel(nextIdx);
+        });
+
+        reloadBtn.addEventListener('click', () => playChannel(activeIndex));
+        retryBtn.addEventListener('click', () => playChannel(activeIndex));
+        nextChannelBtn.addEventListener('click', () => {
+            const nextIdx = (activeIndex + 1) % channels.length;
+            playChannel(nextIdx);
+        });
+
+        // Volume & Mute Handling
+        function updateVolumeUI() {
+            volumeSlider.value = videoElement.muted ? 0 : videoElement.volume;
+            if (videoElement.muted || videoElement.volume === 0) {
+                volumeIcon.className = 'fas fa-volume-xmark text-danger';
+            } else if (videoElement.volume < 0.5) {
+                volumeIcon.className = 'fas fa-volume-low';
             } else {
+                volumeIcon.className = 'fas fa-volume-high';
+            }
+            localStorage.setItem('livetv_volume', videoElement.volume);
+            localStorage.setItem('livetv_muted', videoElement.muted);
+        }
+
+        muteBtn.addEventListener('click', () => {
+            videoElement.muted = !videoElement.muted;
+            updateVolumeUI();
+        });
+
+        volumeSlider.addEventListener('input', (e) => {
+            const val = parseFloat(e.target.value);
+            videoElement.volume = val;
+            videoElement.muted = val === 0;
+            updateVolumeUI();
+        });
+
+        // Picture-in-Picture
+        pipBtn.addEventListener('click', async () => {
+            try {
+                if (document.pictureInPictureElement) {
+                    await document.exitPictureInPicture();
+                } else if (document.pictureInPictureEnabled) {
+                    await videoElement.requestPictureInPicture();
+                }
+            } catch (err) {
+                console.error('PiP error:', err);
+            }
+        });
+
+        // Fullscreen
+        fullscreenBtn.addEventListener('click', () => {
+            const playerCard = document.querySelector('.video-wrapper');
+            if (!document.fullscreenElement) {
+                (playerCard.requestFullscreen || playerCard.webkitRequestFullscreen || playerCard.msRequestFullscreen).call(playerCard);
+            } else {
+                (document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen).call(document);
+            }
+        });
+
+        // --- 7. Search Filter Handling ---
+        searchInput.addEventListener('input', (e) => {
+            searchQuery = e.target.value.trim();
+            searchClear.style.display = searchQuery ? 'block' : 'none';
+            renderChannelGrid();
+        });
+
+        searchClear.addEventListener('click', () => {
+            searchInput.value = '';
+            searchQuery = '';
+            searchClear.style.display = 'none';
+            renderChannelGrid();
+            searchInput.focus();
+        });
+
+        // --- 8. Theme Switcher ---
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+
+        function applyTheme(theme) {
+            if (theme === 'light') {
+                document.body.classList.add('light-theme');
+                themeIcon.className = 'fas fa-sun';
+            } else {
+                document.body.classList.remove('light-theme');
+                themeIcon.className = 'fas fa-moon';
+            }
+            localStorage.setItem('livetv_theme', theme);
+        }
+
+        const savedTheme = localStorage.getItem('livetv_theme') || 
+            (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+        applyTheme(savedTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const isLight = document.body.classList.contains('light-theme');
+            applyTheme(isLight ? 'dark' : 'light');
+        });
+
+        // --- 9. Global Keyboard Shortcuts ---
+        document.addEventListener('keydown', (e) => {
+            // Ignore shortcut keys when typing inside search input
+            if (document.activeElement === searchInput) {
+                if (e.key === 'Escape') {
+                    searchInput.blur();
+                }
                 return;
             }
-            
-            items[currentIndex].click();
+
+            if (e.key === '/') {
+                e.preventDefault();
+                searchInput.focus();
+            } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+                e.preventDefault();
+                const nextIdx = (activeIndex - 1 + channels.length) % channels.length;
+                playChannel(nextIdx);
+            } else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+                e.preventDefault();
+                const nextIdx = (activeIndex + 1) % channels.length;
+                playChannel(nextIdx);
+            } else if (e.key === ' ' || e.code === 'Space') {
+                e.preventDefault();
+                playPauseBtn.click();
+            } else if (e.key === 'm' || e.key === 'M') {
+                e.preventDefault();
+                muteBtn.click();
+            } else if (e.key === 'f' || e.key === 'F') {
+                e.preventDefault();
+                fullscreenBtn.click();
+            } else if (e.key === 'p' || e.key === 'P') {
+                e.preventDefault();
+                pipBtn.click();
+            }
         });
 
-        // Initialize with first channel active on load
-        document.addEventListener('DOMContentLoaded', function() {
-            if (channelData.length > 0) {
-                document.querySelector('.channel-item').click();
+        // --- 10. Initialization on Load ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Restore saved volume
+            const savedVol = localStorage.getItem('livetv_volume');
+            if (savedVol !== null) videoElement.volume = parseFloat(savedVol);
+            const savedMute = localStorage.getItem('livetv_muted');
+            if (savedMute !== null) videoElement.muted = savedMute === 'true';
+            updateVolumeUI();
+
+            initCategories();
+            renderChannelGrid();
+
+            // Auto-play initial channel
+            if (channels.length > 0) {
+                playChannel(0);
             }
         });
     </script>

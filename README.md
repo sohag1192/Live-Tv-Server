@@ -317,6 +317,20 @@ Live-Tv-Server/
 
 ---
 
+## 🌟 Support by Starring
+
+Hello Viewers! 🌟  
+If you find this project helpful or enjoy using the Live TV streaming platform, please consider giving a **Star ⭐** to the repository! Your support motivates continuous updates, new channel additions, and feature enhancements.
+
+<div align="center">
+
+[![GitHub stars](https://img.shields.io/github/stars/sohag1192/Live-Tv-Server?style=for-the-badge&logo=github&color=ffd700&label=Star%20This%20Repo)](https://github.com/sohag1192/Live-Tv-Server/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/sohag1192/Live-Tv-Server?style=for-the-badge&logo=github&color=7c3aed&label=Fork)](https://github.com/sohag1192/Live-Tv-Server/fork)
+
+</div>
+
+---
+
 ## 👤 Author & Support
 
 - **Developer**: **Md Sohag Rana**
@@ -330,3 +344,4 @@ Live-Tv-Server/
 Made with ❤️ by **Md Sohag Rana** • &copy; 2026 Live TV Server
 
 </div>
+

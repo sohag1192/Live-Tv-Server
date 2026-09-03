@@ -6,7 +6,7 @@
     <meta name="description" content="Premium Live TV Streaming - Watch 54+ HD Channels Online">
     <meta name="theme-color" content="#121212">
     <link rel="shortcut icon" href="https://placehold.co/16x16/e50914/ffffff?text=TV"/>
-    <title>Premium Live TV Streaming | Watch 54+ HD Channels</title>
+    <title>Premium Live TV Streaming | 54+ HD Channels</title>
 
     <!-- Google Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Video Streaming Libraries (HLS + Shaka DASH/Widevine DRM) -->
+    <!-- Video Streaming Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.compiled.js"></script>
 
@@ -32,7 +32,6 @@
             --accent-glow: rgba(168, 85, 247, 0.4);
             --accent-hover: #9333ea;
             --live-red: #ef4444;
-            --live-glow: rgba(239, 68, 68, 0.4);
 
             --text-main: #f9fafb;
             --text-muted: #9ca3af;
@@ -77,9 +76,7 @@
             --chip-border: #cbd5e1;
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
@@ -92,6 +89,7 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
+        /* Ambient Glow */
         .ambient-bg {
             position: fixed;
             top: 0;
@@ -126,17 +124,15 @@
             background: radial-gradient(circle, #3b82f6 0%, transparent 70%);
         }
 
-        /* Navigation Bar */
+        /* Navbar */
         .app-navbar {
             position: sticky;
             top: 0;
             z-index: 1000;
             background: rgba(12, 13, 20, 0.88);
             backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--border-color);
             padding: 12px 24px;
-            transition: var(--transition-smooth);
         }
 
         body.light-theme .app-navbar {
@@ -161,7 +157,6 @@
             color: var(--text-main);
             font-weight: 800;
             font-size: 1.25rem;
-            letter-spacing: -0.5px;
         }
 
         .brand-icon-box {
@@ -196,7 +191,7 @@
             height: 7px;
             background-color: var(--live-red);
             border-radius: 50%;
-            animation: pulse-ring 1.8s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+            animation: pulse-ring 1.8s infinite;
         }
 
         @keyframes pulse-ring {
@@ -230,7 +225,6 @@
         .nav-btn:hover {
             color: var(--text-main);
             background: rgba(128, 128, 128, 0.1);
-            border-color: var(--border-color);
         }
 
         .nav-btn.active {
@@ -259,13 +253,7 @@
             transition: var(--transition-smooth);
         }
 
-        .theme-btn:hover {
-            transform: scale(1.05);
-            border-color: var(--accent);
-            box-shadow: 0 4px 12px var(--accent-glow);
-        }
-
-        /* Main App Container */
+        /* App Container */
         .app-container {
             max-width: 1720px;
             margin: 0 auto;
@@ -324,6 +312,21 @@
             color: var(--text-main);
         }
 
+        .player-fav-btn {
+            background: none;
+            border: none;
+            font-size: 1.15rem;
+            color: var(--text-dim);
+            cursor: pointer;
+            padding: 4px;
+            transition: var(--transition-smooth);
+        }
+
+        .player-fav-btn.active {
+            color: #ef4444;
+            transform: scale(1.15);
+        }
+
         .player-tags {
             display: flex;
             align-items: center;
@@ -374,9 +377,7 @@
             text-align: center;
         }
 
-        .video-overlay.active {
-            display: flex;
-        }
+        .video-overlay.active { display: flex; }
 
         .spinner-custom {
             width: 48px;
@@ -388,9 +389,7 @@
             margin-bottom: 16px;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         .overlay-msg {
             font-size: 1rem;
@@ -414,11 +413,7 @@
             transition: var(--transition-smooth);
         }
 
-        .overlay-btn:hover {
-            background: var(--accent-hover);
-            transform: scale(1.03);
-        }
-
+        /* Toolbar Controls */
         .player-toolbar {
             padding: 12px 18px;
             display: flex;
@@ -427,6 +422,7 @@
             gap: 12px;
             background: rgba(0, 0, 0, 0.05);
             border-top: 1px solid var(--border-color);
+            position: relative;
         }
 
         .toolbar-group {
@@ -436,23 +432,65 @@
         }
 
         .tool-btn {
-            width: 36px;
             height: 36px;
+            padding: 0 10px;
             border-radius: var(--radius-sm);
             border: 1px solid var(--border-color);
             background: var(--bg-card);
             color: var(--text-muted);
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.9rem;
+            font-size: 0.88rem;
+            font-weight: 700;
             cursor: pointer;
             transition: var(--transition-smooth);
+            gap: 6px;
         }
 
         .tool-btn:hover {
             color: var(--text-main);
             border-color: var(--accent);
+        }
+
+        /* Quality Dropdown Menu */
+        .quality-menu {
+            position: absolute;
+            bottom: 52px;
+            right: 120px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+            padding: 6px;
+            min-width: 150px;
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            z-index: 100;
+        }
+
+        .quality-menu.show { display: flex; }
+
+        .quality-item {
+            padding: 7px 12px;
+            border-radius: 6px;
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-size: 0.82rem;
+            font-weight: 600;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: var(--transition-smooth);
+        }
+
+        .quality-item:hover, .quality-item.active {
+            background: var(--accent);
+            color: #fff;
         }
 
         .volume-control {
@@ -465,7 +503,6 @@
             width: 80px;
             height: 5px;
             -webkit-appearance: none;
-            appearance: none;
             background: rgba(128, 128, 128, 0.3);
             border-radius: 4px;
             outline: none;
@@ -576,7 +613,7 @@
             padding: 4px;
         }
 
-        /* Category Filter Chips - FIXED CONTRAST */
+        /* Category Filter Chips */
         .category-scroll {
             display: flex;
             align-items: center;
@@ -613,7 +650,6 @@
             box-shadow: 0 2px 8px var(--accent-glow);
         }
 
-        /* Channel Scroll List Area */
         .channels-scroll-area {
             flex: 1;
             overflow-y: auto;
@@ -627,7 +663,7 @@
         .channels-scroll-area::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
         .channels-scroll-area::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
-        /* Robust Channel Card - HIGH CONTRAST */
+        /* Channel Card with D-Pad TV Focus */
         .channel-card {
             display: flex;
             align-items: center;
@@ -641,14 +677,14 @@
             transition: var(--transition-smooth);
             text-decoration: none;
             position: relative;
-            overflow: hidden;
+            outline: none;
         }
 
-        .channel-card:hover {
-            transform: translateX(4px);
+        .channel-card:hover, .channel-card:focus-visible, .channel-card.tv-focused {
+            transform: translateX(4px) scale(1.01);
             background: var(--bg-card-hover);
-            border-color: var(--border-focus);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            border-color: var(--accent) !important;
+            box-shadow: 0 0 0 2.5px var(--accent), 0 4px 20px var(--accent-glow) !important;
         }
 
         .channel-card.active {
@@ -705,7 +741,6 @@
             min-width: 0;
         }
 
-        /* FIXED CHANNEL NUMBER CONTRAST */
         .card-chno {
             font-size: 0.72rem;
             font-weight: 800;
@@ -728,6 +763,7 @@
         .card-footer-line {
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 6px;
         }
 
@@ -735,6 +771,20 @@
             font-size: 0.72rem;
             font-weight: 600;
             color: var(--text-muted);
+        }
+
+        .card-fav-btn {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            cursor: pointer;
+            padding: 2px 4px;
+            transition: var(--transition-smooth);
+        }
+
+        .card-fav-btn.active {
+            color: #ef4444;
         }
 
         .card-drm-badge {
@@ -874,6 +924,9 @@
                             <div>
                                 <h1 class="player-title" id="playerChannelTitle">Somoy tv</h1>
                             </div>
+                            <button class="player-fav-btn" id="playerFavBtn" title="Toggle Favorite">
+                                <i class="far fa-heart" id="playerFavIcon"></i>
+                            </button>
                         </div>
                         <div class="player-tags" id="playerTags">
                             <span class="player-tag" id="playerGroupTag">News</span>
@@ -920,6 +973,15 @@
                         </div>
 
                         <div class="toolbar-group">
+                            <!-- Quality Picker Button -->
+                            <button class="tool-btn" id="qualityBtn" title="Video Quality">
+                                <i class="fas fa-gear"></i>
+                                <span id="qualityLabel">Auto</span>
+                            </button>
+                            <div class="quality-menu" id="qualityMenu">
+                                <button class="quality-item active" data-level="-1">Auto (Best)</button>
+                            </div>
+
                             <div class="volume-control">
                                 <button class="tool-btn" id="muteBtn" title="Mute/Unmute (M)">
                                     <i class="fas fa-volume-high" id="volumeIcon"></i>
@@ -937,7 +999,8 @@
                 </div>
 
                 <div class="keyboard-shortcuts-bar">
-                    <span><span class="kbd-key">↑</span> <span class="kbd-key">↓</span> / <span class="kbd-key">←</span> <span class="kbd-key">→</span> Channel</span>
+                    <span><span class="kbd-key">↑</span> <span class="kbd-key">↓</span> / <span class="kbd-key">←</span> <span class="kbd-key">→</span> Navigate (D-Pad)</span>
+                    <span><span class="kbd-key">Enter / OK</span> Select</span>
                     <span><span class="kbd-key">Space</span> Play/Pause</span>
                     <span><span class="kbd-key">M</span> Mute</span>
                     <span><span class="kbd-key">F</span> Fullscreen</span>
@@ -1026,7 +1089,7 @@
                     current.licenseType = line.substring(45).trim();
                 } else if (line.startsWith('#EXTINF:')) {
                     const idMatch = line.match(/tvg-id="([^"]+)"/);
-                    current.id = idMatch ? idMatch[1] : (channels.length + 1);
+                    current.id = idMatch ? idMatch[1] : String(channels.length + 1);
 
                     const chnoMatch = line.match(/tvg-chno="([^"]+)"/);
                     current.chno = chnoMatch ? chnoMatch[1] : (channels.length + 1);
@@ -1056,6 +1119,10 @@
         let hlsInstance = null;
         let shakaPlayer = null;
 
+        // Favorites & Recents state
+        let favorites = JSON.parse(localStorage.getItem('livetv_favorites') || '[]');
+        let recents = JSON.parse(localStorage.getItem('livetv_recents') || '[]');
+
         if (window.shaka) shaka.polyfill.installAll();
 
         const videoElement = document.getElementById('video-player');
@@ -1069,6 +1136,8 @@
         const playerChannelTitle = document.getElementById('playerChannelTitle');
         const playerGroupTag = document.getElementById('playerGroupTag');
         const playerStreamTypeTag = document.getElementById('playerStreamTypeTag');
+        const playerFavBtn = document.getElementById('playerFavBtn');
+        const playerFavIcon = document.getElementById('playerFavIcon');
 
         const loadingOverlay = document.getElementById('loadingOverlay');
         const errorOverlay = document.getElementById('errorOverlay');
@@ -1086,6 +1155,11 @@
         const pipBtn = document.getElementById('pipBtn');
         const fullscreenBtn = document.getElementById('fullscreenBtn');
 
+        const qualityBtn = document.getElementById('qualityBtn');
+        const qualityLabel = document.getElementById('qualityLabel');
+        const qualityMenu = document.getElementById('qualityMenu');
+
+        // --- 1. Category Setup with Favorites & Recents ---
         function initCategories() {
             const groups = {};
             channels.forEach(ch => {
@@ -1094,21 +1168,33 @@
 
             categoryContainer.innerHTML = '';
             
-            const allBtn = document.createElement('button');
-            allBtn.className = 'cat-chip active';
-            allBtn.dataset.category = 'ALL';
-            allBtn.textContent = `All (${channels.length})`;
-            allBtn.addEventListener('click', () => setCategory('ALL', allBtn));
+            // All Chip
+            const allBtn = createCatChip('ALL', `All (${channels.length})`);
             categoryContainer.appendChild(allBtn);
 
+            // Favorites Chip
+            const favBtn = createCatChip('FAVORITES', `❤️ Favorites (${favorites.length})`);
+            categoryContainer.appendChild(favBtn);
+
+            // Recents Chip
+            const recBtn = createCatChip('RECENTS', `🕒 Recent (${recents.length})`);
+            categoryContainer.appendChild(recBtn);
+
+            // Standard Group Chips
             Object.keys(groups).sort().forEach(group => {
-                const btn = document.createElement('button');
-                btn.className = 'cat-chip';
-                btn.dataset.category = group;
-                btn.textContent = `${group} (${groups[group]})`;
-                btn.addEventListener('click', () => setCategory(group, btn));
+                const btn = createCatChip(group, `${group} (${groups[group]})`);
                 categoryContainer.appendChild(btn);
             });
+        }
+
+        function createCatChip(catKey, label) {
+            const btn = document.createElement('button');
+            btn.className = `cat-chip ${selectedCategory === catKey ? 'active' : ''}`;
+            btn.dataset.category = catKey;
+            btn.textContent = label;
+            btn.tabIndex = 0;
+            btn.addEventListener('click', () => setCategory(catKey, btn));
+            return btn;
         }
 
         function setCategory(cat, btnElement) {
@@ -1118,17 +1204,68 @@
             renderChannelGrid();
         }
 
+        // --- 2. Favorites & Recents Handlers ---
+        function toggleFavorite(chId, e) {
+            if (e) e.stopPropagation();
+            const idx = favorites.indexOf(String(chId));
+            if (idx === -1) {
+                favorites.push(String(chId));
+            } else {
+                favorites.splice(idx, 1);
+            }
+            localStorage.setItem('livetv_favorites', JSON.stringify(favorites));
+            updateFavUI();
+            initCategories();
+            renderChannelGrid();
+        }
+
+        function updateFavUI() {
+            const curCh = channels[activeIndex];
+            const isFav = curCh && favorites.includes(String(curCh.id));
+            if (isFav) {
+                playerFavBtn.classList.add('active');
+                playerFavIcon.className = 'fas fa-heart text-danger';
+            } else {
+                playerFavBtn.classList.remove('active');
+                playerFavIcon.className = 'far fa-heart';
+            }
+        }
+
+        playerFavBtn.addEventListener('click', () => {
+            if (channels[activeIndex]) toggleFavorite(channels[activeIndex].id);
+        });
+
+        function recordRecent(chId) {
+            const sId = String(chId);
+            recents = recents.filter(id => id !== sId);
+            recents.unshift(sId);
+            if (recents.length > 15) recents.pop();
+            localStorage.setItem('livetv_recents', JSON.stringify(recents));
+            initCategories();
+        }
+
+        // --- 3. Render Channel Grid ---
         function renderChannelGrid() {
             channelGrid.innerHTML = '';
 
-            const filtered = channels.filter(ch => {
-                const matchesCat = (selectedCategory === 'ALL' || ch.group.toLowerCase() === selectedCategory.toLowerCase());
-                const matchesSearch = !searchQuery || 
+            let filtered = channels.filter(ch => {
+                if (selectedCategory === 'FAVORITES') return favorites.includes(String(ch.id));
+                if (selectedCategory === 'RECENTS') return recents.includes(String(ch.id));
+                if (selectedCategory !== 'ALL') return ch.group.toLowerCase() === selectedCategory.toLowerCase();
+                return true;
+            });
+
+            if (selectedCategory === 'RECENTS') {
+                filtered.sort((a, b) => recents.indexOf(String(a.id)) - recents.indexOf(String(b.id)));
+            }
+
+            if (searchQuery) {
+                filtered = filtered.filter(ch => 
                     ch.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                     ch.group.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    String(ch.chno).includes(searchQuery);
-                return matchesCat && matchesSearch;
-            });
+                    String(ch.chno).includes(searchQuery)
+                );
+            }
 
             counterBadge.textContent = `${filtered.length} / ${channels.length} Channels`;
 
@@ -1146,9 +1283,11 @@
                 const card = document.createElement('div');
                 card.className = `channel-card ${ch.index === activeIndex ? 'active' : ''}`;
                 card.dataset.index = ch.index;
+                card.tabIndex = 0; // D-Pad focusable
 
                 const fallbackImg = `https://placehold.co/420x300/1e1e2f/ffffff?text=${encodeURIComponent(ch.name)}`;
                 const isDrm = ch.url.includes('.mpd') || !!ch.licenseKey;
+                const isFav = favorites.includes(String(ch.id));
 
                 card.innerHTML = `
                     <div class="card-thumb-wrapper">
@@ -1168,11 +1307,17 @@
                         </div>
                         <div class="card-footer-line">
                             <span class="card-group">${ch.group}</span>
-                            ${isDrm ? '<span class="card-drm-badge">DRM</span>' : ''}
+                            <div class="d-flex align-items-center gap-1">
+                                ${isDrm ? '<span class="card-drm-badge">DRM</span>' : ''}
+                                <button class="card-fav-btn ${isFav ? 'active' : ''}" title="Favorite">
+                                    <i class="${isFav ? 'fas fa-heart text-danger' : 'far fa-heart'}"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 `;
 
+                card.querySelector('.card-fav-btn').addEventListener('click', (e) => toggleFavorite(ch.id, e));
                 card.addEventListener('click', () => playChannel(ch.index));
                 channelGrid.appendChild(card);
             });
@@ -1183,6 +1328,80 @@
             }
         }
 
+        // --- 4. Video Quality Selector ---
+        qualityBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            qualityMenu.classList.toggle('show');
+        });
+
+        document.addEventListener('click', () => qualityMenu.classList.remove('show'));
+
+        function populateHlsQualityMenu(levels) {
+            qualityMenu.innerHTML = '';
+            
+            // Auto Option
+            const autoBtn = document.createElement('button');
+            autoBtn.className = `quality-item ${hlsInstance.currentLevel === -1 ? 'active' : ''}`;
+            autoBtn.textContent = 'Auto (Best)';
+            autoBtn.onclick = () => {
+                hlsInstance.currentLevel = -1;
+                qualityLabel.textContent = 'Auto';
+                document.querySelectorAll('.quality-item').forEach(el => el.classList.remove('active'));
+                autoBtn.classList.add('active');
+            };
+            qualityMenu.appendChild(autoBtn);
+
+            levels.forEach((lvl, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `quality-item ${hlsInstance.currentLevel === idx ? 'active' : ''}`;
+                btn.textContent = `${lvl.height}p (${Math.round(lvl.bitrate / 1000)} kbps)`;
+                btn.onclick = () => {
+                    hlsInstance.currentLevel = idx;
+                    qualityLabel.textContent = `${lvl.height}p`;
+                    document.querySelectorAll('.quality-item').forEach(el => el.classList.remove('active'));
+                    btn.classList.add('active');
+                };
+                qualityMenu.appendChild(btn);
+            });
+        }
+
+        function populateShakaQualityMenu() {
+            if (!shakaPlayer) return;
+            qualityMenu.innerHTML = '';
+
+            const autoBtn = document.createElement('button');
+            autoBtn.className = 'quality-item active';
+            autoBtn.textContent = 'Auto (Best)';
+            autoBtn.onclick = () => {
+                shakaPlayer.configure({ abr: { enabled: true } });
+                qualityLabel.textContent = 'Auto';
+                document.querySelectorAll('.quality-item').forEach(el => el.classList.remove('active'));
+                autoBtn.classList.add('active');
+            };
+            qualityMenu.appendChild(autoBtn);
+
+            const tracks = shakaPlayer.getVariantTracks();
+            const uniqueHeights = [...new Set(tracks.map(t => t.height).filter(Boolean))].sort((a, b) => b - a);
+
+            uniqueHeights.forEach(h => {
+                const btn = document.createElement('button');
+                btn.className = 'quality-item';
+                btn.textContent = `${h}p HD`;
+                btn.onclick = () => {
+                    const track = tracks.find(t => t.height === h);
+                    if (track) {
+                        shakaPlayer.configure({ abr: { enabled: false } });
+                        shakaPlayer.selectVariantTrack(track, true);
+                        qualityLabel.textContent = `${h}p`;
+                        document.querySelectorAll('.quality-item').forEach(el => el.classList.remove('active'));
+                        btn.classList.add('active');
+                    }
+                };
+                qualityMenu.appendChild(btn);
+            });
+        }
+
+        // --- 5. Play Channel Engine ---
         async function playChannel(index) {
             if (index < 0 || index >= channels.length) return;
             activeIndex = index;
@@ -1191,12 +1410,15 @@
             nowPlayingBadge.textContent = `#${ch.chno} LIVE`;
             playerChannelTitle.textContent = ch.name;
             playerGroupTag.textContent = ch.group;
+            updateFavUI();
+            recordRecent(ch.id);
 
             const isMpd = ch.url.includes('.mpd') || ch.url.includes('format=.mpd');
             playerStreamTypeTag.textContent = isMpd ? 'DASH / DRM' : 'HLS';
 
             loadingOverlay.classList.add('active');
             errorOverlay.classList.remove('active');
+            qualityLabel.textContent = 'Auto';
 
             if (hlsInstance) {
                 hlsInstance.destroy();
@@ -1232,6 +1454,7 @@
 
                     shakaPlayer.addEventListener('error', () => handleStreamError(ch));
                     await shakaPlayer.load(ch.url);
+                    populateShakaQualityMenu();
                     loadingOverlay.classList.remove('active');
                     videoElement.play().catch(handleAutoplayBlock);
                 } else if (Hls.isSupported() && !isMpd) {
@@ -1244,7 +1467,8 @@
                     hlsInstance.loadSource(ch.url);
                     hlsInstance.attachMedia(videoElement);
 
-                    hlsInstance.on(Hls.Events.MANIFEST_PARSED, function() {
+                    hlsInstance.on(Hls.Events.MANIFEST_PARSED, function(event, data) {
+                        populateHlsQualityMenu(data.levels || []);
                         loadingOverlay.classList.remove('active');
                         videoElement.play().catch(handleAutoplayBlock);
                     });
@@ -1392,20 +1616,41 @@
             applyTheme(isLight ? 'dark' : 'light');
         });
 
+        // --- 6. D-Pad TV Remote & Keyboard Navigation ---
         document.addEventListener('keydown', (e) => {
             if (document.activeElement === searchInput) {
                 if (e.key === 'Escape') searchInput.blur();
                 return;
             }
+
+            const focused = document.activeElement;
+            const isCard = focused && focused.classList.contains('channel-card');
+
             if (e.key === '/') {
                 e.preventDefault();
                 searchInput.focus();
-            } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+            } else if (e.key === 'ArrowUp') {
                 e.preventDefault();
-                playChannel((activeIndex - 1 + channels.length) % channels.length);
-            } else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+                if (isCard) {
+                    const prev = focused.previousElementSibling;
+                    if (prev && prev.classList.contains('channel-card')) {
+                        prev.focus();
+                        prev.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                } else {
+                    playChannel((activeIndex - 1 + channels.length) % channels.length);
+                }
+            } else if (e.key === 'ArrowDown') {
                 e.preventDefault();
-                playChannel((activeIndex + 1) % channels.length);
+                if (isCard) {
+                    const next = focused.nextElementSibling;
+                    if (next && next.classList.contains('channel-card')) {
+                        next.focus();
+                        next.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                } else {
+                    playChannel((activeIndex + 1) % channels.length);
+                }
             } else if (e.key === ' ' || e.code === 'Space') {
                 e.preventDefault();
                 playPauseBtn.click();

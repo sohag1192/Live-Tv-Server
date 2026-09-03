@@ -340,12 +340,15 @@ Your donations help cover hosting, proxy bandwidth, and server maintenance costs
 
 <div align="center">
 
-| Payment Method | Details | Contact / Donate |
+| Payment Method | Address / Details | Action |
 | :--- | :--- | :---: |
-| **bKash (Personal)** | Send Money (BD) | [![bKash](https://img.shields.io/badge/bKash-Payment-E2136E?style=for-the-badge&logo=bkash&logoColor=white)](https://t.me/MdSohagRana) |
-| **Nagad (Personal)** | Send Money (BD) | [![Nagad](https://img.shields.io/badge/Nagad-Payment-F7941D?style=for-the-badge&logoColor=white)](https://t.me/MdSohagRana) |
-| **Crypto (USDT / TRC20)** | Multi-Network Crypto | [![Crypto](https://img.shields.io/badge/USDT-TRC20-26A17B?style=for-the-badge&logo=tether&logoColor=white)](https://t.me/MdSohagRana) |
-| **Buy Me A Coffee** | Global Creator Support | [![BuyMeACoffee](https://img.shields.io/badge/Buy_Me_A_Coffee-Support-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://t.me/MdSohagRana) |
+| **Crypto (SOL / USDT / Multi-Chain)** | `9YEThZFaqmqPbPJt8f4jLxPKELMzUmgncsrqvCv44BjE` | [![Crypto](https://img.shields.io/badge/Crypto-Wallet_Address-26A17B?style=for-the-badge&logo=tether&logoColor=white)](https://t.me/Md_Sohag_Rana) |
+| **bKash (Personal)** | Send Money (BD) — Contact on Telegram | [![bKash](https://img.shields.io/badge/bKash-Contact-E2136E?style=for-the-badge&logo=bkash&logoColor=white)](https://t.me/Md_Sohag_Rana) |
+| **Nagad (Personal)** | Send Money (BD) — Contact on Telegram | [![Nagad](https://img.shields.io/badge/Nagad-Contact-F7941D?style=for-the-badge&logoColor=white)](https://t.me/Md_Sohag_Rana) |
+| **Buy Me A Coffee** | Global Creator Support | [![BuyMeACoffee](https://img.shields.io/badge/Buy_Me_A_Coffee-Support-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://t.me/Md_Sohag_Rana) |
+
+> 💎 **Crypto Wallet Address (Click to Copy):**  
+> `9YEThZFaqmqPbPJt8f4jLxPKELMzUmgncsrqvCv44BjE`
 
 </div>
 
@@ -364,7 +367,7 @@ Have questions, need custom deployment assistance, or want to collaborate?
 
 <div align="center">
 
-[![Telegram](https://img.shields.io/badge/Telegram-@MdSohagRana-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/MdSohagRana)
+[![Telegram](https://img.shields.io/badge/Telegram-@Md__Sohag__Rana-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/Md_Sohag_Rana)
 [![GitHub](https://img.shields.io/badge/GitHub-@sohag1192-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/sohag1192)
 
 </div>
@@ -382,7 +385,7 @@ Have questions, need custom deployment assistance, or want to collaborate?
 ## 👤 Author & Support
 
 - **Developer**: **Md Sohag Rana**
-- **Telegram**: [@MdSohagRana](https://t.me/MdSohagRana)
+- **Telegram**: [@Md_Sohag_Rana](https://t.me/Md_Sohag_Rana)
 - **GitHub**: [@sohag1192](https://github.com/sohag1192)
 
 ---

@@ -317,17 +317,65 @@ Live-Tv-Server/
 
 ---
 
-## 🌟 Support by Starring
+## 🌟 Support & Sponsorship
 
-Hello Viewers! 🌟  
-If you find this project helpful or enjoy using the Live TV streaming platform, please consider giving a **Star ⭐** to the repository! Your support motivates continuous updates, new channel additions, and feature enhancements.
+Hello Viewers & Developers! 🌟  
+If you find this project helpful, enjoy watching live streams, or use this codebase in your own setup, here are several ways you can support the development:
+
+### 1. ⭐ Give a Star on GitHub
+If you like this project, please consider giving it a **Star** on GitHub. It helps more people discover this project and keeps us motivated to maintain and add more HD channels!
 
 <div align="center">
 
-[![GitHub stars](https://img.shields.io/github/stars/sohag1192/Live-Tv-Server?style=for-the-badge&logo=github&color=ffd700&label=Star%20This%20Repo)](https://github.com/sohag1192/Live-Tv-Server/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/sohag1192/Live-Tv-Server?style=for-the-badge&logo=github&color=7c3aed&label=Fork)](https://github.com/sohag1192/Live-Tv-Server/fork)
+[![Star this repo](https://img.shields.io/badge/⭐_Star_Repository-Live_TV_Server-ffd700?style=for-the-badge&logo=github&logoColor=black)](https://github.com/sohag1192/Live-Tv-Server/stargazers)
+[![Fork this repo](https://img.shields.io/badge/🍴_Fork_Repository-Live_TV_Server-8b5cf6?style=for-the-badge&logo=github&logoColor=white)](https://github.com/sohag1192/Live-Tv-Server/fork)
+[![Watch releases](https://img.shields.io/badge/👁️_Watch_Updates-Notifications-3b82f6?style=for-the-badge&logo=github&logoColor=white)](https://github.com/sohag1192/Live-Tv-Server/subscription)
 
 </div>
+
+---
+
+### 2. ☕ Donate & Support Development
+Your donations help cover hosting, proxy bandwidth, and server maintenance costs:
+
+<div align="center">
+
+| Payment Method | Details | Contact / Donate |
+| :--- | :--- | :---: |
+| **bKash (Personal)** | Send Money (BD) | [![bKash](https://img.shields.io/badge/bKash-Payment-E2136E?style=for-the-badge&logo=bkash&logoColor=white)](https://t.me/MdSohagRana) |
+| **Nagad (Personal)** | Send Money (BD) | [![Nagad](https://img.shields.io/badge/Nagad-Payment-F7941D?style=for-the-badge&logoColor=white)](https://t.me/MdSohagRana) |
+| **Crypto (USDT / TRC20)** | Multi-Network Crypto | [![Crypto](https://img.shields.io/badge/USDT-TRC20-26A17B?style=for-the-badge&logo=tether&logoColor=white)](https://t.me/MdSohagRana) |
+| **Buy Me A Coffee** | Global Creator Support | [![BuyMeACoffee](https://img.shields.io/badge/Buy_Me_A_Coffee-Support-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://t.me/MdSohagRana) |
+
+</div>
+
+---
+
+### 3. 🤝 Contributing & Reporting Issues
+We welcome community contributions! You can help by:
+- 🐛 **Reporting Broken Streams**: Open an [Issue](https://github.com/sohag1192/Live-Tv-Server/issues) if any channel stream is offline or buffering.
+- 📡 **Requesting New Channels**: Suggest channels by submitting an [Issue](https://github.com/sohag1192/Live-Tv-Server/issues).
+- 💻 **Submitting Pull Requests**: Enhancements to the player, UI animations, or theme styling are warmly welcomed!
+
+---
+
+### 4. 💬 Community & Direct Contact
+Have questions, need custom deployment assistance, or want to collaborate?
+
+<div align="center">
+
+[![Telegram](https://img.shields.io/badge/Telegram-@MdSohagRana-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/MdSohagRana)
+[![GitHub](https://img.shields.io/badge/GitHub-@sohag1192-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/sohag1192)
+
+</div>
+
+---
+
+## ⚖️ Disclaimer & Fair Use Notice
+
+> [!NOTE]
+> **Educational & Fair-Use Notice**:  
+> This open-source repository does **not** host, store, or re-stream any copyrighted video or audio content on its servers. All media streams, logos, and trademarks belong to their respective copyright holders and broadcasters. The project is a client-side interface that indexes publicly accessible stream manifests for educational, demonstration, and personal testing purposes only. If you are a copyright owner and wish to request removal of a link, please open an issue or contact the developer directly.
 
 ---
 
@@ -344,4 +392,5 @@ If you find this project helpful or enjoy using the Live TV streaming platform, 
 Made with ❤️ by **Md Sohag Rana** • &copy; 2026 Live TV Server
 
 </div>
+
 

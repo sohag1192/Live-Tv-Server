@@ -23,20 +23,27 @@
         :root {
             --bg-base: #0c0d14;
             --bg-surface: #141622;
-            --bg-card: rgba(25, 28, 44, 0.75);
-            --bg-card-hover: rgba(38, 43, 68, 0.9);
-            --border-color: rgba(255, 255, 255, 0.08);
-            --border-focus: rgba(187, 134, 252, 0.5);
+            --bg-card: rgba(25, 28, 44, 0.8);
+            --bg-card-hover: rgba(38, 43, 68, 0.95);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --border-focus: rgba(187, 134, 252, 0.6);
             
             --accent: #a855f7;
-            --accent-glow: rgba(168, 85, 247, 0.35);
+            --accent-glow: rgba(168, 85, 247, 0.4);
             --accent-hover: #9333ea;
             --live-red: #ef4444;
             --live-glow: rgba(239, 68, 68, 0.4);
 
-            --text-main: #f3f4f6;
+            --text-main: #f9fafb;
             --text-muted: #9ca3af;
             --text-dim: #6b7280;
+
+            --badge-bg: rgba(255, 255, 255, 0.12);
+            --badge-text: #f3f4f6;
+
+            --chip-bg: rgba(255, 255, 255, 0.06);
+            --chip-text: #e5e7eb;
+            --chip-border: rgba(255, 255, 255, 0.14);
 
             --radius-lg: 16px;
             --radius-md: 12px;
@@ -47,20 +54,27 @@
         }
 
         body.light-theme {
-            --bg-base: #f0f2f5;
+            --bg-base: #f1f5f9;
             --bg-surface: #ffffff;
-            --bg-card: rgba(255, 255, 255, 0.9);
-            --bg-card-hover: #f3f4f6;
-            --border-color: rgba(0, 0, 0, 0.08);
-            --border-focus: rgba(124, 58, 237, 0.4);
+            --bg-card: #ffffff;
+            --bg-card-hover: #f8fafc;
+            --border-color: #e2e8f0;
+            --border-focus: #7c3aed;
 
             --accent: #7c3aed;
-            --accent-glow: rgba(124, 58, 237, 0.25);
+            --accent-glow: rgba(124, 58, 237, 0.3);
             --accent-hover: #6d28d9;
 
-            --text-main: #111827;
-            --text-muted: #4b5563;
-            --text-dim: #9ca3af;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --text-dim: #64748b;
+
+            --badge-bg: #ede9fe;
+            --badge-text: #6d28d9;
+
+            --chip-bg: #f1f5f9;
+            --chip-text: #334155;
+            --chip-border: #cbd5e1;
         }
 
         * {
@@ -78,7 +92,6 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* Ambient Glowing Background */
         .ambient-bg {
             position: fixed;
             top: 0;
@@ -95,7 +108,6 @@
             filter: blur(120px);
             opacity: 0.15;
             border-radius: 50%;
-            transition: all 0.5s ease;
         }
 
         .ambient-blob-1 {
@@ -119,7 +131,7 @@
             position: sticky;
             top: 0;
             z-index: 1000;
-            background: rgba(12, 13, 20, 0.85);
+            background: rgba(12, 13, 20, 0.88);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--border-color);
@@ -128,7 +140,8 @@
         }
 
         body.light-theme .app-navbar {
-            background: rgba(255, 255, 255, 0.88);
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 1px 10px rgba(0, 0, 0, 0.05);
         }
 
         .nav-content {
@@ -172,11 +185,10 @@
             color: var(--live-red);
             border: 1px solid rgba(239, 68, 68, 0.3);
             font-size: 0.72rem;
-            font-weight: 700;
+            font-weight: 800;
             padding: 3px 8px;
             border-radius: var(--radius-pill);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
         .pulse-dot {
@@ -217,18 +229,20 @@
 
         .nav-btn:hover {
             color: var(--text-main);
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(128, 128, 128, 0.1);
             border-color: var(--border-color);
-        }
-
-        body.light-theme .nav-btn:hover {
-            background: rgba(0, 0, 0, 0.05);
         }
 
         .nav-btn.active {
             color: var(--accent);
-            background: var(--accent-glow);
+            background: rgba(168, 85, 247, 0.15);
             border-color: rgba(168, 85, 247, 0.3);
+        }
+
+        body.light-theme .nav-btn.active {
+            color: #7c3aed;
+            background: #ede9fe;
+            border-color: #ddd6fe;
         }
 
         .theme-btn {
@@ -263,12 +277,11 @@
             background: var(--bg-surface);
             border-radius: var(--radius-lg);
             border: 1px solid var(--border-color);
-            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
             overflow: hidden;
             display: flex;
             flex-direction: column;
             position: relative;
-            backdrop-filter: blur(12px);
         }
 
         .player-header {
@@ -278,7 +291,7 @@
             justify-content: space-between;
             gap: 12px;
             border-bottom: 1px solid var(--border-color);
-            background: rgba(0, 0, 0, 0.15);
+            background: rgba(0, 0, 0, 0.04);
         }
 
         .player-channel-info {
@@ -290,11 +303,11 @@
 
         .now-playing-badge {
             font-size: 0.75rem;
-            font-weight: 700;
+            font-weight: 800;
             padding: 4px 10px;
             border-radius: var(--radius-pill);
             background: var(--accent);
-            color: #fff;
+            color: #ffffff !important;
             display: inline-flex;
             align-items: center;
             gap: 5px;
@@ -303,7 +316,7 @@
 
         .player-title {
             font-size: 1.15rem;
-            font-weight: 700;
+            font-weight: 800;
             margin: 0;
             white-space: nowrap;
             overflow: hidden;
@@ -318,16 +331,15 @@
         }
 
         .player-tag {
-            font-size: 0.72rem;
-            font-weight: 600;
-            padding: 2px 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 3px 10px;
             border-radius: 6px;
-            background: rgba(255, 255, 255, 0.08);
-            color: var(--text-muted);
+            background: var(--badge-bg);
+            color: var(--badge-text);
             border: 1px solid var(--border-color);
         }
 
-        /* 16:9 Video Wrapper */
         .video-wrapper {
             position: relative;
             width: 100%;
@@ -407,14 +419,13 @@
             transform: scale(1.03);
         }
 
-        /* Player Controls Toolbar */
         .player-toolbar {
             padding: 12px 18px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 12px;
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(0, 0, 0, 0.05);
             border-top: 1px solid var(--border-color);
         }
 
@@ -429,7 +440,7 @@
             height: 36px;
             border-radius: var(--radius-sm);
             border: 1px solid var(--border-color);
-            background: rgba(255, 255, 255, 0.04);
+            background: var(--bg-card);
             color: var(--text-muted);
             display: flex;
             align-items: center;
@@ -441,7 +452,6 @@
 
         .tool-btn:hover {
             color: var(--text-main);
-            background: rgba(255, 255, 255, 0.1);
             border-color: var(--accent);
         }
 
@@ -456,7 +466,7 @@
             height: 5px;
             -webkit-appearance: none;
             appearance: none;
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(128, 128, 128, 0.3);
             border-radius: 4px;
             outline: none;
             cursor: pointer;
@@ -477,13 +487,12 @@
             background: var(--bg-surface);
             border-radius: var(--radius-lg);
             border: 1px solid var(--border-color);
-            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
             display: flex;
             flex-direction: column;
             height: calc(100vh - 120px);
             min-height: 600px;
             overflow: hidden;
-            backdrop-filter: blur(12px);
         }
 
         .sidebar-header {
@@ -502,21 +511,22 @@
 
         .sidebar-title {
             font-size: 1.15rem;
-            font-weight: 700;
+            font-weight: 800;
             margin: 0;
             display: flex;
             align-items: center;
             gap: 8px;
+            color: var(--text-main);
         }
 
         .channel-counter-badge {
-            font-size: 0.75rem;
-            font-weight: 700;
-            padding: 3px 10px;
+            font-size: 0.78rem;
+            font-weight: 800;
+            padding: 4px 12px;
             border-radius: var(--radius-pill);
-            background: rgba(168, 85, 247, 0.15);
-            color: var(--accent);
-            border: 1px solid rgba(168, 85, 247, 0.3);
+            background: var(--badge-bg);
+            color: var(--badge-text);
+            border: 1px solid var(--border-color);
         }
 
         .search-box {
@@ -526,18 +536,15 @@
 
         .search-input {
             width: 100%;
-            padding: 9px 36px;
+            padding: 10px 36px;
             font-size: 0.88rem;
+            font-weight: 600;
             border-radius: var(--radius-md);
             border: 1px solid var(--border-color);
-            background: rgba(0, 0, 0, 0.2);
+            background: var(--bg-card);
             color: var(--text-main);
             outline: none;
             transition: var(--transition-smooth);
-        }
-
-        body.light-theme .search-input {
-            background: rgba(0, 0, 0, 0.03);
         }
 
         .search-input:focus {
@@ -569,6 +576,7 @@
             padding: 4px;
         }
 
+        /* Category Filter Chips - FIXED CONTRAST */
         .category-scroll {
             display: flex;
             align-items: center;
@@ -582,25 +590,26 @@
 
         .cat-chip {
             white-space: nowrap;
-            padding: 5px 11px;
+            padding: 5px 12px;
             border-radius: var(--radius-pill);
-            font-size: 0.78rem;
-            font-weight: 600;
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-muted);
-            border: 1px solid var(--border-color);
+            font-size: 0.8rem;
+            font-weight: 700;
+            background: var(--chip-bg);
+            color: var(--chip-text);
+            border: 1px solid var(--chip-border);
             cursor: pointer;
             transition: var(--transition-smooth);
         }
 
-        body.light-theme .cat-chip {
-            background: rgba(0, 0, 0, 0.04);
+        .cat-chip:hover {
+            color: var(--text-main);
+            background: var(--bg-card-hover);
         }
 
         .cat-chip.active {
-            background: var(--accent);
-            color: #fff;
-            border-color: var(--accent);
+            background: var(--accent) !important;
+            color: #ffffff !important;
+            border-color: var(--accent) !important;
             box-shadow: 0 2px 8px var(--accent-glow);
         }
 
@@ -618,7 +627,7 @@
         .channels-scroll-area::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
         .channels-scroll-area::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
-        /* Robust Channel Card Row */
+        /* Robust Channel Card - HIGH CONTRAST */
         .channel-card {
             display: flex;
             align-items: center;
@@ -639,13 +648,18 @@
             transform: translateX(4px);
             background: var(--bg-card-hover);
             border-color: var(--border-focus);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
         }
 
         .channel-card.active {
-            border-color: var(--accent);
-            background: rgba(168, 85, 247, 0.16);
+            border-color: var(--accent) !important;
+            background: rgba(168, 85, 247, 0.15) !important;
             box-shadow: 0 0 0 1.5px var(--accent), 0 4px 20px var(--accent-glow);
+        }
+
+        body.light-theme .channel-card.active {
+            background: #f5f3ff !important;
+            border-color: #7c3aed !important;
         }
 
         .card-thumb-wrapper {
@@ -691,18 +705,19 @@
             min-width: 0;
         }
 
+        /* FIXED CHANNEL NUMBER CONTRAST */
         .card-chno {
-            font-size: 0.68rem;
+            font-size: 0.72rem;
             font-weight: 800;
-            background: rgba(255, 255, 255, 0.12);
-            color: #fff;
-            padding: 1px 5px;
+            background: var(--badge-bg);
+            color: var(--badge-text);
+            padding: 1px 6px;
             border-radius: 4px;
             flex-shrink: 0;
         }
 
         .card-name {
-            font-size: 0.86rem;
+            font-size: 0.88rem;
             font-weight: 700;
             color: var(--text-main);
             white-space: nowrap;
@@ -725,12 +740,18 @@
         .card-drm-badge {
             font-size: 0.62rem;
             font-weight: 800;
-            background: rgba(168, 85, 247, 0.25);
-            color: #c084fc;
+            background: rgba(168, 85, 247, 0.2);
+            color: var(--accent);
             padding: 1px 5px;
             border-radius: 4px;
             border: 1px solid rgba(168, 85, 247, 0.4);
             text-transform: uppercase;
+        }
+
+        body.light-theme .card-drm-badge {
+            background: #ede9fe;
+            color: #6d28d9;
+            border-color: #ddd6fe;
         }
 
         .card-playing-indicator {
@@ -797,7 +818,7 @@
         .kbd-key {
             display: inline-block;
             padding: 2px 6px;
-            background: rgba(255, 255, 255, 0.08);
+            background: var(--badge-bg);
             border: 1px solid var(--border-color);
             border-radius: 4px;
             color: var(--text-muted);

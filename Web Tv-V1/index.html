@@ -25,23 +25,31 @@
             --bg-surface: rgba(18, 18, 18, 0.95);
             --bg-card: rgba(255, 255, 255, 0.05);
             --bg-card-hover: rgba(255, 255, 255, 0.1);
-            --border-glass: rgba(255, 255, 255, 0.1);
-            --text-color: #f5f5f5;
-            --text-muted: #a3a3a3;
+            --border-glass: rgba(255, 255, 255, 0.12);
+            --text-color: #f9fafb;
+            --text-muted: #9ca3af;
+            --badge-bg: rgba(255, 255, 255, 0.12);
+            --badge-text: #f3f4f6;
+            --chip-bg: rgba(255, 255, 255, 0.08);
+            --chip-text: #e5e7eb;
             --nav-bg: rgba(10, 10, 10, 0.88);
         }
 
         [data-theme="light"] {
             --primary: #0d6efd;
             --primary-glow: rgba(13, 110, 253, 0.35);
-            --bg-base: #f0f2f5;
-            --bg-surface: rgba(255, 255, 255, 0.95);
-            --bg-card: rgba(0, 0, 0, 0.04);
-            --bg-card-hover: rgba(0, 0, 0, 0.08);
-            --border-glass: rgba(0, 0, 0, 0.1);
-            --text-color: #111827;
-            --text-muted: #4b5563;
-            --nav-bg: rgba(255, 255, 255, 0.9);
+            --bg-base: #f1f5f9;
+            --bg-surface: #ffffff;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f8fafc;
+            --border-glass: #e2e8f0;
+            --text-color: #0f172a;
+            --text-muted: #475569;
+            --badge-bg: #dbeafe;
+            --badge-text: #1d4ed8;
+            --chip-bg: #f1f5f9;
+            --chip-text: #334155;
+            --nav-bg: rgba(255, 255, 255, 0.95);
         }
 
         [data-theme="green"] {
@@ -54,6 +62,10 @@
             --border-glass: rgba(16, 185, 129, 0.2);
             --text-color: #ecfdf5;
             --text-muted: #6ee7b7;
+            --badge-bg: rgba(16, 185, 129, 0.2);
+            --badge-text: #a7f3d0;
+            --chip-bg: rgba(16, 185, 129, 0.1);
+            --chip-text: #d1fae5;
             --nav-bg: rgba(6, 24, 16, 0.9);
         }
 
@@ -67,6 +79,10 @@
             --border-glass: rgba(168, 85, 247, 0.2);
             --text-color: #faf5ff;
             --text-muted: #c084fc;
+            --badge-bg: rgba(168, 85, 247, 0.2);
+            --badge-text: #e9d5ff;
+            --chip-bg: rgba(168, 85, 247, 0.1);
+            --chip-text: #f3e8ff;
             --nav-bg: rgba(14, 7, 28, 0.9);
         }
 
@@ -150,7 +166,7 @@
             background: #000;
             border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
             border: 1px solid var(--border-glass);
         }
 
@@ -183,11 +199,12 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            color: var(--text-color);
         }
 
         .live-tag {
             background: var(--primary);
-            color: #fff;
+            color: #fff !important;
             font-size: 0.72rem;
             font-weight: 800;
             padding: 3px 8px;
@@ -212,7 +229,7 @@
             padding: 10px 14px 10px 36px;
             border-radius: 10px;
             border: 1px solid var(--border-glass);
-            background: rgba(0, 0, 0, 0.25);
+            background: var(--bg-card);
             color: var(--text-color);
             outline: none;
             font-size: 0.88rem;
@@ -236,21 +253,22 @@
 
         .chip-btn {
             white-space: nowrap;
-            padding: 4px 10px;
-            font-size: 0.75rem;
+            padding: 5px 12px;
+            font-size: 0.78rem;
             font-weight: 700;
             border-radius: 20px;
-            background: var(--bg-card);
-            color: var(--text-muted);
+            background: var(--chip-bg);
+            color: var(--chip-text);
             border: 1px solid var(--border-glass);
             cursor: pointer;
             transition: all 0.2s ease;
         }
 
-        .chip-btn.active, .chip-btn:hover {
-            background: var(--primary);
-            color: #fff;
-            border-color: var(--primary);
+        .chip-btn.active {
+            background: var(--primary) !important;
+            color: #ffffff !important;
+            border-color: var(--primary) !important;
+            box-shadow: 0 2px 8px var(--primary-glow);
         }
 
         .cinema-channel-list {
@@ -284,8 +302,8 @@
         }
 
         .cinema-channel-card.active {
-            border-color: var(--primary);
-            background: rgba(229, 9, 20, 0.15);
+            border-color: var(--primary) !important;
+            background: rgba(229, 9, 20, 0.15) !important;
             box-shadow: 0 0 0 1.5px var(--primary), 0 4px 20px var(--primary-glow);
         }
 
@@ -320,8 +338,24 @@
             text-align: left;
         }
 
+        .card-header-v1 {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .card-chno-v1 {
+            font-size: 0.72rem;
+            font-weight: 800;
+            background: var(--badge-bg);
+            color: var(--badge-text);
+            padding: 1px 6px;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+
         .card-name-text {
-            font-size: 0.86rem;
+            font-size: 0.88rem;
             font-weight: 700;
             white-space: nowrap;
             overflow: hidden;
@@ -533,7 +567,10 @@
                         <img src="${c.logo}" alt="${c.name}" onerror="this.src='https://placehold.co/420x300/111/fff?text=${encodeURIComponent(c.name)}'">
                     </div>
                     <div class="card-info">
-                        <div class="card-name-text">#${c.chno} ${c.name}</div>
+                        <div class="card-header-v1">
+                            <span class="card-chno-v1">#${c.chno}</span>
+                            <div class="card-name-text">${c.name}</div>
+                        </div>
                         <div class="card-group-text">
                             <span>${c.group}</span>
                             ${isDrm ? '<span class="badge bg-danger" style="font-size:0.6rem;padding:2px 4px;">DRM</span>' : ''}

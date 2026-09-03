@@ -23,22 +23,30 @@
             --bg-surface: #171926;
             --bg-card: rgba(255, 255, 255, 0.05);
             --bg-card-hover: rgba(255, 255, 255, 0.1);
-            --border-color: rgba(255, 255, 255, 0.08);
+            --border-color: rgba(255, 255, 255, 0.1);
             --accent: #a855f7;
             --accent-glow: rgba(168, 85, 247, 0.35);
-            --text-main: #f3f4f6;
+            --text-main: #f9fafb;
             --text-muted: #9ca3af;
+            --badge-bg: rgba(255, 255, 255, 0.12);
+            --badge-text: #f3f4f6;
+            --chip-bg: rgba(255, 255, 255, 0.08);
+            --chip-text: #e5e7eb;
         }
 
         body.light-theme {
-            --bg-base: #f3f4f6;
+            --bg-base: #f1f5f9;
             --bg-surface: #ffffff;
-            --bg-card: rgba(0, 0, 0, 0.04);
-            --bg-card-hover: rgba(0, 0, 0, 0.08);
-            --border-color: rgba(0, 0, 0, 0.08);
+            --bg-card: #ffffff;
+            --bg-card-hover: #f8fafc;
+            --border-color: #e2e8f0;
             --accent: #7c3aed;
-            --text-main: #111827;
-            --text-muted: #4b5563;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --badge-bg: #ede9fe;
+            --badge-text: #6d28d9;
+            --chip-bg: #f1f5f9;
+            --chip-text: #334155;
         }
 
         * { box-sizing: border-box; }
@@ -57,14 +65,15 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            background: rgba(15, 17, 26, 0.9);
+            background: rgba(15, 17, 26, 0.92);
             backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--border-color);
             padding: 12px 24px;
         }
 
         body.light-theme .guide-navbar {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 1px 10px rgba(0,0,0,0.05);
         }
 
         .guide-container {
@@ -78,7 +87,7 @@
             border-radius: 16px;
             border: 1px solid var(--border-color);
             overflow: hidden;
-            box-shadow: 0 16px 40px rgba(0,0,0,0.3);
+            box-shadow: 0 16px 40px rgba(0,0,0,0.2);
         }
 
         .guide-video-wrapper {
@@ -121,15 +130,11 @@
             padding: 10px 14px 10px 36px;
             border-radius: 10px;
             border: 1px solid var(--border-color);
-            background: rgba(0, 0, 0, 0.2);
+            background: var(--bg-card);
             color: var(--text-main);
             outline: none;
             font-size: 0.88rem;
             margin-bottom: 12px;
-        }
-
-        body.light-theme .guide-search {
-            background: rgba(0, 0, 0, 0.03);
         }
 
         .guide-cat-row {
@@ -148,17 +153,18 @@
             font-size: 0.78rem;
             font-weight: 700;
             border-radius: 20px;
-            background: var(--bg-card);
-            color: var(--text-muted);
+            background: var(--chip-bg);
+            color: var(--chip-text);
             border: 1px solid var(--border-color);
             cursor: pointer;
             transition: all 0.2s ease;
         }
 
-        .guide-chip.active, .guide-chip:hover {
-            background: var(--accent);
-            color: #fff;
-            border-color: var(--accent);
+        .guide-chip.active {
+            background: var(--accent) !important;
+            color: #ffffff !important;
+            border-color: var(--accent) !important;
+            box-shadow: 0 2px 8px var(--accent-glow);
         }
 
         .guide-grid-area {
@@ -190,9 +196,14 @@
         }
 
         .guide-card.active {
-            border-color: var(--accent);
-            background: rgba(168, 85, 247, 0.16);
+            border-color: var(--accent) !important;
+            background: rgba(168, 85, 247, 0.16) !important;
             box-shadow: 0 0 0 1.5px var(--accent), 0 4px 20px var(--accent-glow);
+        }
+
+        body.light-theme .guide-card.active {
+            background: #f5f3ff !important;
+            border-color: #7c3aed !important;
         }
 
         .guide-thumb-wrap {
@@ -226,8 +237,24 @@
             text-align: left;
         }
 
+        .guide-header-line {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .guide-chno {
+            font-size: 0.72rem;
+            font-weight: 800;
+            background: var(--badge-bg);
+            color: var(--badge-text);
+            padding: 1px 6px;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+
         .guide-card-name {
-            font-size: 0.86rem;
+            font-size: 0.88rem;
             font-weight: 700;
             white-space: nowrap;
             overflow: hidden;
@@ -247,15 +274,15 @@
 <body>
     <header class="guide-navbar">
         <div class="d-flex align-items-center justify-content-between max-width-1720 mx-auto">
-            <a href="../index.html" class="d-flex align-items-center gap-2 text-decoration-none text-white fw-bold">
+            <a href="../index.html" class="d-flex align-items-center gap-2 text-decoration-none fw-bold" style="color: var(--text-main)">
                 <i class="fas fa-table-list text-primary"></i>
-                <span style="color: var(--text-main)">TV Guide</span>
+                <span>TV Guide</span>
             </a>
 
             <div class="d-flex align-items-center gap-2">
-                <a href="../index.html" class="btn btn-sm btn-outline-secondary text-light">Main TV</a>
-                <a href="../Web%20Tv-V1/index.html" class="btn btn-sm btn-outline-secondary text-light">Cinema Mode</a>
-                <button class="btn btn-sm btn-outline-secondary text-light" id="guideThemeToggle">
+                <a href="../index.html" class="btn btn-sm btn-outline-secondary">Main TV</a>
+                <a href="../Web%20Tv-V1/index.html" class="btn btn-sm btn-outline-secondary">Cinema Mode</a>
+                <button class="btn btn-sm btn-outline-secondary" id="guideThemeToggle">
                     <i class="fas fa-moon" id="guideThemeIcon"></i>
                 </button>
             </div>
@@ -269,7 +296,7 @@
                     <div class="guide-info-header">
                         <div class="d-flex align-items-center gap-2">
                             <span class="badge bg-danger" id="guideBadge">#1 LIVE</span>
-                            <h2 class="h5 m-0 fw-bold" id="guideChTitle">Somoy tv</h2>
+                            <h2 class="h5 m-0 fw-bold" id="guideChTitle" style="color: var(--text-main)">Somoy tv</h2>
                         </div>
                         <span class="badge bg-secondary" id="guideChGroup">News</span>
                     </div>
@@ -415,7 +442,10 @@
                         <img src="${c.logo}" alt="${c.name}" onerror="this.src='https://placehold.co/420x300/111/fff?text=${encodeURIComponent(c.name)}'">
                     </div>
                     <div class="guide-card-info">
-                        <div class="guide-card-name">#${c.chno} ${c.name}</div>
+                        <div class="guide-header-line">
+                            <span class="guide-chno">#${c.chno}</span>
+                            <div class="guide-card-name">${c.name}</div>
+                        </div>
                         <div class="guide-card-group">
                             <span>${c.group}</span>
                             ${isDrm ? '<span class="badge bg-danger" style="font-size:0.6rem;padding:2px 4px;">DRM</span>' : ''}

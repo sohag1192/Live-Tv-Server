@@ -1,0 +1,44 @@
+name: Auto-Update Toffee Playlist
+
+on:
+  schedule:
+    # Runs every 30 minutes to synchronize fresh Toffee stream tokens
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: "playlist-update"
+  cancel-in-progress: true
+
+jobs:
+  update-playlist:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Fetch Latest Toffee Playlist
+        run: |
+          echo "Fetching latest playlist from srhady/toffee-bd..."
+          curl -sSL "https://raw.githubusercontent.com/srhady/toffee-bd/refs/heads/main/toffee_playlist.m3u" -o toffee_playlist.m3u
+          if [ -s toffee_playlist.m3u ] && grep -q "#EXTINF" toffee_playlist.m3u; then
+            echo "Successfully downloaded fresh Toffee playlist ($(grep -c '#EXTINF' toffee_playlist.m3u) channels)"
+          else
+            echo "Downloaded playlist is empty or invalid!"
+            exit 1
+          fi
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add toffee_playlist.m3u
+          if git diff --staged --quiet; then
+            echo "No changes detected in toffee_playlist.m3u"
+          else
+            git commit -m "Auto-update Toffee playlist [skip ci]"
+            git push origin master
+          fi

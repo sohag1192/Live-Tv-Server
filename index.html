@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Premium Live TV Streaming - Watch 54+ HD Channels Online">
+    <meta name="description" content="Premium Live TV Streaming - Watch 75+ HD Channels Online with Live Auto-Updating Playlist">
     <meta name="theme-color" content="#121212">
     <link rel="shortcut icon" href="https://placehold.co/16x16/e50914/ffffff?text=TV"/>
-    <title>Premium Live TV Streaming | 54+ HD Channels</title>
+    <title>Premium Live TV Streaming | 75+ HD Channels (Auto-Updating)</title>
 
     <!-- Google Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -251,6 +251,78 @@
             justify-content: center;
             cursor: pointer;
             transition: var(--transition-smooth);
+        }
+
+        .sync-btn {
+            border: 1px solid rgba(16, 185, 129, 0.35) !important;
+            background: rgba(16, 185, 129, 0.12) !important;
+            color: #10b981 !important;
+        }
+        .sync-btn:hover {
+            background: rgba(16, 185, 129, 0.22) !important;
+            color: #34d399 !important;
+            border-color: rgba(16, 185, 129, 0.6) !important;
+        }
+        .sync-btn.syncing i {
+            animation: spin-sync 0.8s linear infinite;
+        }
+        @keyframes spin-sync {
+            100% { transform: rotate(360deg); }
+        }
+
+        .sync-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 3px 10px;
+            border-radius: var(--radius-pill);
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            background: rgba(16, 185, 129, 0.12);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            transition: var(--transition-smooth);
+        }
+        .sync-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #10b981;
+            display: inline-block;
+            box-shadow: 0 0 6px #10b981;
+            animation: pulse-sync 2s infinite;
+        }
+        @keyframes pulse-sync {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+
+        .toast-notice {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--bg-surface);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid #10b981;
+            padding: 12px 18px;
+            border-radius: var(--radius-sm);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            z-index: 9999;
+            font-size: 0.88rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
+        }
+        .toast-notice.show {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         /* App Container */
@@ -906,6 +978,10 @@
                     <i class="fas fa-table-list"></i>
                     <span>Guide</span>
                 </a>
+                <button class="nav-btn sync-btn" id="syncPlaylistBtn" title="Auto-update channels from Toffee live playlist">
+                    <i class="fas fa-arrows-rotate" id="syncIcon"></i>
+                    <span id="syncBtnText">Sync</span>
+                </button>
                 <button class="theme-btn" id="themeToggle" aria-label="Toggle theme">
                     <i class="fas fa-moon" id="themeIcon"></i>
                 </button>
@@ -948,6 +1024,9 @@
                             <div class="d-flex gap-2">
                                 <button class="overlay-btn" id="retryBtn">
                                     <i class="fas fa-rotate-right"></i> Retry
+                                </button>
+                                <button class="overlay-btn" id="refreshSyncBtn" style="background: rgba(16,185,129,0.25); border-color: rgba(16,185,129,0.5); color: #34d399">
+                                    <i class="fas fa-arrows-rotate"></i> Refresh Token
                                 </button>
                                 <button class="overlay-btn" id="nextChannelBtn" style="background: rgba(255,255,255,0.15)">
                                     <i class="fas fa-forward-step"></i> Next Channel
@@ -1018,12 +1097,18 @@
                                 <i class="fas fa-list-ul text-muted"></i>
                                 <span>Channels</span>
                             </h2>
-                            <span class="channel-counter-badge" id="channelCountBadge">54 Channels</span>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="sync-status-badge" id="syncStatusBadge" title="Live Auto-Update: Connected to GitHub">
+                                    <span class="sync-dot"></span>
+                                    <span id="syncStatusText">Auto</span>
+                                </span>
+                                <span class="channel-counter-badge" id="channelCountBadge">75 Channels</span>
+                            </div>
                         </div>
 
                         <div class="search-box">
                             <i class="fas fa-search search-icon"></i>
-                            <input type="text" class="search-input" id="channelSearch" placeholder="Search 54+ channels... (/ to focus)" autocomplete="off">
+                            <input type="text" class="search-input" id="channelSearch" placeholder="Search 75+ channels... (/ to focus)" autocomplete="off">
                             <button class="search-clear" id="searchClear" aria-label="Clear Search">
                                 <i class="fas fa-times"></i>
                             </button>
@@ -1032,7 +1117,13 @@
                         <div class="category-scroll" id="categoryContainer"></div>
                     </div>
 
-                    <div class="channels-scroll-area" id="channelGrid"></div>
+                    <div class="channels-scroll-area" id="channelGrid">
+                        <div class="empty-channels py-5">
+                            <div class="spinner-custom mx-auto mb-3" style="width: 32px; height: 32px; border-width: 3px;"></div>
+                            <h6>Loading Live Channels...</h6>
+                            <p class="text-muted small mb-0">Auto-updating playlist from GitHub...</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1072,11 +1163,56 @@
             return new TextDecoder().decode(out);
         }
 
-        const rawM3U = _0xUnlock(_0xVaultPayload, _0xVaultKey);
+        // Playlist Endpoints & Cache configuration
+        const PLAYLIST_REMOTE_URL = 'https://raw.githubusercontent.com/srhady/toffee-bd/refs/heads/main/toffee_playlist.m3u';
+        const PLAYLIST_LOCAL_URL = './toffee_playlist.m3u';
+        const CACHE_PLAYLIST_KEY = 'livetv_toffee_m3u_cache';
+        const CACHE_PLAYLIST_TIME_KEY = 'livetv_toffee_m3u_time';
+
+        let channels = [];
+        let activeIndex = 0;
+        let selectedCategory = 'ALL';
+        let searchQuery = '';
+        let hlsInstance = null;
+        let shakaPlayer = null;
+        let isSyncing = false;
+        let isRecoveringToken = false;
+
+        function showToast(message, isError = false) {
+            let toast = document.getElementById('appToast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'appToast';
+                toast.className = 'toast-notice';
+                document.body.appendChild(toast);
+            }
+            toast.style.borderLeftColor = isError ? '#ef4444' : '#10b981';
+            toast.innerHTML = `<i class="fas ${isError ? 'fa-circle-exclamation text-danger' : 'fa-circle-check text-success'}"></i> <span>${message}</span>`;
+            toast.classList.add('show');
+            clearTimeout(window._toastTimeout);
+            window._toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3500);
+        }
+
+        function updateSyncBadge(isBusy, text) {
+            const badge = document.getElementById('syncStatusBadge');
+            const label = document.getElementById('syncStatusText');
+            if (label) label.textContent = isBusy ? 'Updating...' : text;
+            if (badge) {
+                badge.style.borderColor = isBusy ? 'rgba(234, 179, 8, 0.4)' : 'rgba(16, 185, 129, 0.25)';
+                badge.style.color = isBusy ? '#eab308' : '#10b981';
+            }
+        }
+
+        function updateChannelCountBadge() {
+            if (counterBadge) counterBadge.textContent = `${channels.length} Channels`;
+            if (searchInput) searchInput.placeholder = `Search ${channels.length}+ channels... (/ to focus)`;
+        }
 
         function parseM3U(data) {
             const lines = data.split('\n');
-            const channels = [];
+            const result = [];
             let current = {};
 
             for (let rawLine of lines) {
@@ -1089,13 +1225,13 @@
                     current.licenseType = line.substring(45).trim();
                 } else if (line.startsWith('#EXTINF:')) {
                     const idMatch = line.match(/tvg-id="([^"]+)"/);
-                    current.id = idMatch ? idMatch[1] : String(channels.length + 1);
+                    current.id = idMatch ? idMatch[1] : String(result.length + 1);
 
                     const chnoMatch = line.match(/tvg-chno="([^"]+)"/);
-                    current.chno = chnoMatch ? chnoMatch[1] : (channels.length + 1);
+                    current.chno = chnoMatch ? chnoMatch[1] : (result.length + 1);
 
                     const logoMatch = line.match(/tvg-logo="([^"]+)"/);
-                    current.logo = logoMatch ? logoMatch[1] : 'https://placehold.co/420x300/1e1e2f/ffffff?text=LIVE%20TV';
+                    current.logo = logoMatch ? logoMatch[1] : '';
 
                     const groupMatch = line.match(/group-title="([^"]+)"/);
                     current.group = groupMatch ? groupMatch[1] : 'General';
@@ -1104,15 +1240,119 @@
                     current.name = commaIdx !== -1 ? line.substring(commaIdx + 1).trim() : 'Live Channel';
                 } else if (line.startsWith('http://') || line.startsWith('https://')) {
                     current.url = line;
-                    current.index = channels.length;
-                    channels.push(current);
+                    current.index = result.length;
+                    if (!current.name) current.name = `Channel ${result.length + 1}`;
+                    if (!current.group) current.group = 'General';
+                    if (!current.id) current.id = String(result.length + 1);
+                    if (!current.chno) current.chno = result.length + 1;
+                    if (!current.logo) current.logo = `https://placehold.co/420x300/1e1e2f/ffffff?text=${encodeURIComponent(current.name)}`;
+                    result.push(current);
                     current = {};
                 }
             }
-            return channels;
+            return result;
         }
 
-        const channels = parseM3U(rawM3U);
+        async function fetchPlaylistText() {
+            // 1. Try Live Remote GitHub URL with 1-minute cache buster
+            try {
+                const cacheBuster = `?_t=${Math.floor(Date.now() / 60000)}`;
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 7000);
+                const resp = await fetch(PLAYLIST_REMOTE_URL + cacheBuster, {
+                    cache: 'no-cache',
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+                if (resp.ok) {
+                    const text = await resp.text();
+                    if (text.includes('#EXTINF')) {
+                        localStorage.setItem(CACHE_PLAYLIST_KEY, text);
+                        localStorage.setItem(CACHE_PLAYLIST_TIME_KEY, Date.now().toString());
+                        return { text, source: 'GitHub' };
+                    }
+                }
+            } catch (err) {
+                console.warn('Live remote playlist fetch failed, trying local fallback:', err);
+            }
+
+            // 2. Try Local Fallback File
+            try {
+                const resp = await fetch(PLAYLIST_LOCAL_URL + `?_t=${Date.now()}`, { cache: 'no-cache' });
+                if (resp.ok) {
+                    const text = await resp.text();
+                    if (text.includes('#EXTINF')) {
+                        localStorage.setItem(CACHE_PLAYLIST_KEY, text);
+                        localStorage.setItem(CACHE_PLAYLIST_TIME_KEY, Date.now().toString());
+                        return { text, source: 'Local' };
+                    }
+                }
+            } catch (err) {
+                console.warn('Local playlist fetch failed, trying cache:', err);
+            }
+
+            // 3. Try LocalStorage Cache
+            const cached = localStorage.getItem(CACHE_PLAYLIST_KEY);
+            if (cached && cached.includes('#EXTINF')) {
+                return { text: cached, source: 'Cache' };
+            }
+
+            // 4. Try Built-in Vault Payload
+            try {
+                const vaultText = _0xUnlock(_0xVaultPayload, _0xVaultKey);
+                if (vaultText && vaultText.includes('#EXTINF')) {
+                    return { text: vaultText, source: 'Vault' };
+                }
+            } catch (err) {
+                console.error('Vault fallback failed:', err);
+            }
+
+            throw new Error('All playlist sources failed.');
+        }
+
+        async function loadPlaylist(initialPlay = true) {
+            if (isSyncing) return;
+            isSyncing = true;
+            updateSyncBadge(true, 'Updating...');
+
+            const syncBtn = document.getElementById('syncPlaylistBtn');
+            if (syncBtn) syncBtn.classList.add('syncing');
+
+            try {
+                const { text, source } = await fetchPlaylistText();
+                const parsed = parseM3U(text);
+                if (parsed.length === 0) throw new Error('Parsed 0 channels from M3U');
+
+                const prevCh = channels[activeIndex];
+                channels = parsed;
+
+                updateChannelCountBadge();
+                initCategories();
+                renderChannelGrid();
+
+                if (initialPlay) {
+                    if (channels.length > 0) playChannel(0);
+                } else if (prevCh) {
+                    const matchIdx = channels.findIndex(c => c.id === prevCh.id || c.name.toLowerCase() === prevCh.name.toLowerCase());
+                    if (matchIdx !== -1) {
+                        activeIndex = matchIdx;
+                        channels[activeIndex].url = channels[matchIdx].url;
+                    }
+                    renderChannelGrid();
+                    updateFavUI();
+                }
+
+                updateSyncBadge(false, `${channels.length} Ch`);
+                showToast(`Auto-Update: ${channels.length} Live Channels loaded (${source})`);
+            } catch (err) {
+                console.error('loadPlaylist error:', err);
+                updateSyncBadge(false, 'Offline');
+                showToast('Failed to auto-update playlist (offline mode)', true);
+            } finally {
+                isSyncing = false;
+                if (syncBtn) syncBtn.classList.remove('syncing');
+            }
+        }
         let activeIndex = 0;
         let selectedCategory = 'ALL';
         let searchQuery = '';
@@ -1475,9 +1715,18 @@
 
                     hlsInstance.on(Hls.Events.ERROR, function(event, data) {
                         if (data.fatal) {
+                            if (data.response && (data.response.code === 403 || data.response.code === 401)) {
+                                console.warn('HLS 403 Token Expired, attempting auto-refresh of playlist...');
+                                handleTokenExpirationRetry(ch);
+                                return;
+                            }
                             switch (data.type) {
                                 case Hls.ErrorTypes.NETWORK_ERROR:
-                                    hlsInstance.startLoad();
+                                    if (data.details === 'manifestLoadError' || data.details === 'manifestParsingError') {
+                                        handleTokenExpirationRetry(ch);
+                                    } else {
+                                        hlsInstance.startLoad();
+                                    }
                                     break;
                                 case Hls.ErrorTypes.MEDIA_ERROR:
                                     hlsInstance.recoverMediaError();
@@ -1505,10 +1754,32 @@
             videoElement.play().catch(e => console.log('Muted autoplay blocked:', e));
         }
 
+        async function handleTokenExpirationRetry(ch) {
+            if (isRecoveringToken) return;
+            isRecoveringToken = true;
+            loadingOverlay.classList.add('active');
+            errorOverlay.classList.remove('active');
+            showToast(`Refreshing live token for "${ch ? ch.name : 'Channel'}"...`);
+            try {
+                await loadPlaylist(false);
+                if (channels[activeIndex]) {
+                    console.log('Stream token refreshed, resuming playback...');
+                    await playChannel(activeIndex);
+                } else {
+                    handleStreamError(ch);
+                }
+            } catch (e) {
+                console.error('Failed to auto-refresh stream token:', e);
+                handleStreamError(ch);
+            } finally {
+                isRecoveringToken = false;
+            }
+        }
+
         function handleStreamError(ch) {
             loadingOverlay.classList.remove('active');
             errorOverlay.classList.add('active');
-            document.getElementById('errorMsg').textContent = `Failed to load "${ch.name}". Stream might be offline.`;
+            document.getElementById('errorMsg').textContent = `Failed to load "${ch ? ch.name : 'Stream'}". Stream token may be expired or offline.`;
         }
 
         function updatePlayPauseIcon() {
@@ -1526,16 +1797,43 @@
         });
 
         prevBtn.addEventListener('click', () => {
+            if (!channels.length) return;
             playChannel((activeIndex - 1 + channels.length) % channels.length);
         });
 
         nextBtn.addEventListener('click', () => {
+            if (!channels.length) return;
             playChannel((activeIndex + 1) % channels.length);
         });
 
-        reloadBtn.addEventListener('click', () => playChannel(activeIndex));
-        retryBtn.addEventListener('click', () => playChannel(activeIndex));
-        nextChannelBtn.addEventListener('click', () => playChannel((activeIndex + 1) % channels.length));
+        reloadBtn.addEventListener('click', () => {
+            if (channels[activeIndex]) playChannel(activeIndex);
+        });
+        retryBtn.addEventListener('click', () => {
+            if (channels[activeIndex]) playChannel(activeIndex);
+        });
+        nextChannelBtn.addEventListener('click', () => {
+            if (!channels.length) return;
+            playChannel((activeIndex + 1) % channels.length);
+        });
+
+        const refreshSyncBtn = document.getElementById('refreshSyncBtn');
+        if (refreshSyncBtn) {
+            refreshSyncBtn.addEventListener('click', () => {
+                if (channels[activeIndex]) handleTokenExpirationRetry(channels[activeIndex]);
+            });
+        }
+
+        const syncPlaylistBtn = document.getElementById('syncPlaylistBtn');
+        if (syncPlaylistBtn) {
+            syncPlaylistBtn.addEventListener('click', () => loadPlaylist(false));
+        }
+
+        // Auto-refresh playlist in background every 15 minutes to guarantee fresh edge-cache tokens
+        setInterval(() => {
+            console.log('Auto-update interval: Fetching fresh playlist in background...');
+            loadPlaylist(false);
+        }, 15 * 60 * 1000);
 
         function updateVolumeUI() {
             volumeSlider.value = videoElement.muted ? 0 : videoElement.volume;
@@ -1666,16 +1964,15 @@
             }
         });
 
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             const savedVol = localStorage.getItem('livetv_volume');
             if (savedVol !== null) videoElement.volume = parseFloat(savedVol);
             const savedMute = localStorage.getItem('livetv_muted');
             if (savedMute !== null) videoElement.muted = savedMute === 'true';
             updateVolumeUI();
 
-            initCategories();
-            renderChannelGrid();
-            if (channels.length > 0) playChannel(0);
+            // Auto-load live channels from GitHub with local & cache fallbacks
+            await loadPlaylist(true);
         });
     </script>
 </body>

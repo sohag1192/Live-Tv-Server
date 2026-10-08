@@ -22,12 +22,17 @@ jobs:
 
       - name: Fetch Latest Toffee Playlist
         run: |
-          echo "Fetching latest playlist from srhady/toffee-bd..."
-          curl -sSL "https://raw.githubusercontent.com/srhady/toffee-bd/refs/heads/main/toffee_playlist.m3u" -o toffee_playlist.m3u
+          echo "Fetching latest playlist from toffee.rootbd.xyz..."
+          curl -sSL --connect-timeout 15 --max-time 30 "https://toffee.rootbd.xyz/playlist.m3u" -o toffee_playlist.m3u
+          if [ ! -s toffee_playlist.m3u ] || ! grep -q "#EXTINF" toffee_playlist.m3u; then
+            echo "Primary endpoint failed or empty, falling back to srhady/toffee-bd GitHub raw..."
+            curl -sSL --connect-timeout 15 --max-time 30 "https://raw.githubusercontent.com/srhady/toffee-bd/refs/heads/main/toffee_playlist.m3u" -o toffee_playlist.m3u
+          fi
+
           if [ -s toffee_playlist.m3u ] && grep -q "#EXTINF" toffee_playlist.m3u; then
             echo "Successfully downloaded fresh Toffee playlist ($(grep -c '#EXTINF' toffee_playlist.m3u) channels)"
           else
-            echo "Downloaded playlist is empty or invalid!"
+            echo "Downloaded playlist is empty or invalid from all sources!"
             exit 1
           fi
 

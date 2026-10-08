@@ -1121,7 +1121,7 @@
                         <div class="empty-channels py-5">
                             <div class="spinner-custom mx-auto mb-3" style="width: 32px; height: 32px; border-width: 3px;"></div>
                             <h6>Loading Live Channels...</h6>
-                            <p class="text-muted small mb-0">Auto-updating playlist from GitHub...</p>
+                            <p class="text-muted small mb-0">Auto-updating playlist from Toffee server...</p>
                         </div>
                     </div>
                 </div>
@@ -1131,7 +1131,7 @@
 
     <footer class="app-footer">
         <div>
-            &copy; 2026 <strong>Live TV Server</strong>. Developed with <i class="fas fa-heart text-danger"></i> by <a href="https://t.me/Md_Sohag_Rana" target="_blank">Md Sohag Rana</a>
+            &copy; 2026 <strong>Live TV Server</strong>. Developed with <i class="fas fa-heart text-danger"></i> by <a href="https://toffee.rootbd.xyz/" target="_blank">Md Sohag Rana</a> &bull; <a href="https://t.me/Md_Sohag_Rana" target="_blank"><i class="fab fa-telegram me-1"></i>Telegram</a>
         </div>
     </footer>
 
@@ -1164,7 +1164,8 @@
         }
 
         // Playlist Endpoints & Cache configuration
-        const PLAYLIST_REMOTE_URL = 'https://raw.githubusercontent.com/srhady/toffee-bd/refs/heads/main/toffee_playlist.m3u';
+        const PLAYLIST_REMOTE_URL = 'https://toffee.rootbd.xyz/playlist.m3u';
+        const PLAYLIST_BACKUP_URL = 'https://raw.githubusercontent.com/srhady/toffee-bd/refs/heads/main/toffee_playlist.m3u';
         const PLAYLIST_LOCAL_URL = './toffee_playlist.m3u';
         const CACHE_PLAYLIST_KEY = 'livetv_toffee_m3u_cache';
         const CACHE_PLAYLIST_TIME_KEY = 'livetv_toffee_m3u_time';
@@ -1254,11 +1255,11 @@
         }
 
         async function fetchPlaylistText() {
-            // 1. Try Live Remote GitHub URL with 1-minute cache buster
+            // 1. Try Primary Remote Server (toffee.rootbd.xyz)
             try {
                 const cacheBuster = `?_t=${Math.floor(Date.now() / 60000)}`;
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 7000);
+                const timeoutId = setTimeout(() => controller.abort(), 6000);
                 const resp = await fetch(PLAYLIST_REMOTE_URL + cacheBuster, {
                     cache: 'no-cache',
                     signal: controller.signal
@@ -1269,14 +1270,36 @@
                     if (text.includes('#EXTINF')) {
                         localStorage.setItem(CACHE_PLAYLIST_KEY, text);
                         localStorage.setItem(CACHE_PLAYLIST_TIME_KEY, Date.now().toString());
-                        return { text, source: 'GitHub' };
+                        return { text, source: 'RootBD Live' };
                     }
                 }
             } catch (err) {
-                console.warn('Live remote playlist fetch failed, trying local fallback:', err);
+                console.warn('Primary remote playlist fetch failed, trying backup GitHub raw:', err);
             }
 
-            // 2. Try Local Fallback File
+            // 2. Try Backup Remote URL (GitHub raw srhady/toffee-bd)
+            try {
+                const cacheBuster = `?_t=${Math.floor(Date.now() / 60000)}`;
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 6000);
+                const resp = await fetch(PLAYLIST_BACKUP_URL + cacheBuster, {
+                    cache: 'no-cache',
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+                if (resp.ok) {
+                    const text = await resp.text();
+                    if (text.includes('#EXTINF')) {
+                        localStorage.setItem(CACHE_PLAYLIST_KEY, text);
+                        localStorage.setItem(CACHE_PLAYLIST_TIME_KEY, Date.now().toString());
+                        return { text, source: 'GitHub Backup' };
+                    }
+                }
+            } catch (err) {
+                console.warn('Backup remote playlist fetch failed, trying local fallback:', err);
+            }
+
+            // 3. Try Local Fallback File
             try {
                 const resp = await fetch(PLAYLIST_LOCAL_URL + `?_t=${Date.now()}`, { cache: 'no-cache' });
                 if (resp.ok) {
@@ -1291,13 +1314,13 @@
                 console.warn('Local playlist fetch failed, trying cache:', err);
             }
 
-            // 3. Try LocalStorage Cache
+            // 4. Try LocalStorage Cache
             const cached = localStorage.getItem(CACHE_PLAYLIST_KEY);
             if (cached && cached.includes('#EXTINF')) {
                 return { text: cached, source: 'Cache' };
             }
 
-            // 4. Try Built-in Vault Payload
+            // 5. Try Built-in Vault Payload
             try {
                 const vaultText = _0xUnlock(_0xVaultPayload, _0xVaultKey);
                 if (vaultText && vaultText.includes('#EXTINF')) {
@@ -1353,11 +1376,6 @@
                 if (syncBtn) syncBtn.classList.remove('syncing');
             }
         }
-        let activeIndex = 0;
-        let selectedCategory = 'ALL';
-        let searchQuery = '';
-        let hlsInstance = null;
-        let shakaPlayer = null;
 
         // Favorites & Recents state
         let favorites = JSON.parse(localStorage.getItem('livetv_favorites') || '[]');

@@ -5,12 +5,14 @@
 ![Live TV Banner](https://placehold.co/1200x400/0c0d14/a855f7?text=📺+Live+TV+Streaming+Platform&font=montserrat)
 
 [![Live Demo](https://img.shields.io/badge/Live-Demo-7c3aed?style=for-the-badge&logo=googlechrome&logoColor=white)](https://sohag1192.github.io/Live-Tv-Server/)
-[![Channels](https://img.shields.io/badge/Channels-75%2B%20Live%20HD-ef4444?style=for-the-badge&logo=youtube&logoColor=white)](https://sohag1192.github.io/Live-Tv-Server/)
-[![Auto-Sync](https://img.shields.io/badge/Auto--Sync-Every%2030m-10b981?style=for-the-badge&logo=githubactions&logoColor=white)](https://raw.githubusercontent.com/srhady/toffee-bd/refs/heads/main/toffee_playlist.m3u)
+[![Live Server](https://img.shields.io/badge/Live-Server-10b981?style=for-the-badge&logo=cloudflare&logoColor=white)](https://toffee.rootbd.xyz/)
+[![Playlist M3U](https://img.shields.io/badge/Playlist-Toffee%20M3U-f59e0b?style=for-the-badge&logo=vlcmediaplayer&logoColor=white)](https://toffee.rootbd.xyz/playlist.m3u)
+[![Channels](https://img.shields.io/badge/Channels-75%2B%20Live%20HD-ef4444?style=for-the-badge&logo=youtube&logoColor=white)](https://toffee.rootbd.xyz/)
+[![Auto-Sync](https://img.shields.io/badge/Auto--Sync-Every%2030m-3b82f6?style=for-the-badge&logo=githubactions&logoColor=white)](https://toffee.rootbd.xyz/playlist.m3u)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 [![Visitor Count](https://hitscounter.dev/api/hit?url=https%3A%2F%2Fgithub.com%2Fsohag1192%2FLive-Tv-Server&label=Visitors&icon=github&color=%237c3aed&message=&style=for-the-badge&tz=UTC)](https://github.com/sohag1192/Live-Tv-Server)
 
-A modern, responsive, and high-performance web-based Live TV streaming platform featuring **75+ Bangladeshi and International HD TV channels**. Built with real-time **Auto-Updating Toffee M3U Playlist integration**, support for **HLS (`.m3u8`)** via Hls.js and **MPEG-DASH (`.mpd`) + Widevine DRM** via Google Shaka Player, wrapped in an encrypted stream security vault and multi-tier fallbacks.
+A modern, responsive, and high-performance web-based Live TV streaming platform featuring **75+ Bangladeshi and International HD TV channels**. Built with real-time **Auto-Updating Toffee M3U Playlist integration** powered by [toffee.rootbd.xyz](https://toffee.rootbd.xyz/), support for **HLS (`.m3u8`)** via Hls.js and **MPEG-DASH (`.mpd`) + Widevine DRM** via Google Shaka Player, wrapped in an encrypted stream security vault and multi-tier fallbacks.
 
 [Explore Features](#-key-features) • [Quick Start & Deployment](#-quick-start--server-deployment) • [Nginx Setup](#2-nginx-production-server) • [Apache2 Setup](#3-apache2-production-server) • [Keyboard Shortcuts](#-keyboard-shortcuts) • [Security](#-stream-security--encryption)
 
@@ -21,8 +23,8 @@ A modern, responsive, and high-performance web-based Live TV streaming platform 
 ## ✨ Key Features
 
 - 🛰️ **75+ Live HD Channels**: Complete lineup spanning **News, Sports, Entertainment, Movies, Kids, Music, and Infotainment**.
-- 🔄 **Live Auto-Updating Toffee Playlist**: Synchronizes live stream tokens dynamically from [Toffee Playlist M3U](https://raw.githubusercontent.com/srhady/toffee-bd/refs/heads/main/toffee_playlist.m3u) directly in your browser on load, with background periodic refresh (every 15 min), 1-click manual "Sync" button, automated 403 token expiration recovery, and a recurring GitHub Actions workflow (`.github/workflows/auto-update-playlist.yml`).
-- 🛡️ **Encrypted Stream Vault & Multi-Tier Fallback**: Stream URLs and licenses are protected with dynamic in-memory decryption, with graceful fallbacks across GitHub Raw, Local M3U, browser `localStorage` cache, and secure vault.
+- 🔄 **Live Auto-Updating Toffee Playlist**: Synchronizes live stream tokens dynamically from [Toffee Server Playlist](https://toffee.rootbd.xyz/playlist.m3u) (with GitHub raw failover) directly in your browser on load, with background periodic refresh (every 15 min), 1-click manual "Sync" button, automated 403 token expiration recovery, and a recurring GitHub Actions workflow (`.github/workflows/auto-update-playlist.yml`).
+- 🛡️ **Encrypted Stream Vault & Multi-Tier Fallback**: Stream URLs and licenses are protected with dynamic in-memory decryption, with graceful fallbacks across `toffee.rootbd.xyz`, GitHub Raw, Local M3U, browser `localStorage` cache, and secure vault.
 - ⚙️ **Video Quality Selector**: Built-in resolution switcher (**Auto, 1080p, 720p, 480p, 360p**) with dynamic bitrate detection.
 - ❤️ **Favorites & Recent History**: Mark favorite channels with 1 click and automatically track recently watched channels (saved to `localStorage`).
 - ⚡ **Dual Streaming Engines**:
@@ -391,6 +393,8 @@ Have questions, need custom deployment assistance, or want to collaborate?
 ## 👤 Author & Support
 
 - **Developer**: **Md Sohag Rana**
+- **Live Server**: [https://toffee.rootbd.xyz/](https://toffee.rootbd.xyz/)
+- **Live M3U Playlist**: [https://toffee.rootbd.xyz/playlist.m3u](https://toffee.rootbd.xyz/playlist.m3u)
 - **Telegram**: [@Md_Sohag_Rana](https://t.me/Md_Sohag_Rana)
 - **GitHub**: [@sohag1192](https://github.com/sohag1192)
 

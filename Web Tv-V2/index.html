@@ -362,7 +362,6 @@
         }
 
         const PLAYLIST_REMOTE_URL = 'https://toffee.rootbd.xyz/playlist.m3u';
-        const PLAYLIST_BACKUP_URL = 'https://raw.githubusercontent.com/srhady/toffee-bd/refs/heads/main/toffee_playlist.m3u';
         const PLAYLIST_LOCAL_URL = '../toffee_playlist.m3u';
         const CACHE_PLAYLIST_KEY = 'livetv_toffee_m3u_cache';
         const CACHE_PLAYLIST_TIME_KEY = 'livetv_toffee_m3u_time';
@@ -416,26 +415,9 @@
                         return text;
                     }
                 }
-            } catch (e) { console.warn('Primary remote playlist fetch failed, trying backup GitHub raw:', e); }
+            } catch (e) { console.warn('Primary remote playlist fetch failed, trying local fallback:', e); }
 
-            // 2. Try Backup Remote URL (GitHub raw srhady/toffee-bd)
-            try {
-                const cacheBuster = `?_t=${Math.floor(Date.now() / 60000)}`;
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 6000);
-                const resp = await fetch(PLAYLIST_BACKUP_URL + cacheBuster, { cache: 'no-cache', signal: controller.signal });
-                clearTimeout(timeoutId);
-                if (resp.ok) {
-                    const text = await resp.text();
-                    if (text.includes('#EXTINF')) {
-                        localStorage.setItem(CACHE_PLAYLIST_KEY, text);
-                        localStorage.setItem(CACHE_PLAYLIST_TIME_KEY, Date.now().toString());
-                        return text;
-                    }
-                }
-            } catch (e) { console.warn('Backup remote playlist fetch failed, trying local fallback:', e); }
-
-            // 3. Try Local Fallback File
+            // 2. Try Local Fallback File
             try {
                 const resp = await fetch(PLAYLIST_LOCAL_URL + `?_t=${Date.now()}`, { cache: 'no-cache' });
                 if (resp.ok) {
@@ -444,11 +426,11 @@
                 }
             } catch (e) { console.warn('Local playlist fetch failed, trying cache:', e); }
 
-            // 4. Try LocalStorage Cache
+            // 3. Try LocalStorage Cache
             const cached = localStorage.getItem(CACHE_PLAYLIST_KEY);
             if (cached && cached.includes('#EXTINF')) return cached;
 
-            // 5. Try Built-in Vault Payload
+            // 4. Try Built-in Vault Payload
             try {
                 const vaultText = _0xUnlock(_0xVaultPayload, _0xVaultKey);
                 if (vaultText && vaultText.includes('#EXTINF')) return vaultText;

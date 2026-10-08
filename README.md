@@ -23,8 +23,8 @@ A modern, responsive, and high-performance web-based Live TV streaming platform 
 ## ✨ Key Features
 
 - 🛰️ **75+ Live HD Channels**: Complete lineup spanning **News, Sports, Entertainment, Movies, Kids, Music, and Infotainment**.
-- 🔄 **Live Auto-Updating Toffee Playlist**: Synchronizes live stream tokens dynamically from [Toffee Server Playlist](https://toffee.rootbd.xyz/playlist.m3u) (with GitHub raw failover) directly in your browser on load, with background periodic refresh (every 15 min), 1-click manual "Sync" button, automated 403 token expiration recovery, and a recurring GitHub Actions workflow (`.github/workflows/auto-update-playlist.yml`).
-- 🛡️ **Encrypted Stream Vault & Multi-Tier Fallback**: Stream URLs and licenses are protected with dynamic in-memory decryption, with graceful fallbacks across `toffee.rootbd.xyz`, GitHub Raw, Local M3U, browser `localStorage` cache, and secure vault.
+- 🔄 **Live Auto-Updating Toffee Playlist**: Synchronizes live stream tokens dynamically from [Toffee Server Playlist](https://toffee.rootbd.xyz/playlist.m3u) directly in your browser on load, with background periodic refresh (every 15 min), 1-click manual "Sync" button, automated 403 token expiration recovery, and a recurring GitHub Actions workflow (`.github/workflows/auto-update-playlist.yml`).
+- 🛡️ **Encrypted Stream Vault & Multi-Tier Fallback**: Stream URLs and licenses are protected with dynamic in-memory decryption, with graceful fallbacks across `toffee.rootbd.xyz`, Local M3U, browser `localStorage` cache, and secure vault.
 - ⚙️ **Video Quality Selector**: Built-in resolution switcher (**Auto, 1080p, 720p, 480p, 360p**) with dynamic bitrate detection.
 - ❤️ **Favorites & Recent History**: Mark favorite channels with 1 click and automatically track recently watched channels (saved to `localStorage`).
 - ⚡ **Dual Streaming Engines**:

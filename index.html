@@ -1637,8 +1637,14 @@
         }
 
         // --- 5. Play Channel Engine ---
-        async function playChannel(index) {
+        let streamRetryCount = 0;
+        const MAX_STREAM_RETRIES = 2;
+
+        async function playChannel(index, isRetry = false) {
             if (index < 0 || index >= channels.length) return;
+            if (!isRetry) {
+                streamRetryCount = 0;
+            }
             activeIndex = index;
             const ch = channels[activeIndex];
 
@@ -1695,14 +1701,23 @@
                 } else if (Hls.isSupported() && !isMpd) {
                     hlsInstance = new Hls({
                         enableWorker: true,
-                        lowLatencyMode: true,
-                        manifestLoadingMaxRetry: 3
+                        lowLatencyMode: false,
+                        backBufferLength: 90,
+                        maxBufferLength: 30,
+                        maxMaxBufferLength: 60,
+                        manifestLoadingTimeOut: 12000,
+                        manifestLoadingMaxRetry: 2,
+                        levelLoadingTimeOut: 12000,
+                        levelLoadingMaxRetry: 2,
+                        fragLoadingTimeOut: 15000,
+                        fragLoadingMaxRetry: 3
                     });
 
                     hlsInstance.loadSource(ch.url);
                     hlsInstance.attachMedia(videoElement);
 
                     hlsInstance.on(Hls.Events.MANIFEST_PARSED, function(event, data) {
+                        streamRetryCount = 0;
                         populateHlsQualityMenu(data.levels || []);
                         loadingOverlay.classList.remove('active');
                         videoElement.play().catch(handleAutoplayBlock);
@@ -1710,15 +1725,16 @@
 
                     hlsInstance.on(Hls.Events.ERROR, function(event, data) {
                         if (data.fatal) {
+                            console.warn('Fatal HLS Error:', data.type, data.details, data);
                             if (data.response && (data.response.code === 403 || data.response.code === 401)) {
-                                console.warn('HLS 403 Token Expired, attempting auto-refresh of playlist...');
-                                handleTokenExpirationRetry(ch);
+                                handleTokenExpirationRetry(ch, 'Stream token expired (403/401)');
                                 return;
                             }
                             switch (data.type) {
                                 case Hls.ErrorTypes.NETWORK_ERROR:
                                     if (data.details === 'manifestLoadError' || data.details === 'manifestParsingError') {
-                                        handleTokenExpirationRetry(ch);
+                                        const isStatusZero = data.response && data.response.code === 0;
+                                        handleTokenExpirationRetry(ch, isStatusZero ? 'CORS / Network Error (Status 0)' : 'Manifest network error');
                                     } else {
                                         hlsInstance.startLoad();
                                     }
@@ -1749,32 +1765,45 @@
             videoElement.play().catch(e => console.log('Muted autoplay blocked:', e));
         }
 
-        async function handleTokenExpirationRetry(ch) {
+        async function handleTokenExpirationRetry(ch, reason = '') {
             if (isRecoveringToken) return;
+            if (streamRetryCount >= MAX_STREAM_RETRIES) {
+                console.warn(`Max stream retries reached (${MAX_STREAM_RETRIES}) for channel:`, ch?.name);
+                handleStreamError(ch, reason || 'Playback failed. Stream server blocked by browser CORS policy or offline.');
+                return;
+            }
+            streamRetryCount++;
             isRecoveringToken = true;
             loadingOverlay.classList.add('active');
             errorOverlay.classList.remove('active');
-            showToast(`Refreshing live token for "${ch ? ch.name : 'Channel'}"...`);
+            showToast(`Auto-recovering stream for "${ch ? ch.name : 'Channel'}" (${streamRetryCount}/${MAX_STREAM_RETRIES})...`);
+
+            // 1.5s delay backoff to prevent UI freezing / request spam
+            await new Promise(r => setTimeout(r, 1500));
+
             try {
                 await loadPlaylist(false);
                 if (channels[activeIndex]) {
-                    console.log('Stream token refreshed, resuming playback...');
-                    await playChannel(activeIndex);
+                    console.log('Playlist refreshed, attempting playback retry...');
+                    await playChannel(activeIndex, true);
                 } else {
-                    handleStreamError(ch);
+                    handleStreamError(ch, reason);
                 }
             } catch (e) {
                 console.error('Failed to auto-refresh stream token:', e);
-                handleStreamError(ch);
+                handleStreamError(ch, reason);
             } finally {
                 isRecoveringToken = false;
             }
         }
 
-        function handleStreamError(ch) {
+        function handleStreamError(ch, customMsg) {
             loadingOverlay.classList.remove('active');
             errorOverlay.classList.add('active');
-            document.getElementById('errorMsg').textContent = `Failed to load "${ch ? ch.name : 'Stream'}". Stream token may be expired or offline.`;
+            const msgEl = document.getElementById('errorMsg');
+            if (msgEl) {
+                msgEl.textContent = customMsg || `Failed to load "${ch ? ch.name : 'Stream'}". Stream token may be expired or blocked by CORS.`;
+            }
         }
 
         function updatePlayPauseIcon() {

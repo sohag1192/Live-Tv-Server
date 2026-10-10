@@ -602,10 +602,23 @@
                     video.play().catch(() => { video.muted = true; video.play(); });
                 } catch(e) { console.error('Shaka load error:', e); }
             } else if (Hls.isSupported() && !isMpd) {
-                hlsInst = new Hls();
+                hlsInst = new Hls({
+                    enableWorker: true,
+                    lowLatencyMode: false,
+                    manifestLoadingTimeOut: 12000,
+                    levelLoadingTimeOut: 12000,
+                    fragLoadingTimeOut: 15000
+                });
                 hlsInst.loadSource(ch.url);
                 hlsInst.attachMedia(video);
                 hlsInst.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(() => { video.muted = true; video.play(); }));
+                hlsInst.on(Hls.Events.ERROR, (event, data) => {
+                    if (data.fatal) {
+                        console.warn('Guide HLS fatal error:', data);
+                        if (data.type === Hls.ErrorTypes.MEDIA_ERROR) hlsInst.recoverMediaError();
+                        else if (data.type === Hls.ErrorTypes.NETWORK_ERROR) hlsInst.startLoad();
+                    }
+                });
             } else {
                 video.src = ch.url;
                 video.play().catch(() => { video.muted = true; video.play(); });

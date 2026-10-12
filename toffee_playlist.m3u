@@ -149,9 +149,9 @@ https://toffee.rootbd.xyz/channel/73.m3u8
 https://toffee.rootbd.xyz/channel/74.m3u8
 #EXTINF:-1 tvg-logo="https://assets-prod.services.toffeelive.com/F9UM56ABalKyvLQIr9B1/posters/26081e64-671e-44a8-95ba-a692bfaae49c.jpeg" group-title="Live Action",AWSN TV
 https://toffee.rootbd.xyz/channel/75.m3u8
-#EXTINF:-1 tvg-logo="https://assets-prod.services.toffeelive.com/S9bzFaEBalKyvLQIrh3b/posters/f400a8bc-d83c-40f8-93e8-206314ad332d.png" group-title="Documentary",Al Jazeera
-https://toffee.rootbd.xyz/channel/76.m3u8
 #EXTINF:-1 tvg-logo="https://assets-prod.services.toffeelive.com/HHnAgJkBcqxnFHJBabwO/posters/967dd1fe-c2af-442e-a0b1-22320ed82c88.png" group-title="Sports",BFL | Live 1
+https://toffee.rootbd.xyz/channel/76.m3u8
+#EXTINF:-1 tvg-logo="https://assets-prod.services.toffeelive.com/S9bzFaEBalKyvLQIrh3b/posters/f400a8bc-d83c-40f8-93e8-206314ad332d.png" group-title="Documentary",Al Jazeera
 https://toffee.rootbd.xyz/channel/77.m3u8
 #EXTINF:-1 tvg-logo="https://assets-prod.services.toffeelive.com/f_png,w_300,q_85/LnlKhJkBcqxnFHJBU8GM/posters/b76989ae-877e-4d9f-9751-5f1661cf844b.png" group-title="Live TV",BFL | Live 3
 https://toffee.rootbd.xyz/channel/78.m3u8

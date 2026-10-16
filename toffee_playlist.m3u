@@ -151,11 +151,13 @@ https://toffee.rootbd.xyz/channel/74.m3u8
 https://toffee.rootbd.xyz/channel/75.m3u8
 #EXTINF:-1 tvg-logo="https://assets-prod.services.toffeelive.com/MXnGgJkBcqxnFHJBILyR/posters/83032d69-05f6-4048-919d-7fcafe4e3735.png" group-title="Sports",BFL | Live 2
 https://toffee.rootbd.xyz/channel/76.m3u8
-#EXTINF:-1 tvg-logo="https://assets-prod.services.toffeelive.com/F9UM56ABalKyvLQIr9B1/posters/26081e64-671e-44a8-95ba-a692bfaae49c.jpeg" group-title="Live Action",AWSN TV
+#EXTINF:-1 tvg-logo="https://assets-prod.services.toffeelive.com/LnlKhJkBcqxnFHJBU8GM/posters/7f5d5efc-9234-442a-a346-c2589d49412b.png" group-title="Sports",BFL | Live 3
 https://toffee.rootbd.xyz/channel/77.m3u8
-#EXTINF:-1 tvg-logo="https://assets-prod.services.toffeelive.com/S9bzFaEBalKyvLQIrh3b/posters/f400a8bc-d83c-40f8-93e8-206314ad332d.png" group-title="Documentary",Al Jazeera
+#EXTINF:-1 tvg-logo="https://assets-prod.services.toffeelive.com/F9UM56ABalKyvLQIr9B1/posters/26081e64-671e-44a8-95ba-a692bfaae49c.jpeg" group-title="Live Action",AWSN TV
 https://toffee.rootbd.xyz/channel/78.m3u8
-#EXTINF:-1 tvg-logo="https://assets-prod.services.toffeelive.com/f_png,w_300,q_85/Ey9jtJoBNnOkwJLWw06R/posters/177c9f64-6d2b-4431-aeee-4a118d9e4f70.png" group-title="Live TV",BFL | Live 4
+#EXTINF:-1 tvg-logo="https://assets-prod.services.toffeelive.com/S9bzFaEBalKyvLQIrh3b/posters/f400a8bc-d83c-40f8-93e8-206314ad332d.png" group-title="Documentary",Al Jazeera
 https://toffee.rootbd.xyz/channel/79.m3u8
-#EXTINF:-1 tvg-logo="https://assets-prod.services.toffeelive.com/f_png,w_300,q_85/nUB7JJ4BuUSiBsg_sKJF/posters/f5596ca8-8735-474d-bc6f-b48e3f90464d.png" group-title="Live TV",BFL | Live 5
+#EXTINF:-1 tvg-logo="https://assets-prod.services.toffeelive.com/f_png,w_300,q_85/Ey9jtJoBNnOkwJLWw06R/posters/177c9f64-6d2b-4431-aeee-4a118d9e4f70.png" group-title="Live TV",BFL | Live 4
 https://toffee.rootbd.xyz/channel/80.m3u8
+#EXTINF:-1 tvg-logo="https://assets-prod.services.toffeelive.com/f_png,w_300,q_85/nUB7JJ4BuUSiBsg_sKJF/posters/f5596ca8-8735-474d-bc6f-b48e3f90464d.png" group-title="Live TV",BFL | Live 5
+https://toffee.rootbd.xyz/channel/81.m3u8

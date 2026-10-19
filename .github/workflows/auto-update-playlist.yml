@@ -1,27 +1,26 @@
-name: Auto-Update Toffee Playlist
-
-on:
-  schedule:
-    # Keep your existing cron schedule here
-    - cron: '0 */6 * * *' 
-  workflow_dispatch:
-
 jobs:
-  update-playlist:
-    # FIX 1: Explicitly set the Ubuntu version to avoid the migration notice
+  deploy:
+    # 1. FIX THE UBUNTU NOTICE:
+    # Change 'ubuntu-latest' to a specific version to avoid unexpected migration issues.
     runs-on: ubuntu-24.04 
 
     steps:
-      - name: Checkout repository
-        # FIX 2: Update to v4 (or v5 if available) to address the Node deprecation
-        uses: actions/checkout@v4 
-        
-      # ---------------------------------------------------
-      # PASTE YOUR EXISTING SETUP AND RUN STEPS BELOW HERE
-      # (e.g., actions/setup-python, npm install, etc.)
-      # ---------------------------------------------------
+      # 2. FIX THE NODE.JS 20 DEPRECATION:
+      # Update the specific actions flagged in your screenshot to their next major versions.
+      # (If the newer version isn't released yet, GitHub is already safely forcing them to Node 24, so you can ignore the warning until the maintainers release the update).
       
-      - name: Run Update Script
-        run: |
-          # Your commands to update the Toffee playlist go here
-          echo "Updating playlist..."
+      - name: Checkout repository
+        uses: actions/checkout@v5 # Update from v4
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v6 # Update from v5
+
+      # ... (Your build steps go here, if any) ...
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v5 # Update from v4
+        with:
+          path: '.' # (Adjust your path as needed)
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v5 # Update from v4

@@ -2,43 +2,26 @@ name: Auto-Update Toffee Playlist
 
 on:
   schedule:
-    # Runs every 30 minutes to synchronize fresh Toffee stream tokens
-    - cron: '*/30 * * * *'
+    # Keep your existing cron schedule here
+    - cron: '0 */6 * * *' 
   workflow_dispatch:
-
-permissions:
-  contents: write
-
-concurrency:
-  group: "playlist-update"
-  cancel-in-progress: true
 
 jobs:
   update-playlist:
-    runs-on: ubuntu-latest
+    # FIX 1: Explicitly set the Ubuntu version to avoid the migration notice
+    runs-on: ubuntu-24.04 
+
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Fetch Latest Toffee Playlist
+      - name: Checkout repository
+        # FIX 2: Update to v4 (or v5 if available) to address the Node deprecation
+        uses: actions/checkout@v4 
+        
+      # ---------------------------------------------------
+      # PASTE YOUR EXISTING SETUP AND RUN STEPS BELOW HERE
+      # (e.g., actions/setup-python, npm install, etc.)
+      # ---------------------------------------------------
+      
+      - name: Run Update Script
         run: |
-          echo "Fetching latest playlist from toffee.rootbd.xyz..."
-          curl -sSL --connect-timeout 15 --max-time 30 "https://toffee.rootbd.xyz/playlist.m3u" -o toffee_playlist.m3u
-          if [ -s toffee_playlist.m3u ] && grep -q "#EXTINF" toffee_playlist.m3u; then
-            echo "Successfully downloaded fresh Toffee playlist ($(grep -c '#EXTINF' toffee_playlist.m3u) channels)"
-          else
-            echo "Downloaded playlist from toffee.rootbd.xyz is empty or invalid!"
-            exit 1
-          fi
-
-      - name: Commit and Push Changes
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add toffee_playlist.m3u
-          if git diff --staged --quiet; then
-            echo "No changes detected in toffee_playlist.m3u"
-          else
-            git commit -m "Auto-update Toffee playlist [skip ci]"
-            git push origin master
-          fi
+          # Your commands to update the Toffee playlist go here
+          echo "Updating playlist..."

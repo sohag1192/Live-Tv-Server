@@ -1177,6 +1177,8 @@
         let shakaPlayer = null;
         let isSyncing = false;
         let isRecoveringToken = false;
+        let isInitialAutoPlay = true;
+        let initialAutoPlayAttempts = 0;
 
         function showToast(message, isError = false) {
             let toast = document.getElementById('appToast');
@@ -1331,7 +1333,17 @@
                 renderChannelGrid();
 
                 if (initialPlay) {
-                    if (channels.length > 0) playChannel(0);
+                    isInitialAutoPlay = true;
+                    initialAutoPlayAttempts = 0;
+                    const savedIdx = parseInt(localStorage.getItem('livetv_last_played_idx'), 10);
+                    let startIdx = 0;
+                    if (!isNaN(savedIdx) && savedIdx >= 0 && savedIdx < channels.length) {
+                        startIdx = savedIdx;
+                    } else {
+                        // Default to Channel 2 (Zee Bangla) if Somoy TV is offline
+                        startIdx = channels.length > 1 ? 1 : 0;
+                    }
+                    if (channels.length > 0) playChannel(startIdx);
                 } else if (prevCh) {
                     const matchIdx = channels.findIndex(c => c.id === prevCh.id || c.name.toLowerCase() === prevCh.name.toLowerCase());
                     if (matchIdx !== -1) {
@@ -1647,6 +1659,7 @@
             }
             activeIndex = index;
             const ch = channels[activeIndex];
+            localStorage.setItem('livetv_last_played_idx', activeIndex);
 
             nowPlayingBadge.textContent = `#${ch.chno} LIVE`;
             playerChannelTitle.textContent = ch.name;
@@ -1736,6 +1749,13 @@
 
                     hlsInstance.on(Hls.Events.MANIFEST_PARSED, function(event, data) {
                         streamRetryCount = 0;
+                        if (!data.levels || data.levels.length === 0) {
+                            console.warn('Channel manifest has 0 levels:', ch.name);
+                            handleChannelFailure(ch, 'empty_manifest');
+                            return;
+                        }
+                        isInitialAutoPlay = false;
+                        initialAutoPlayAttempts = 0;
                         populateHlsQualityMenu(data.levels || []);
                         loadingOverlay.classList.remove('active');
                         videoElement.play().catch(handleAutoplayBlock);
@@ -1748,20 +1768,26 @@
                                 handleTokenExpirationRetry(ch, 'Stream token expired (403/401)');
                                 return;
                             }
+                            if (data.details === 'manifestParsingError' || (data.response && (data.response.code >= 500 || data.response.code === 404))) {
+                                handleChannelFailure(ch, 'manifest_error');
+                                return;
+                            }
                             switch (data.type) {
                                 case Hls.ErrorTypes.NETWORK_ERROR:
-                                    if (data.details === 'manifestLoadError' || data.details === 'manifestParsingError') {
+                                    if (data.details === 'manifestLoadError') {
                                         const isStatusZero = data.response && data.response.code === 0;
                                         handleTokenExpirationRetry(ch, isStatusZero ? 'CORS / Network Error (Status 0)' : 'Manifest network error');
                                     } else {
+                                        console.log('HLS Network error: restarting load...');
                                         hlsInstance.startLoad();
                                     }
                                     break;
                                 case Hls.ErrorTypes.MEDIA_ERROR:
+                                    console.log('HLS Media error: recovering...');
                                     hlsInstance.recoverMediaError();
                                     break;
                                 default:
-                                    handleStreamError(ch);
+                                    handleChannelFailure(ch, 'unrecoverable_error');
                                     break;
                             }
                         }
@@ -1779,6 +1805,19 @@
                 console.error('Playback initialization error:', err);
                 handleStreamError(ch);
             }
+        }
+
+        function handleChannelFailure(ch, reasonType) {
+            if (isInitialAutoPlay && initialAutoPlayAttempts < 5) {
+                initialAutoPlayAttempts++;
+                const nextIdx = (activeIndex + 1) % channels.length;
+                console.log(`Auto-advancing from offline channel "${ch ? ch.name : activeIndex}" to "${channels[nextIdx].name}"...`);
+                showToast(`"${ch ? ch.name : 'Channel'}" is offline upstream. Auto-switching to "${channels[nextIdx].name}"...`, false);
+                playChannel(nextIdx);
+                return;
+            }
+            isInitialAutoPlay = false;
+            handleStreamError(ch, `"${ch ? ch.name : 'Channel'}" is currently offline on the upstream server. Please click "Next Channel" or select another channel.`);
         }
 
         function handleAutoplayBlock() {

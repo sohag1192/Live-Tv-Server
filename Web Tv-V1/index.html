@@ -573,7 +573,14 @@
                 initCatChips();
                 renderGrid();
                 if (initialPlay) {
-                    if (channelData.length > 0) playCh(0);
+                    const savedIdx = parseInt(localStorage.getItem('livetv_last_played_idx'), 10);
+                    let startIdx = 0;
+                    if (!isNaN(savedIdx) && savedIdx >= 0 && savedIdx < channelData.length) {
+                        startIdx = savedIdx;
+                    } else {
+                        startIdx = channelData.length > 1 ? 1 : 0;
+                    }
+                    if (channelData.length > 0) playCh(startIdx);
                 } else if (prev) {
                     const m = channelData.findIndex(c => c.id === prev.id || c.name.toLowerCase() === prev.name.toLowerCase());
                     if (m !== -1) {
@@ -693,6 +700,7 @@
         async function playCh(idx) {
             curIdx = idx;
             const ch = channelData[idx];
+            localStorage.setItem('livetv_last_played_idx', idx);
             document.getElementById('cinemaChno').textContent = `#${ch.chno} LIVE`;
             document.getElementById('cinemaName').textContent = ch.name;
             document.getElementById('cinemaGroup').textContent = ch.group;
@@ -758,10 +766,21 @@
                 });
                 hlsInst.loadSource(ch.url);
                 hlsInst.attachMedia(video);
-                hlsInst.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(() => { video.muted = true; video.play(); }));
+                hlsInst.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
+                    if (!data.levels || data.levels.length === 0) {
+                        console.warn('Channel manifest has 0 levels:', ch.name);
+                        playCh((curIdx + 1) % channelData.length);
+                        return;
+                    }
+                    video.play().catch(() => { video.muted = true; video.play(); });
+                });
                 hlsInst.on(Hls.Events.ERROR, (event, data) => {
                     if (data.fatal) {
                         console.warn('Cinema HLS fatal error:', data);
+                        if (data.details === 'manifestParsingError' || (data.response && (data.response.code >= 500 || data.response.code === 404))) {
+                            playCh((curIdx + 1) % channelData.length);
+                            return;
+                        }
                         if (data.type === Hls.ErrorTypes.MEDIA_ERROR) hlsInst.recoverMediaError();
                         else if (data.type === Hls.ErrorTypes.NETWORK_ERROR) hlsInst.startLoad();
                     }

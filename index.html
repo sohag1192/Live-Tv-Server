@@ -17,7 +17,6 @@
 
     <!-- Video Streaming Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.compiled.js"></script>
 
     <style>
         :root {
@@ -1174,7 +1173,6 @@
         let selectedCategory = 'ALL';
         let searchQuery = '';
         let hlsInstance = null;
-        let shakaPlayer = null;
         let isSyncing = false;
         let isRecoveringToken = false;
         let isInitialAutoPlay = true;
@@ -1370,8 +1368,6 @@
         let favorites = JSON.parse(localStorage.getItem('livetv_favorites') || '[]');
         let recents = JSON.parse(localStorage.getItem('livetv_recents') || '[]');
 
-        if (window.shaka) shaka.polyfill.installAll();
-
         const videoElement = document.getElementById('video-player');
         const channelGrid = document.getElementById('channelGrid');
         const categoryContainer = document.getElementById('categoryContainer');
@@ -1533,7 +1529,7 @@
                 card.tabIndex = 0; // D-Pad focusable
 
                 const fallbackImg = `https://placehold.co/420x300/1e1e2f/ffffff?text=${encodeURIComponent(ch.name)}`;
-                const isDrm = ch.url.includes('.mpd') || !!ch.licenseKey;
+                
                 const isFav = favorites.includes(String(ch.id));
 
                 card.innerHTML = `
@@ -1555,7 +1551,7 @@
                         <div class="card-footer-line">
                             <span class="card-group">${ch.group}</span>
                             <div class="d-flex align-items-center gap-1">
-                                ${isDrm ? '<span class="card-drm-badge">DRM</span>' : ''}
+                                
                                 <button class="card-fav-btn ${isFav ? 'active' : ''}" title="Favorite">
                                     <i class="${isFav ? 'fas fa-heart text-danger' : 'far fa-heart'}"></i>
                                 </button>
@@ -1612,41 +1608,7 @@
             });
         }
 
-        function populateShakaQualityMenu() {
-            if (!shakaPlayer) return;
-            qualityMenu.innerHTML = '';
-
-            const autoBtn = document.createElement('button');
-            autoBtn.className = 'quality-item active';
-            autoBtn.textContent = 'Auto (Best)';
-            autoBtn.onclick = () => {
-                shakaPlayer.configure({ abr: { enabled: true } });
-                qualityLabel.textContent = 'Auto';
-                document.querySelectorAll('.quality-item').forEach(el => el.classList.remove('active'));
-                autoBtn.classList.add('active');
-            };
-            qualityMenu.appendChild(autoBtn);
-
-            const tracks = shakaPlayer.getVariantTracks();
-            const uniqueHeights = [...new Set(tracks.map(t => t.height).filter(Boolean))].sort((a, b) => b - a);
-
-            uniqueHeights.forEach(h => {
-                const btn = document.createElement('button');
-                btn.className = 'quality-item';
-                btn.textContent = `${h}p HD`;
-                btn.onclick = () => {
-                    const track = tracks.find(t => t.height === h);
-                    if (track) {
-                        shakaPlayer.configure({ abr: { enabled: false } });
-                        shakaPlayer.selectVariantTrack(track, true);
-                        qualityLabel.textContent = `${h}p`;
-                        document.querySelectorAll('.quality-item').forEach(el => el.classList.remove('active'));
-                        btn.classList.add('active');
-                    }
-                };
-                qualityMenu.appendChild(btn);
-            });
-        }
+        
 
         // --- 5. Play Channel Engine ---
         let streamRetryCount = 0;
@@ -1671,8 +1633,7 @@
             updateFavUI();
             recordRecent(ch.id);
 
-            const isMpd = ch.url.includes('.mpd') || ch.url.includes('format=.mpd');
-            playerStreamTypeTag.textContent = isMpd ? 'DASH / DRM' : 'HLS';
+            playerStreamTypeTag.textContent = 'HLS';
 
             clearTimeout(bufferingTimeout);
             const spinner = loadingOverlay.querySelector('.spinner-custom');
@@ -1694,18 +1655,8 @@
                 }
                 hlsInstance = null;
             }
-            if (shakaPlayer) {
-                try {
-                    await shakaPlayer.destroy();
-                } catch (e) {
-                    console.warn('Shaka cleanup error:', e);
-                }
-                shakaPlayer = null;
-            }
             try {
                 videoElement.pause();
-                videoElement.removeAttribute('src');
-                videoElement.load();
             } catch (e) {}
 
             document.querySelectorAll('.channel-card').forEach(c => {
@@ -1714,25 +1665,7 @@
             });
 
             try {
-                if (isMpd && window.shaka && shaka.Player.isBrowserSupported()) {
-                    shakaPlayer = new shaka.Player(videoElement);
-
-                    if (ch.licenseKey) {
-                        shakaPlayer.configure({
-                            drm: {
-                                servers: {
-                                    'com.widevine.alpha': ch.licenseKey
-                                }
-                            }
-                        });
-                    }
-
-                    shakaPlayer.addEventListener('error', () => handleChannelFailure(ch, 'shaka_error'));
-                    await shakaPlayer.load(ch.url);
-                    populateShakaQualityMenu();
-                    loadingOverlay.classList.remove('active');
-                    videoElement.play().catch(handleAutoplayBlock);
-                } else if (Hls.isSupported() && !isMpd) {
+                if (Hls.isSupported()) {
                     hlsInstance = new Hls({
                         enableWorker: true,
                         lowLatencyMode: false,

@@ -443,10 +443,13 @@
             align-items: center;
             justify-content: center;
             flex-direction: column;
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(12, 13, 20, 0.78);
+            backdrop-filter: blur(4px);
             z-index: 20;
             padding: 24px;
             text-align: center;
+            cursor: pointer;
+            transition: opacity 0.25s ease;
         }
 
         .video-overlay.active { display: flex; }
@@ -1020,15 +1023,12 @@
 
                         <div class="video-overlay" id="errorOverlay">
                             <i class="fas fa-triangle-exclamation text-warning fa-2x mb-3"></i>
-                            <div class="overlay-msg" id="errorMsg">Unable to load stream directly.</div>
+                            <div class="overlay-msg" id="errorMsg">Channel stream is temporarily offline or slow to respond.</div>
                             <div class="d-flex gap-2">
                                 <button class="overlay-btn" id="retryBtn">
-                                    <i class="fas fa-rotate-right"></i> Retry
+                                    <i class="fas fa-rotate-right"></i> Retry Channel
                                 </button>
-                                <button class="overlay-btn" id="refreshSyncBtn" style="background: rgba(16,185,129,0.25); border-color: rgba(16,185,129,0.5); color: #34d399">
-                                    <i class="fas fa-arrows-rotate"></i> Refresh Token
-                                </button>
-                                <button class="overlay-btn" id="nextChannelBtn" style="background: rgba(255,255,255,0.15)">
+                                <button class="overlay-btn" id="nextChannelBtn" style="background: var(--accent); border-color: var(--accent); color: #fff">
                                     <i class="fas fa-forward-step"></i> Next Channel
                                 </button>
                             </div>
@@ -1651,11 +1651,15 @@
         // --- 5. Play Channel Engine ---
         let streamRetryCount = 0;
         const MAX_STREAM_RETRIES = 2;
+        let fragRetryCount = 0;
+        const MAX_FRAG_RETRIES = 2;
+        let bufferingTimeout = null;
 
         async function playChannel(index, isRetry = false) {
             if (index < 0 || index >= channels.length) return;
             if (!isRetry) {
                 streamRetryCount = 0;
+                fragRetryCount = 0;
             }
             activeIndex = index;
             const ch = channels[activeIndex];
@@ -1669,6 +1673,12 @@
 
             const isMpd = ch.url.includes('.mpd') || ch.url.includes('format=.mpd');
             playerStreamTypeTag.textContent = isMpd ? 'DASH / DRM' : 'HLS';
+
+            clearTimeout(bufferingTimeout);
+            const spinner = loadingOverlay.querySelector('.spinner-custom');
+            if (spinner) spinner.style.display = 'block';
+            const loadingMsg = document.getElementById('loadingMsg');
+            if (loadingMsg) loadingMsg.textContent = `Connecting to ${ch.name}...`;
 
             loadingOverlay.classList.add('active');
             errorOverlay.classList.remove('active');
@@ -1717,7 +1727,7 @@
                         });
                     }
 
-                    shakaPlayer.addEventListener('error', () => handleStreamError(ch));
+                    shakaPlayer.addEventListener('error', () => handleChannelFailure(ch, 'shaka_error'));
                     await shakaPlayer.load(ch.url);
                     populateShakaQualityMenu();
                     loadingOverlay.classList.remove('active');
@@ -1731,24 +1741,26 @@
                         maxMaxBufferLength: 60,
                         liveSyncDurationCount: 3,
                         liveMaxLatencyDurationCount: 10,
-                        manifestLoadingTimeOut: 15000,
-                        manifestLoadingMaxRetry: 4,
-                        manifestLoadingRetryDelay: 1000,
-                        levelLoadingTimeOut: 15000,
-                        levelLoadingMaxRetry: 4,
-                        levelLoadingRetryDelay: 1000,
-                        fragLoadingTimeOut: 20000,
-                        fragLoadingMaxRetry: 6,
-                        fragLoadingRetryDelay: 1000,
+                        manifestLoadingTimeOut: 8000,
+                        manifestLoadingMaxRetry: 2,
+                        manifestLoadingRetryDelay: 500,
+                        levelLoadingTimeOut: 8000,
+                        levelLoadingMaxRetry: 2,
+                        levelLoadingRetryDelay: 500,
+                        fragLoadingTimeOut: 10000,
+                        fragLoadingMaxRetry: 2,
+                        fragLoadingRetryDelay: 500,
                         startLevel: -1,
                         autoStartLoad: true
                     });
 
-                    hlsInstance.loadSource(ch.url);
+                    const streamUrl = isRetry ? (ch.url + (ch.url.includes('?') ? '&' : '?') + '_t=' + Date.now()) : ch.url;
+                    hlsInstance.loadSource(streamUrl);
                     hlsInstance.attachMedia(videoElement);
 
                     hlsInstance.on(Hls.Events.MANIFEST_PARSED, function(event, data) {
                         streamRetryCount = 0;
+                        fragRetryCount = 0;
                         if (!data.levels || data.levels.length === 0) {
                             console.warn('Channel manifest has 0 levels:', ch.name);
                             handleChannelFailure(ch, 'empty_manifest');
@@ -1764,22 +1776,20 @@
                     hlsInstance.on(Hls.Events.ERROR, function(event, data) {
                         if (data.fatal) {
                             console.warn('Fatal HLS Error:', data.type, data.details, data);
-                            if (data.response && (data.response.code === 403 || data.response.code === 401)) {
-                                handleTokenExpirationRetry(ch, 'Stream token expired (403/401)');
-                                return;
-                            }
-                            if (data.details === 'manifestParsingError' || (data.response && (data.response.code >= 500 || data.response.code === 404))) {
-                                handleChannelFailure(ch, 'manifest_error');
-                                return;
-                            }
                             switch (data.type) {
                                 case Hls.ErrorTypes.NETWORK_ERROR:
                                     if (data.details === 'manifestLoadError') {
-                                        const isStatusZero = data.response && data.response.code === 0;
-                                        handleTokenExpirationRetry(ch, isStatusZero ? 'CORS / Network Error (Status 0)' : 'Manifest network error');
+                                        handleStreamRecovery(ch, 'manifestLoadError');
+                                    } else if (data.details === 'manifestParsingError') {
+                                        handleChannelFailure(ch, 'manifestParsingError');
                                     } else {
-                                        console.log('HLS Network error: restarting load...');
-                                        hlsInstance.startLoad();
+                                        fragRetryCount++;
+                                        if (fragRetryCount <= MAX_FRAG_RETRIES) {
+                                            console.log(`Retrying fragment load (${fragRetryCount}/${MAX_FRAG_RETRIES})...`);
+                                            hlsInstance.startLoad();
+                                        } else {
+                                            handleChannelFailure(ch, 'fragLoadError');
+                                        }
                                     }
                                     break;
                                 case Hls.ErrorTypes.MEDIA_ERROR:
@@ -1803,74 +1813,77 @@
                 }
             } catch (err) {
                 console.error('Playback initialization error:', err);
-                handleStreamError(ch);
+                handleChannelFailure(ch, 'init_error');
             }
         }
 
         function handleChannelFailure(ch, reasonType) {
+            console.warn(`Channel failure [${reasonType}] for "${ch ? ch.name : activeIndex}"`);
+            clearTimeout(bufferingTimeout);
+
             if (isInitialAutoPlay && initialAutoPlayAttempts < 5) {
                 initialAutoPlayAttempts++;
                 const nextIdx = (activeIndex + 1) % channels.length;
                 console.log(`Auto-advancing from offline channel "${ch ? ch.name : activeIndex}" to "${channels[nextIdx].name}"...`);
-                showToast(`"${ch ? ch.name : 'Channel'}" is offline upstream. Auto-switching to "${channels[nextIdx].name}"...`, false);
+                showToast(`"${ch ? ch.name : 'Channel'}" is offline. Auto-switching to "${channels[nextIdx].name}"...`, false);
                 playChannel(nextIdx);
                 return;
             }
             isInitialAutoPlay = false;
-            handleStreamError(ch, `"${ch ? ch.name : 'Channel'}" is currently offline on the upstream server. Please click "Next Channel" or select another channel.`);
+            loadingOverlay.classList.remove('active');
+            errorOverlay.classList.add('active');
+            const msgEl = document.getElementById('errorMsg');
+            if (msgEl) {
+                msgEl.textContent = `"${ch ? ch.name : 'Channel'}" is currently offline on upstream server. Please choose another channel or click "Next Channel".`;
+            }
         }
 
         function handleAutoplayBlock() {
             videoElement.muted = true;
             updateVolumeUI();
             videoElement.play().catch(e => {
-                console.log('Muted autoplay blocked:', e);
+                console.log('Muted autoplay blocked, prompting user:', e);
+                loadingOverlay.classList.add('active');
+                const spinner = loadingOverlay.querySelector('.spinner-custom');
+                if (spinner) spinner.style.display = 'none';
                 const msgEl = document.getElementById('loadingMsg');
                 if (msgEl) {
-                    msgEl.innerHTML = '<i class="fas fa-play-circle fa-2x mb-2 text-primary" style="cursor:pointer"></i><br>Click to Play Stream';
+                    msgEl.innerHTML = `
+                        <div style="cursor: pointer; padding: 12px 28px; background: var(--accent); border-radius: 9999px; display: inline-flex; align-items: center; gap: 10px; font-weight: 700; box-shadow: 0 4px 18px var(--accent-glow); margin-top: 8px;">
+                            <i class="fas fa-play"></i> Click to Play Stream
+                        </div>
+                    `;
                 }
             });
         }
 
-        async function handleTokenExpirationRetry(ch, reason = '') {
+        async function handleStreamRecovery(ch, reason = '') {
             if (isRecoveringToken) return;
             if (streamRetryCount >= MAX_STREAM_RETRIES) {
                 console.warn(`Max stream retries reached (${MAX_STREAM_RETRIES}) for channel:`, ch?.name);
-                handleStreamError(ch, reason || 'Playback failed. Stream server blocked by browser CORS policy or offline.');
+                handleChannelFailure(ch, reason || 'Playback failed. Stream offline.');
                 return;
             }
             streamRetryCount++;
             isRecoveringToken = true;
             loadingOverlay.classList.add('active');
             errorOverlay.classList.remove('active');
-            showToast(`Auto-recovering stream for "${ch ? ch.name : 'Channel'}" (${streamRetryCount}/${MAX_STREAM_RETRIES})...`);
+            showToast(`Reconnecting to "${ch ? ch.name : 'Channel'}" (${streamRetryCount}/${MAX_STREAM_RETRIES})...`);
 
-            // 1.5s delay backoff to prevent UI freezing / request spam
-            await new Promise(r => setTimeout(r, 1500));
+            await new Promise(r => setTimeout(r, 1000));
 
             try {
-                await loadPlaylist(false);
-                if (channels[activeIndex]) {
-                    console.log('Playlist refreshed, attempting playback retry...');
-                    await playChannel(activeIndex, true);
-                } else {
-                    handleStreamError(ch, reason);
-                }
+                await playChannel(activeIndex, true);
             } catch (e) {
-                console.error('Failed to auto-refresh stream token:', e);
-                handleStreamError(ch, reason);
+                console.error('Failed to recover stream:', e);
+                handleChannelFailure(ch, reason);
             } finally {
                 isRecoveringToken = false;
             }
         }
 
         function handleStreamError(ch, customMsg) {
-            loadingOverlay.classList.remove('active');
-            errorOverlay.classList.add('active');
-            const msgEl = document.getElementById('errorMsg');
-            if (msgEl) {
-                msgEl.textContent = customMsg || `Failed to load "${ch ? ch.name : 'Stream'}". Stream token may be expired or blocked by CORS.`;
-            }
+            handleChannelFailure(ch, customMsg);
         }
 
         function updatePlayPauseIcon() {
@@ -1879,25 +1892,44 @@
 
         videoElement.addEventListener('play', updatePlayPauseIcon);
         videoElement.addEventListener('pause', updatePlayPauseIcon);
+
         ['canplay', 'playing', 'loadeddata'].forEach(evt => {
             videoElement.addEventListener(evt, () => {
+                clearTimeout(bufferingTimeout);
                 loadingOverlay.classList.remove('active');
+                const spinner = loadingOverlay.querySelector('.spinner-custom');
+                if (spinner) spinner.style.display = 'block';
                 const msgEl = document.getElementById('loadingMsg');
                 if (msgEl) msgEl.textContent = 'Loading Stream...';
             });
         });
+
         videoElement.addEventListener('timeupdate', () => {
-            if (videoElement.currentTime > 0) {
+            if (videoElement.currentTime > 0 && loadingOverlay.classList.contains('active')) {
+                clearTimeout(bufferingTimeout);
                 loadingOverlay.classList.remove('active');
             }
         });
+
         videoElement.addEventListener('waiting', () => {
-            if (!videoElement.paused) {
-                loadingOverlay.classList.add('active');
+            clearTimeout(bufferingTimeout);
+            if (!videoElement.paused && videoElement.currentTime > 0) {
+                bufferingTimeout = setTimeout(() => {
+                    if (!videoElement.paused) {
+                        const spinner = loadingOverlay.querySelector('.spinner-custom');
+                        if (spinner) spinner.style.display = 'block';
+                        const msgEl = document.getElementById('loadingMsg');
+                        if (msgEl) msgEl.textContent = 'Buffering...';
+                        loadingOverlay.classList.add('active');
+                    }
+                }, 1200);
             }
         });
+
         loadingOverlay.addEventListener('click', () => {
             loadingOverlay.classList.remove('active');
+            const spinner = loadingOverlay.querySelector('.spinner-custom');
+            if (spinner) spinner.style.display = 'block';
             videoElement.play().catch(e => console.log('Overlay click play blocked:', e));
         });
 
@@ -1927,21 +1959,14 @@
             playChannel((activeIndex + 1) % channels.length);
         });
 
-        const refreshSyncBtn = document.getElementById('refreshSyncBtn');
-        if (refreshSyncBtn) {
-            refreshSyncBtn.addEventListener('click', () => {
-                if (channels[activeIndex]) handleTokenExpirationRetry(channels[activeIndex]);
-            });
-        }
-
         const syncPlaylistBtn = document.getElementById('syncPlaylistBtn');
         if (syncPlaylistBtn) {
             syncPlaylistBtn.addEventListener('click', () => loadPlaylist(false));
         }
 
-        // Auto-refresh playlist in background every 15 minutes to guarantee fresh edge-cache tokens
+        // Auto-refresh playlist in background every 15 minutes to keep channel lineup updated
         setInterval(() => {
-            console.log('Auto-update interval: Fetching fresh playlist in background...');
+            console.log('Auto-update interval: Checking playlist in background...');
             loadPlaylist(false);
         }, 15 * 60 * 1000);
 

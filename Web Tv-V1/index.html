@@ -697,7 +697,15 @@
             });
         }
 
-        async function playCh(idx) {
+        let cinemaStreamRetries = 0;
+        let cinemaFragRetries = 0;
+
+        async function playCh(idx, isRetry = false) {
+            if (idx < 0 || idx >= channelData.length) return;
+            if (!isRetry) {
+                cinemaStreamRetries = 0;
+                cinemaFragRetries = 0;
+            }
             curIdx = idx;
             const ch = channelData[idx];
             localStorage.setItem('livetv_last_played_idx', idx);
@@ -741,8 +749,11 @@
                 }
                 try {
                     await shakaInst.load(ch.url);
-                    video.play().catch(() => { video.muted = true; video.play(); });
-                } catch(e) { console.error('Shaka load error:', e); }
+                    video.play().catch(() => { video.muted = true; video.play().catch(e => console.log(e)); });
+                } catch(e) { 
+                    console.error('Shaka load error:', e); 
+                    playCh((curIdx + 1) % channelData.length);
+                }
             } else if (Hls.isSupported() && !isMpd) {
                 hlsInst = new Hls({
                     enableWorker: true,
@@ -752,45 +763,74 @@
                     maxMaxBufferLength: 60,
                     liveSyncDurationCount: 3,
                     liveMaxLatencyDurationCount: 10,
-                    manifestLoadingTimeOut: 15000,
-                    manifestLoadingMaxRetry: 4,
-                    manifestLoadingRetryDelay: 1000,
-                    levelLoadingTimeOut: 15000,
-                    levelLoadingMaxRetry: 4,
-                    levelLoadingRetryDelay: 1000,
-                    fragLoadingTimeOut: 20000,
-                    fragLoadingMaxRetry: 6,
-                    fragLoadingRetryDelay: 1000,
+                    manifestLoadingTimeOut: 8000,
+                    manifestLoadingMaxRetry: 2,
+                    manifestLoadingRetryDelay: 500,
+                    levelLoadingTimeOut: 8000,
+                    levelLoadingMaxRetry: 2,
+                    levelLoadingRetryDelay: 500,
+                    fragLoadingTimeOut: 10000,
+                    fragLoadingMaxRetry: 2,
+                    fragLoadingRetryDelay: 500,
                     startLevel: -1,
                     autoStartLoad: true
                 });
-                hlsInst.loadSource(ch.url);
+
+                const streamUrl = isRetry ? (ch.url + (ch.url.includes('?') ? '&' : '?') + '_t=' + Date.now()) : ch.url;
+                hlsInst.loadSource(streamUrl);
                 hlsInst.attachMedia(video);
+
                 hlsInst.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
+                    cinemaStreamRetries = 0;
+                    cinemaFragRetries = 0;
                     if (!data.levels || data.levels.length === 0) {
                         console.warn('Channel manifest has 0 levels:', ch.name);
                         playCh((curIdx + 1) % channelData.length);
                         return;
                     }
-                    video.play().catch(() => { video.muted = true; video.play(); });
+                    video.play().catch(() => { video.muted = true; video.play().catch(e => console.log(e)); });
                 });
+
                 hlsInst.on(Hls.Events.ERROR, (event, data) => {
                     if (data.fatal) {
-                        console.warn('Cinema HLS fatal error:', data);
+                        console.warn('Cinema HLS fatal error:', data.type, data.details);
                         if (data.details === 'manifestParsingError' || (data.response && (data.response.code >= 500 || data.response.code === 404))) {
                             playCh((curIdx + 1) % channelData.length);
                             return;
                         }
-                        if (data.type === Hls.ErrorTypes.MEDIA_ERROR) hlsInst.recoverMediaError();
-                        else if (data.type === Hls.ErrorTypes.NETWORK_ERROR) hlsInst.startLoad();
+                        switch (data.type) {
+                            case Hls.ErrorTypes.NETWORK_ERROR:
+                                if (data.details === 'manifestLoadError') {
+                                    if (cinemaStreamRetries < 2) {
+                                        cinemaStreamRetries++;
+                                        setTimeout(() => playCh(curIdx, true), 1000);
+                                    } else {
+                                        playCh((curIdx + 1) % channelData.length);
+                                    }
+                                } else {
+                                    cinemaFragRetries++;
+                                    if (cinemaFragRetries <= 2) {
+                                        hlsInst.startLoad();
+                                    } else {
+                                        playCh((curIdx + 1) % channelData.length);
+                                    }
+                                }
+                                break;
+                            case Hls.ErrorTypes.MEDIA_ERROR:
+                                hlsInst.recoverMediaError();
+                                break;
+                            default:
+                                playCh((curIdx + 1) % channelData.length);
+                                break;
+                        }
                     }
                 });
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 video.src = ch.url;
-                video.play().catch(() => { video.muted = true; video.play(); });
+                video.play().catch(() => { video.muted = true; video.play().catch(e => console.log(e)); });
             } else {
                 video.src = ch.url;
-                video.play().catch(() => { video.muted = true; video.play(); });
+                video.play().catch(() => { video.muted = true; video.play().catch(e => console.log(e)); });
             }
         }
 

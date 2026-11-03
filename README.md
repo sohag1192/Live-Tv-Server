@@ -337,6 +337,20 @@ If you like this project, please consider giving it a **Star** on GitHub. It hel
 
 </div>
 
+### ⭐ Star History
+
+<div align="center">
+
+<a href="https://star-history.com/#sohag1192/Live-Tv-Server&Date">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=sohag1192/Live-Tv-Server&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=sohag1192/Live-Tv-Server&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=sohag1192/Live-Tv-Server&type=Date" />
+ </picture>
+</a>
+
+</div>
+
 ---
 
 ### 2. ☕ Donate & Support Development

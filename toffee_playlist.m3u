@@ -1,4 +1,6 @@
 #EXTM3U
+#EXTINF:-1 tvg-id="zee24ghanta" tvg-name="Zee 24 Ghanta" tvg-logo="https://i.imgur.com/39wVv5b.png" group-title="News",Zee 24 Ghanta
+https://d2dsoyvkr33m05.cloudfront.net/index_5.m3u8
 #EXTINF:-1 tvg-id="Xi_Ga5oBNnOkwJLWkhKP" tvg-logo="https://assets-prod.services.toffeelive.com/Xi_Ga5oBNnOkwJLWkhKP/posters/ef2899d5-1ae0-4fee-aee5-45f9b0b3ba80.png" group-title="Live Action",Somoy TV
 https://toffee.aliflaila.live/channel/1.m3u8
 #EXTINF:-1 tvg-id="kK2aX5UBrjBfS2_RBcKf" tvg-logo="https://assets-prod.services.toffeelive.com/kK2aX5UBrjBfS2_RBcKf/posters/ba5dd8dc-4f87-414a-b57f-c9ecdeda5253.png" group-title="Drama",Zee Bangla
